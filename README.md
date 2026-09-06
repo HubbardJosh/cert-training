@@ -1,6 +1,6 @@
-# AWS Certification Study App
+# Certification Study App
 
-A mobile-first study app for AWS certification exam prep, built with Expo and React Native. Supports multiple certifications with flashcards, practice quizzes, detailed service guides, and progress tracking — all stored locally on your device.
+A mobile-first study app for cloud and AI certification exam prep, built with Expo and React Native. Supports multiple certifications with flashcards, practice quizzes, detailed guides, and progress tracking — all stored locally on your device.
 
 ---
 
