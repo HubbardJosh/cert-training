@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "aws-training",
-    "slug": "aws-training",
+    "name": "Certification Study App",
+    "slug": "cert-training",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
