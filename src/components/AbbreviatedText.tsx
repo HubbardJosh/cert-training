@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { AIF_ABBREVIATIONS } from "../data/aif/abbreviations";
+import { CCAO_ABBREVIATIONS } from "../data/ccao/abbreviations";
 import { CLF_ABBREVIATIONS } from "../data/clf/abbreviations";
 import { DVA_ABBREVIATIONS } from "../data/dva/abbreviations";
 import { useTheme } from "../context/ThemeContext";
@@ -21,6 +22,7 @@ const registries: Record<string, Record<string, string>> = {
   "dva-c02": DVA_ABBREVIATIONS,
   "clf-c02": CLF_ABBREVIATIONS,
   "aif-c01": AIF_ABBREVIATIONS,
+  "ccao-f": CCAO_ABBREVIATIONS,
 };
 
 export function registerAbbreviations(
