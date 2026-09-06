@@ -6,12 +6,21 @@ A mobile-first study app for AWS certification exam prep, built with Expo and Re
 
 ## Certifications Covered
 
-| Cert        | Name                                     | Questions | Time    | Passing Score |
-| ----------- | ---------------------------------------- | --------- | ------- | ------------- |
-| **DVA-C02** | AWS Certified Developer – Associate      | 65        | 130 min | 720/1000      |
-| **CLF-C02** | AWS Certified Cloud Practitioner         | 65        | 90 min  | 700/1000      |
-| **AIF-C01** | AWS Certified AI Practitioner            | 85        | 120 min | 700/1000      |
-| **MLS-C01** | AWS Certified Machine Learning Specialty | 65        | 180 min | 750/1000      |
+### AWS Certifications
+
+| Cert        | Name                                          | Questions | Time    | Passing Score |
+| ----------- | --------------------------------------------- | --------- | ------- | ------------- |
+| **CLF-C02** | AWS Certified Cloud Practitioner              | 65        | 90 min  | 700/1000      |
+| **DVA-C02** | AWS Certified Developer – Associate           | 65        | 130 min | 720/1000      |
+| **SAA-C03** | AWS Certified Solutions Architect – Associate | 65        | 130 min | 720/1000      |
+| **AIF-C01** | AWS Certified AI Practitioner                 | 85        | 120 min | 700/1000      |
+| **MLS-C01** | AWS Certified Machine Learning Specialty      | 65        | 180 min | 750/1000      |
+
+### Anthropic / Claude Certifications
+
+| Cert       | Name                               | Questions | Time    | Passing Score |
+| ---------- | ---------------------------------- | --------- | ------- | ------------- |
+| **CCAO-F** | Claude AI Operations – Foundations | 60        | 120 min | 720/1000      |
 
 ---
 
@@ -32,7 +41,7 @@ A mobile-first study app for AWS certification exam prep, built with Expo and Re
 
 | Layer             | Technology                                       |
 | ----------------- | ------------------------------------------------ |
-| Framework         | Expo 54 (managed workflow)                       |
+| Framework         | Expo ~54.0.0 (managed workflow)                  |
 | Language          | TypeScript 5.9                                   |
 | UI Runtime        | React Native 0.81 / React 19                     |
 | Navigation        | React Navigation v7 (bottom tabs + native stack) |
@@ -52,8 +61,10 @@ aws-training/
 │   ├── data/               # All certification content
 │   │   ├── dva/            # DVA-C02 flashcards, quiz questions, guides
 │   │   ├── clf/            # CLF-C02 content
+│   │   ├── saa/            # SAA-C03 content
 │   │   ├── aif/            # AIF-C01 content
-│   │   └── mls/            # MLS-C01 content
+│   │   ├── mls/            # MLS-C01 content
+│   │   └── ccao/           # CCAO-F content
 │   ├── screens/            # 12 screen components
 │   ├── navigation/         # Bottom tab + stack navigator setup
 │   ├── context/            # CertContext, ThemeContext
@@ -72,7 +83,7 @@ Each certification folder contains:
 - `flashcards.ts` — 100+ flashcards tagged by domain, difficulty, and service
 - `quizQuestions.ts` — 100+ quiz questions with explanations for every answer option
 - `abbreviations.ts` — Service acronym definitions for tooltip expansion
-- `guides/` — 20–33 detailed service guides (e.g. Lambda, S3, DynamoDB, IAM)
+- `guides/` — 18–31 detailed service/topic guides (e.g. Lambda, S3, DynamoDB, IAM)
 
 ---
 
