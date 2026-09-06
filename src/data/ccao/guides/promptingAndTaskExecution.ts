@@ -202,7 +202,7 @@ The exam tests whether you can match the right technique to the task type, not j
   ],
 
   keyFacts: [
-    "Domain 1 is 14% of the CCAO-F exam — the second-smallest domain but foundational to all others",
+    "Prompting and Task Execution is 14% of the CCAO-F exam — the second-smallest domain but foundational to all others",
     "Effective prompts are clear, specific, and complete — vague instructions produce unpredictable outputs",
     "Place critical constraints early in the system prompt; they receive more weight than late instructions",
     "XML tags (e.g., <context>, <instructions>, <example>) are the recommended way to structure complex prompts",
