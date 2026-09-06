@@ -42,7 +42,7 @@ const AWS_GROUPS: CertGroup[] = [
     certs: [
       {
         meta: CERT_META["clf-c02"],
-        next: "DVA-C02 / SAA-C03 / AIF-C01",
+        next: "DVA-C02 / AIF-C01",
       },
     ],
   },
