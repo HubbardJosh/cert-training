@@ -9,11 +9,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { AIF_ABBREVIATIONS } from "../data/aif/abbreviations";
-import { CCAO_ABBREVIATIONS } from "../data/ccao/abbreviations";
-import { CLF_ABBREVIATIONS } from "../data/clf/abbreviations";
-import { DVA_ABBREVIATIONS } from "../data/dva/abbreviations";
-import { SAA_ABBREVIATIONS } from "../data/saa/abbreviations";
+import { AIF_ABBREVIATIONS } from "../data/aws/aif/abbreviations";
+import { CCAO_ABBREVIATIONS } from "../data/anthropic/ccao/abbreviations";
+import { CLF_ABBREVIATIONS } from "../data/aws/clf/abbreviations";
+import { DVA_ABBREVIATIONS } from "../data/aws/dva/abbreviations";
+import { SAA_ABBREVIATIONS } from "../data/aws/saa/abbreviations";
 import { useTheme } from "../context/ThemeContext";
 import { fontSize, radius, spacing } from "../utils/theme";
 
