@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { setActiveCert } from "../components/AbbreviatedText";
 
-export type CertificationId = "dva-c02" | "clf-c02" | "aif-c01" | "mls-c01";
+export type CertificationId =
+  "dva-c02" | "clf-c02" | "aif-c01" | "mls-c01" | "ccao-f";
 
 export interface CertMeta {
   id: CertificationId;
@@ -49,6 +50,15 @@ export const CERT_META: Record<CertificationId, CertMeta> = {
     icon: "analytics",
     color: "#00A86B",
     storageKey: "aws_training_progress_mls",
+  },
+  "ccao-f": {
+    id: "ccao-f",
+    name: "CCAO-F",
+    fullName: "Anthropic Claude AI Operations – Foundations",
+    examInfo: "60 questions · 120 min · Passing score: 720/1000",
+    icon: "sparkles",
+    color: "#D97706",
+    storageKey: "aws_training_progress_ccao",
   },
 };
 

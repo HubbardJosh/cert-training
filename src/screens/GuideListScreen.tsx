@@ -168,7 +168,12 @@ export default function GuideListScreen() {
 
         {/* Guide cards */}
         {filtered.map((guide) => {
-          const meta = DOMAIN_META[guide.domain];
+          const meta = DOMAIN_META[guide.domain] ?? {
+            label: guide.domain,
+            color: colors.primary,
+            weight: "",
+            icon: "ellipse-outline",
+          };
           const gp = progress?.guideProgress[guide.id];
           const sectionsRead = gp?.sectionsRead.length ?? 0;
           const isCompleted = gp?.completed ?? false;

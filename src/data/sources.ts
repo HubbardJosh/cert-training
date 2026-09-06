@@ -839,4 +839,140 @@ export const SOURCES: CertSources[] = [
       },
     ],
   },
+  {
+    certId: "ccao-f",
+    sources: [
+      {
+        title: "Claude Certified Associate – Foundations Exam Guide (CCAO-F)",
+        url: "https://everpath-course-content.s3-accelerate.amazonaws.com/instructor%2F6nizmqk8tpzpfjvt6qmmav7rh%2Fpublic%2F1783542847%2FClaude+Certified+Associate+%E2%80%93+Foundations+Exam+Guide.pdf",
+        topics: [
+          "Exam domains and weightings",
+          "Scope of Claude concepts tested",
+          "Passing score and format",
+        ],
+      },
+      {
+        title: "Anthropic API Documentation",
+        url: "https://docs.anthropic.com/en/api/getting-started",
+        topics: [
+          "Messages API request and response structure",
+          "Required fields: model, max_tokens, messages",
+          "Authentication and API key management",
+          "Rate limits and error codes",
+        ],
+      },
+      {
+        title: "Anthropic Model Overview",
+        url: "https://docs.anthropic.com/en/docs/about-claude/models",
+        topics: [
+          "Claude model family: Opus, Sonnet, Haiku",
+          "Versioned model IDs and deprecation policy",
+          "Context window sizes by model",
+          "Vision capability by model",
+        ],
+      },
+      {
+        title: "Prompt Engineering Guide",
+        url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview",
+        topics: [
+          "Core prompting principles: clear, specific, complete",
+          "System prompt design and XML tag structuring",
+          "Few-shot examples and chain-of-thought prompting",
+          "Output format control and JSON extraction",
+          "Prompt injection risks and mitigations",
+        ],
+      },
+      {
+        title: "Tool Use (Function Calling)",
+        url: "https://docs.anthropic.com/en/docs/build-with-claude/tool-use",
+        topics: [
+          "Tool definition: name, description, input_schema",
+          "Tool use lifecycle: tool_use block → application executes → tool_result",
+          "Parallel and sequential tool calls",
+          "tool_choice parameter: auto, any, specific tool",
+          "stop_reason: tool_use vs. end_turn",
+        ],
+      },
+      {
+        title: "Anthropic Usage Policy",
+        url: "https://www.anthropic.com/legal/aup",
+        topics: [
+          "Prohibited use cases (hardcoded refusals)",
+          "Operator responsibilities and acceptable use",
+          "Content categories and policy enforcement",
+        ],
+      },
+      {
+        title: "Safety and Responsible AI – Anthropic",
+        url: "https://www.anthropic.com/safety",
+        topics: [
+          "Constitutional AI (CAI) training approach",
+          "Helpful, Harmless, Honest design principles",
+          "Hardcoded vs. softcoded behaviors",
+          "Trust hierarchy: Anthropic > Operator > User",
+          "Honesty constraints: Claude will not claim to be human",
+        ],
+      },
+      {
+        title: "Streaming with the Messages API",
+        url: "https://docs.anthropic.com/en/api/messages-streaming",
+        topics: [
+          "Server-sent events (SSE) event types",
+          "message_start, content_block_delta, message_delta, message_stop",
+          "Streaming vs. non-streaming billing (identical)",
+          "Assembling the full response from deltas",
+        ],
+      },
+      {
+        title: "Prompt Caching",
+        url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching",
+        topics: [
+          "cache_control block and ephemeral type",
+          "Cache TTL: 5 minutes, resets on each cache hit",
+          "Cache read price: ~10% of normal input token cost",
+          "Cacheable content must precede non-cacheable content",
+        ],
+      },
+      {
+        title: "Batch API",
+        url: "https://docs.anthropic.com/en/docs/build-with-claude/message-batches",
+        topics: [
+          "50% cost reduction for offline async workloads",
+          "Up to 100,000 requests per batch",
+          "Processing within 24 hours",
+          "JSONL submission and result download format",
+        ],
+      },
+      {
+        title: "Anthropic Console",
+        url: "https://console.anthropic.com",
+        topics: [
+          "API key creation and management",
+          "Usage metrics and token consumption by model",
+          "Spending limits and billing",
+          "Workbench for interactive prompt testing",
+        ],
+      },
+      {
+        title: "Evaluating Claude Outputs",
+        url: "https://docs.anthropic.com/en/docs/test-and-evaluate/eval-overview",
+        topics: [
+          "Building evaluation datasets from real user traffic",
+          "LLM-as-judge for subjective quality evaluation",
+          "Red teaming and adversarial testing",
+          "Prompt iteration methodology: one change at a time",
+        ],
+      },
+      {
+        title: "Agentic and Multi-Turn Applications",
+        url: "https://docs.anthropic.com/en/docs/build-with-claude/agentic-and-multi-turn",
+        topics: [
+          "Agentic loop: repeat tool calls until stop_reason end_turn",
+          "Minimal footprint principle: least permissions, prefer reversible",
+          "Human-in-the-loop checkpoints for irreversible actions",
+          "Maximum iteration limits to prevent infinite loops",
+        ],
+      },
+    ],
+  },
 ];

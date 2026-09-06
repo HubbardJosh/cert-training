@@ -134,6 +134,12 @@ export const DOMAIN_META: Record<
     weight: "",
     icon: "school",
   },
+  applications: {
+    label: "Applications",
+    color: darkColors.accent,
+    weight: "",
+    icon: "layers",
+  },
 };
 
 export function getDomainMeta(
@@ -178,6 +184,12 @@ export function getDomainMeta(
       color: colors.primary,
       weight: "",
       icon: "school",
+    },
+    applications: {
+      label: "Applications",
+      color: colors.accent,
+      weight: "",
+      icon: "layers",
     },
   };
 }

@@ -650,7 +650,12 @@ export default function GuideDetailScreen() {
     );
   }
 
-  const meta = DOMAIN_META[guide.domain];
+  const meta = DOMAIN_META[guide.domain] ?? {
+    label: guide.domain,
+    color: colors.primary,
+    weight: "",
+    icon: "ellipse-outline",
+  };
   const gp = progress ? getGuideProgress(progress, guide.id) : null;
   const sectionsRead = gp?.sectionsRead.length ?? 0;
   const isCompleted = gp?.completed ?? false;

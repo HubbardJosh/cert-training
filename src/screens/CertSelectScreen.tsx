@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { RootStackParamList } from "../navigation";
 import { useTheme } from "../context/ThemeContext";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
+type Provider = "aws" | "anthropic";
 
 interface CertEntry {
   meta: CertMeta;
@@ -34,7 +35,7 @@ interface CertGroup {
   certs: CertEntry[];
 }
 
-const CERT_GROUPS: CertGroup[] = [
+const AWS_GROUPS: CertGroup[] = [
   {
     level: "Foundational",
     description: "No prior cloud experience required",
@@ -73,16 +74,108 @@ const CERT_GROUPS: CertGroup[] = [
   },
 ];
 
+const ANTHROPIC_GROUPS: CertGroup[] = [
+  {
+    level: "Foundational",
+    description: "Core Claude AI operations knowledge",
+    certs: [
+      {
+        meta: CERT_META["ccao-f"],
+        next: "CCDV-F / CCAR-F",
+      },
+    ],
+  },
+];
+
+const AWS_COLOR = "#FF9900";
+const ANTHROPIC_COLOR = "#D97706";
+
 export default function CertSelectScreen() {
   const navigation = useNavigation<Nav>();
   const { certId, setCert } = useCert();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
 
+  const [provider, setProvider] = useState<Provider | null>(null);
+
   const handleSelect = (id: CertificationId) => {
     setCert(id);
     navigation.navigate("Tabs");
   };
+
+  const groups = provider === "aws" ? AWS_GROUPS : ANTHROPIC_GROUPS;
+  const providerColor = provider === "aws" ? AWS_COLOR : ANTHROPIC_COLOR;
+
+  if (provider === null) {
+    return (
+      <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
+        <View style={styles.pickerContent}>
+          <View style={styles.header}>
+            <View style={styles.logoWrap}>
+              <Ionicons name="ribbon" size={36} color={colors.primary} />
+            </View>
+            <Text style={styles.title}>Certifications</Text>
+            <Text style={styles.subtitle}>
+              Choose a certification provider to get started
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.providerCard, { borderColor: AWS_COLOR }]}
+            onPress={() => setProvider("aws")}
+            activeOpacity={0.8}
+          >
+            <View
+              style={[
+                styles.providerIcon,
+                { backgroundColor: AWS_COLOR + "22" },
+              ]}
+            >
+              <Ionicons name="cloud" size={36} color={AWS_COLOR} />
+            </View>
+            <View style={styles.providerText}>
+              <Text style={[styles.providerName, { color: AWS_COLOR }]}>
+                Amazon Web Services
+              </Text>
+              <Text style={styles.providerDesc}>
+                Cloud Practitioner · Developer · AI Practitioner · Machine
+                Learning
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={22} color={AWS_COLOR} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.providerCard, { borderColor: ANTHROPIC_COLOR }]}
+            onPress={() => setProvider("anthropic")}
+            activeOpacity={0.8}
+          >
+            <View
+              style={[
+                styles.providerIcon,
+                { backgroundColor: ANTHROPIC_COLOR + "22" },
+              ]}
+            >
+              <Ionicons name="sparkles" size={36} color={ANTHROPIC_COLOR} />
+            </View>
+            <View style={styles.providerText}>
+              <Text style={[styles.providerName, { color: ANTHROPIC_COLOR }]}>
+                Anthropic
+              </Text>
+              <Text style={styles.providerDesc}>
+                Claude AI Operations · Foundations &amp; beyond
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={22}
+              color={ANTHROPIC_COLOR}
+            />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
@@ -92,19 +185,44 @@ export default function CertSelectScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <View style={styles.logoWrap}>
-            <Ionicons name="ribbon" size={36} color={colors.primary} />
+          <TouchableOpacity
+            style={styles.backRow}
+            onPress={() => setProvider(null)}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="chevron-back" size={18} color={providerColor} />
+            <Text style={[styles.backLabel, { color: providerColor }]}>
+              Providers
+            </Text>
+          </TouchableOpacity>
+
+          <View
+            style={[styles.logoWrap, { backgroundColor: providerColor + "18" }]}
+          >
+            <Ionicons
+              name={provider === "aws" ? "cloud" : "sparkles"}
+              size={36}
+              color={providerColor}
+            />
           </View>
-          <Text style={styles.title}>AWS Certifications</Text>
+          <Text style={styles.title}>
+            {provider === "aws"
+              ? "AWS Certifications"
+              : "Anthropic Certifications"}
+          </Text>
           <Text style={styles.subtitle}>
             Choose a certification to study for
           </Text>
         </View>
 
-        {CERT_GROUPS.map((group) => (
+        {groups.map((group) => (
           <View key={group.level} style={styles.group}>
-            <View style={styles.groupHeader}>
-              <Text style={styles.groupLevel}>{group.level}</Text>
+            <View
+              style={[styles.groupHeader, { borderLeftColor: providerColor }]}
+            >
+              <Text style={[styles.groupLevel, { color: providerColor }]}>
+                {group.level}
+              </Text>
               <Text style={styles.groupDesc}>{group.description}</Text>
             </View>
 
@@ -209,9 +327,27 @@ function makeStyles(colors: ThemeColors) {
       paddingTop: spacing.xl,
     },
 
+    pickerContent: {
+      flex: 1,
+      padding: spacing.lg,
+      paddingTop: spacing.xl,
+      justifyContent: "center",
+    },
+
     header: {
       alignItems: "center",
       marginBottom: spacing.xl,
+    },
+    backRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      alignSelf: "flex-start",
+      marginBottom: spacing.md,
+      gap: 2,
+    },
+    backLabel: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
     },
     logoWrap: {
       width: 72,
@@ -231,6 +367,38 @@ function makeStyles(colors: ThemeColors) {
     subtitle: {
       fontSize: fontSize.md,
       color: colors.textSecondary,
+      textAlign: "center",
+    },
+
+    providerCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.surface,
+      borderRadius: radius.xl,
+      padding: spacing.lg,
+      marginBottom: spacing.md,
+      borderWidth: 2,
+      gap: spacing.md,
+    },
+    providerIcon: {
+      width: 64,
+      height: 64,
+      borderRadius: radius.lg,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    providerText: {
+      flex: 1,
+      gap: 4,
+    },
+    providerName: {
+      fontSize: fontSize.lg,
+      fontWeight: "800",
+    },
+    providerDesc: {
+      fontSize: fontSize.sm,
+      color: colors.textSecondary,
+      lineHeight: 18,
     },
 
     group: {
