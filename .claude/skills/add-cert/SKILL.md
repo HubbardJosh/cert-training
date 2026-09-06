@@ -101,9 +101,49 @@ src/data/<slug>/
     <topic2>.ts
     ...
     index.ts
+  abbreviations.ts
   flashcards.ts
   quizQuestions.ts
 ```
+
+---
+
+## Step 2.5 — Build the abbreviation registry
+
+Before writing any content, identify every acronym and abbreviation that will appear in the cert's guides, flashcards, and quiz questions. Write `src/data/<slug>/abbreviations.ts`:
+
+```ts
+export const <SLUG_UPPER>_ABBREVIATIONS: Record<string, string> = {
+  // Group by category (e.g., "// API & developer concepts", "// AI concepts", "// Safety")
+  ABBR: "Full expansion — one-sentence description of what it means in this cert's context",
+  // ...
+};
+```
+
+What to include:
+
+- Every service name acronym used in guides (e.g., `IAM`, `S3`, `EC2` for AWS; `API`, `SDK`, `SSE` for Claude certs)
+- Every technical abbreviation that appears two or more times across guides, flashcards, or quiz questions
+- Every certification identifier referenced (e.g., `CCAO`, `CCDV`, `SAA`)
+- Every domain-specific acronym a student might not immediately know (e.g., `RAG`, `CoT`, `RLHF`, `PII`, `HITL`)
+
+What NOT to include:
+
+- Common English words and obvious terms (e.g., `URL`, `PDF` are fine; `IT` or `AI` alone may be too obvious)
+- Abbreviations only used once and fully spelled out inline in that context
+
+**Naming convention**: export name is `<SLUG_UPPER>_ABBREVIATIONS` where `<SLUG_UPPER>` is the slug in uppercase (e.g., slug `ccdv` → `CCDV_ABBREVIATIONS`, slug `saa` → `SAA_ABBREVIATIONS`).
+
+Then register it in `src/components/AbbreviatedText.tsx`:
+
+1. Add the import:
+   ```ts
+   import { <SLUG_UPPER>_ABBREVIATIONS } from "../data/<slug>/abbreviations";
+   ```
+2. Add an entry to the `registries` object:
+   ```ts
+   "<certId>": <SLUG_UPPER>_ABBREVIATIONS,
+   ```
 
 ---
 
@@ -152,6 +192,13 @@ export const <camelCaseName>Guide: ServiceGuide = {
 - Write as many sections as needed to cover every sub-topic the exam tests
 - Each section body is full prose (3–6 sentences), not bullet lists
 - Every section should have a `quiz` question testing the most important concept in that section
+
+**Abbreviation usage:**
+
+- Use abbreviations naturally throughout `body`, `intro`, `tagline`, `keyFacts`, and `examTips` — do not avoid them or always spell them out
+- Every abbreviation that appears in the registry (from Step 2.5) should be used as-is in text; the app renders tappable tooltips automatically
+- Do not parenthetically define an abbreviation inline (e.g., avoid "RAG (Retrieval-Augmented Generation)") — the tooltip handles that; just write `RAG`
+- `keyFacts` and `examTips` are especially good places to use abbreviations densely, since students will tap to check definitions as they study
 
 **CRITICAL — backtick escaping**: `body` fields are template literals. Any inline code inside a body MUST use `\`` (escaped backtick):
 
@@ -386,7 +433,7 @@ Do not skip this step.
 ## Step 12 — Format and report
 
 ```bash
-npx prettier --write src/data/<slug>/**/*.ts src/context/CertContext.tsx src/context/useCertData.ts src/data/sources.ts src/screens/CertSelectScreen.tsx
+npx prettier --write src/data/<slug>/**/*.ts src/context/CertContext.tsx src/context/useCertData.ts src/data/sources.ts src/screens/CertSelectScreen.tsx src/components/AbbreviatedText.tsx
 ```
 
 Report:
@@ -395,5 +442,6 @@ Report:
 - Number of guide files created and total sections written
 - Total flashcard count
 - Total quiz question count
+- Total abbreviations registered
 - Total sources added
 - Any topics you assessed as needing more coverage than you could fit in one pass

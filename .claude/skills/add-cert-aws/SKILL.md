@@ -9,6 +9,23 @@ The argument passed after `/add-cert-aws` is the AWS certification code (e.g. `S
 
 ---
 
+## Step 0 — Fetch official cert details
+
+Before doing anything else, fetch authoritative exam details for the requested cert code.
+
+1. **WebFetch** `https://aws.amazon.com/certification/` — the AWS certification hub. Navigate from here to the specific cert matching the code (e.g. "AWS Certified Solutions Architect – Associate" for `SAA-C03`). Follow any links to the cert's dedicated page to capture:
+   - Official full cert name
+   - Exam format: number of questions, time limit, passing score
+   - Domains and their percentage weightings
+   - Topic areas and services explicitly listed
+   - Any listed prerequisites or recommended experience
+
+2. If the cert page links to an official exam guide PDF (typically on `d1.awsstatic.com`), **WebFetch** that URL too and extract domain breakdowns and topic lists from it.
+
+Use all data gathered here to populate `fullName`, `examInfo`, domain weights, guide topics, flashcard terms, and quiz question scenarios in later steps. Real data from these pages takes priority over model estimates. If a page is unreachable or the cert does not appear, note it and fall back to model knowledge.
+
+---
+
 ## Step 1 — Validate the certification code
 
 A valid AWS certification code matches the pattern `[A-Z]+-C[0-9]+` (e.g. `SAA-C03`, `DVA-C02`, `SCS-C02`, `ANS-C01`, `DOP-C02`, `SOA-C02`, `MLS-C01`, `DAS-C01`, `PAS-C01`, `AIF-C01`, `CLF-C02`).
