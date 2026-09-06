@@ -52,13 +52,18 @@ A vague prompt like "Write something about our product launch" can produce anyth
 
 For example, a customer support system prompt might read:
 
-\`<context>\`
-You are a support assistant for Acme Software. Acme offers three products: Starter, Pro, and Enterprise. Starter supports up to 5 users; Pro up to 50; Enterprise is unlimited.
-\`</context>\`
+\`\`\`xml
+<context>
+You are a support assistant for Acme Software. Acme offers three products:
+Starter, Pro, and Enterprise. Starter supports up to 5 users; Pro up to 50;
+Enterprise is unlimited.
+</context>
 
-\`<instructions>\`
-Answer only questions about Acme products. If a question is outside this scope, politely decline and redirect to support@acme.com.
-\`</instructions>\`
+<instructions>
+Answer only questions about Acme products. If a question is outside this
+scope, politely decline and redirect to support@acme.com.
+</instructions>
+\`\`\`
 
 Without tags, a long prose system prompt forces Claude to infer which sentences are background facts versus which are directives — an inference that can go wrong at the boundaries. Tags eliminate that ambiguity. They are especially valuable when untrusted user content is injected into the prompt: wrapping user-submitted text in \`<user_document>\` tags and instructing Claude to treat that section as data rather than instructions is a primary defense against prompt injection.
 
