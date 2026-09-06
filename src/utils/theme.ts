@@ -37,7 +37,7 @@ export const darkColors: ThemeColors = {
   accent: "#00A8E8",
 
   development: "#00A8E8",
-  security: "#E8433A",
+  security: "#E91E8C",
   deployment: "#2ECC71",
   troubleshooting: "#9B59B6",
 
@@ -68,7 +68,7 @@ export const lightColors: ThemeColors = {
   accent: "#0077AA",
 
   development: "#0077AA",
-  security: "#C0392B",
+  security: "#C2185B",
   deployment: "#27AE60",
   troubleshooting: "#7D3C98",
 
