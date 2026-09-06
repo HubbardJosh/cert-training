@@ -7,7 +7,7 @@ export const workflowIntegrationAndSolutionDesignGuide: ServiceGuide = {
   tagline:
     "Applying Claude to analyze requirements, optimize processes, and integrate AI into existing or redesigned workflows",
   intro:
-    "Domain 4 of the CCAO-F exam covers how to bring Claude into real-world work: analyzing requirements, supporting solution design, embedding Claude into existing processes, and communicating its value and limits to stakeholders. Sixteen percent of exam weight reflects how central these skills are to AI operations roles.",
+    "Workflow Integration and Solution Design (Domain 4 of the CCAO-F exam) covers how to bring Claude into real-world work: analyzing requirements, supporting solution design, embedding Claude into existing processes, and communicating its value and limits to stakeholders. Sixteen percent of exam weight reflects how central these skills are to AI operations roles.",
 
   sections: [
     {

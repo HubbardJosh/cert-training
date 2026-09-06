@@ -7,7 +7,7 @@ export const troubleshootingAndOptimizationGuide: ServiceGuide = {
   tagline:
     "Diagnosing poor outputs, iterating on prompts, and tuning workflows for speed, cost, and quality",
   intro:
-    "Domain 7 covers how to identify why Claude is producing poor outputs, how to systematically fix them, and how to optimize workflows once they are working. This includes recognizing failure modes, applying a structured troubleshooting process, managing context windows, and choosing the right levers — model, prompt length, format, task decomposition — to hit your quality, speed, and cost targets.",
+    "Troubleshooting and Optimization (Domain 7) covers how to identify why Claude is producing poor outputs, how to systematically fix them, and how to optimize workflows once they are working. This includes recognizing failure modes, applying a structured troubleshooting process, managing context windows, and choosing the right levers — model, prompt length, format, task decomposition — to hit your quality, speed, and cost targets.",
 
   sections: [
     {

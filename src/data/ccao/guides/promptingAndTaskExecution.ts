@@ -7,7 +7,7 @@ export const promptingAndTaskExecutionGuide: ServiceGuide = {
   tagline:
     "Craft effective prompts, decompose complex tasks, and iterate toward high-quality Claude outputs",
   intro:
-    "Domain 1 of the CCAO-F exam (14% weight) covers how users and operators write prompts that produce reliable, high-quality responses from Claude. This includes the principles of clear and specific instructions, structuring complex requests with XML tags, decomposing multi-step tasks, using few-shot examples and chain-of-thought techniques, and iterating prompts systematically to improve output quality across different task types.",
+    "Prompting and Task Execution (Domain 1 of the CCAO-F exam, 14% weight) covers how users and operators write prompts that produce reliable, high-quality responses from Claude. This includes the principles of clear and specific instructions, structuring complex requests with XML tags, decomposing multi-step tasks, using few-shot examples and chain-of-thought techniques, and iterating prompts systematically to improve output quality across different task types.",
 
   sections: [
     {
