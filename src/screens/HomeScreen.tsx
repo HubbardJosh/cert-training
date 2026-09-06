@@ -22,7 +22,6 @@ import {
   loadProgress,
   getDomainAccuracy,
   getOverallAccuracy,
-  getMissedQuestions,
 } from "../utils/storage";
 import { UserProgress, Domain } from "../types";
 import { RootStackParamList } from "../navigation";
@@ -57,7 +56,6 @@ export default function HomeScreen() {
   );
 
   const overallAccuracy = progress ? getOverallAccuracy(progress) : 0;
-  const missedCount = progress ? getMissedQuestions(progress).length : 0;
   const totalStudied = progress
     ? Object.values(progress.studiedCards).filter((s) => s === "known").length
     : 0;
@@ -128,28 +126,6 @@ export default function HomeScreen() {
             colors={colors}
           />
         </View>
-
-        {/* Missed questions */}
-        {missedCount > 0 && (
-          <TouchableOpacity
-            style={styles.missedBtn}
-            onPress={() =>
-              navigation.navigate("MissedQuestions", { source: "guide" })
-            }
-            activeOpacity={0.8}
-          >
-            <Ionicons name="close-circle" size={15} color={colors.incorrect} />
-            <Text style={styles.missedBtnText}>
-              Review {missedCount} missed question
-              {missedCount !== 1 ? "s" : ""}
-            </Text>
-            <Ionicons
-              name="chevron-forward"
-              size={14}
-              color={colors.incorrect + "99"}
-            />
-          </TouchableOpacity>
-        )}
 
         {/* Domain breakdown */}
         <Text style={styles.sectionTitle}>Exam Domains</Text>
@@ -426,25 +402,6 @@ function makeStyles(colors: ThemeColors) {
       fontSize: fontSize.xs,
       color: colors.textSecondary,
       textAlign: "center",
-    },
-
-    missedBtn: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacing.xs,
-      backgroundColor: colors.incorrect + "12",
-      borderWidth: 1,
-      borderColor: colors.incorrect + "44",
-      borderRadius: radius.md,
-      paddingHorizontal: spacing.md,
-      paddingVertical: spacing.sm,
-      marginBottom: spacing.sm,
-    },
-    missedBtnText: {
-      flex: 1,
-      fontSize: fontSize.sm,
-      fontWeight: "600",
-      color: colors.incorrect,
     },
 
     sectionTitle: {
