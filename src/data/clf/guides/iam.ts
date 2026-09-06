@@ -138,7 +138,7 @@ The **Principle of Least Privilege** is the foundational security concept that e
       heading: "IAM Roles for Services",
       body: `One of IAM's most important patterns is using **roles** to grant AWS services permission to access other AWS services on your behalf. This eliminates the need to embed long-term credentials in code or configuration files.
 
-When an EC2 instance needs to read from S3, you create a role with an S3 read policy, attach it to the instance as an **instance profile**, and the application running on EC2 can then call S3 without any access keys. The instance automatically retrieves temporary credentials from the instance metadata endpoint.
+When an EC2 instance needs to read from S3, you create a role with an S3 read policy, attach it to the instance as an **instance profile**, and the application running on EC2 can then call S3 without any access keys. The instance automatically retrieves temporary credentials from the instance metadata endpoint. Note that **instance profiles are an EC2-specific construct** — they are the container mechanism AWS uses to pass a role to an EC2 instance. Other services (Lambda, ECS, EKS, etc.) have their own role-attachment mechanisms and do not use instance profiles.
 
 Similarly, when a Lambda function needs to write to DynamoDB, you attach a role with DynamoDB write permissions to the Lambda function. AWS rotates the temporary credentials automatically.
 
@@ -167,7 +167,7 @@ This pattern — **services assuming roles with least-privilege permissions** �
           ],
           correctIndex: 1,
           explanation:
-            "An IAM Instance Profile is a container for an IAM role that is attached to an EC2 instance. It allows the application code running on the instance to assume the role and receive temporary credentials to call AWS services.",
+            "An IAM Instance Profile is a container for an IAM role that is attached to an EC2 instance. It is an EC2-specific construct — other services like Lambda and ECS have their own role-attachment mechanisms and do not use instance profiles. It allows the application code running on the instance to assume the role and receive temporary credentials to call AWS services.",
         },
       ],
     },
