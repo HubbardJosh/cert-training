@@ -13,6 +13,7 @@ import { AIF_ABBREVIATIONS } from "../data/aif/abbreviations";
 import { CCAO_ABBREVIATIONS } from "../data/ccao/abbreviations";
 import { CLF_ABBREVIATIONS } from "../data/clf/abbreviations";
 import { DVA_ABBREVIATIONS } from "../data/dva/abbreviations";
+import { SAA_ABBREVIATIONS } from "../data/saa/abbreviations";
 import { useTheme } from "../context/ThemeContext";
 import { fontSize, radius, spacing } from "../utils/theme";
 
@@ -23,6 +24,7 @@ const registries: Record<string, Record<string, string>> = {
   "clf-c02": CLF_ABBREVIATIONS,
   "aif-c01": AIF_ABBREVIATIONS,
   "ccao-f": CCAO_ABBREVIATIONS,
+  "saa-c03": SAA_ABBREVIATIONS,
 };
 
 export function registerAbbreviations(

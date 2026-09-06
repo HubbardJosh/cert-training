@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { setActiveCert } from "../components/AbbreviatedText";
 
 export type CertificationId =
-  "dva-c02" | "clf-c02" | "aif-c01" | "mls-c01" | "ccao-f";
+  "dva-c02" | "clf-c02" | "aif-c01" | "mls-c01" | "ccao-f" | "saa-c03";
 
 export interface CertMeta {
   id: CertificationId;
@@ -59,6 +59,15 @@ export const CERT_META: Record<CertificationId, CertMeta> = {
     icon: "sparkles",
     color: "#D97706",
     storageKey: "aws_training_progress_ccao",
+  },
+  "saa-c03": {
+    id: "saa-c03",
+    name: "SAA-C03",
+    fullName: "AWS Certified Solutions Architect – Associate",
+    examInfo: "65 questions · 130 min · Passing score: 720/1000",
+    icon: "git-network",
+    color: "#FF9900",
+    storageKey: "aws_training_progress_saa",
   },
 };
 

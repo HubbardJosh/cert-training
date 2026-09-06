@@ -14,6 +14,9 @@ import { quizQuestions as mlsQuizQuestions } from "../data/mls/quizQuestions";
 import { allGuides as ccaoGuides } from "../data/ccao/guides";
 import { flashcards as ccaoFlashcards } from "../data/ccao/flashcards";
 import { quizQuestions as ccaoQuizQuestions } from "../data/ccao/quizQuestions";
+import { allGuides as saaGuides } from "../data/saa/guides";
+import { flashcards as saaFlashcards } from "../data/saa/flashcards";
+import { quizQuestions as saaQuizQuestions } from "../data/saa/quizQuestions";
 
 export function useCertData() {
   const { certId } = useCert();
@@ -42,6 +45,12 @@ export function useCertData() {
         guides: ccaoGuides,
         flashcards: ccaoFlashcards,
         quizQuestions: ccaoQuizQuestions,
+      };
+    case "saa-c03":
+      return {
+        guides: saaGuides,
+        flashcards: saaFlashcards,
+        quizQuestions: saaQuizQuestions,
       };
     default:
       return {

@@ -13,6 +13,209 @@ export interface CertSources {
 
 export const SOURCES: CertSources[] = [
   {
+    certId: "saa-c03",
+    sources: [
+      {
+        title:
+          "AWS Certified Solutions Architect – Associate Exam Guide (SAA-C03)",
+        url: "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html",
+        topics: [
+          "Exam domains and weightings",
+          "Domain 1: Design Secure Architectures (30%)",
+          "Domain 2: Design Resilient Architectures (26%)",
+          "Domain 3: Design High-Performing Architectures (24%)",
+          "Domain 4: Design Cost-Optimized Architectures (20%)",
+          "65 questions, 130 minutes, passing score 720/1000",
+        ],
+      },
+      {
+        title: "AWS IAM – User Guide",
+        url: "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html",
+        topics: [
+          "Users, groups, roles, and policies",
+          "Policy evaluation logic and explicit Deny",
+          "Permissions boundaries and SCPs",
+          "STS AssumeRole and federation",
+          "Resource-based policies and cross-account access",
+        ],
+      },
+      {
+        title: "Amazon VPC – User Guide",
+        url: "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html",
+        topics: [
+          "Subnets, route tables, and internet gateways",
+          "Security groups vs. NACLs (stateful vs. stateless)",
+          "NAT Gateway for private subnet internet access",
+          "VPC peering, Transit Gateway, and PrivateLink",
+          "VPN and Direct Connect connectivity",
+          "VPC Flow Logs and network monitoring",
+        ],
+      },
+      {
+        title: "Amazon EC2 – User Guide",
+        url: "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html",
+        topics: [
+          "Instance types, families, and purchasing options",
+          "On-Demand, Reserved, Savings Plans, Spot, Dedicated",
+          "EBS volume types and performance characteristics",
+          "Auto Scaling Groups and scaling policies",
+          "Placement groups (Cluster, Spread, Partition)",
+          "Instance metadata and user data",
+        ],
+      },
+      {
+        title: "Amazon S3 – User Guide",
+        url: "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html",
+        topics: [
+          "Storage classes and minimum storage durations",
+          "Bucket policies, Block Public Access, and ACLs",
+          "Versioning, CRR, SRR, and Batch Replication",
+          "Lifecycle policies and transitions",
+          "SSE-S3, SSE-KMS, and SSE-C encryption",
+          "Transfer Acceleration and multipart upload",
+          "S3 Object Lock and WORM compliance",
+        ],
+      },
+      {
+        title: "Amazon RDS – User Guide",
+        url: "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html",
+        topics: [
+          "Multi-AZ vs. Read Replicas",
+          "Automated backups and PITR",
+          "RDS Proxy for connection pooling",
+          "Aurora storage architecture and Global Database",
+          "Aurora Serverless v2",
+          "ElastiCache Redis vs. Memcached",
+        ],
+      },
+      {
+        title: "Elastic Load Balancing – User Guide",
+        url: "https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html",
+        topics: [
+          "ALB: Layer 7, path/host routing, WAF, SNI",
+          "NLB: Layer 4, static IPs, source IP preservation",
+          "GLB: Layer 3, inline appliance routing",
+          "Target groups, health checks, and connection draining",
+        ],
+      },
+      {
+        title: "Amazon CloudFront – Developer Guide",
+        url: "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html",
+        topics: [
+          "Origins, distributions, and cache behaviors",
+          "Origin Access Control (OAC) for S3",
+          "Cache invalidation and cache busting",
+          "Signed URLs and signed cookies",
+          "Lambda@Edge vs. CloudFront Functions",
+          "WAF and geo-restriction",
+        ],
+      },
+      {
+        title: "Amazon Route 53 – Developer Guide",
+        url: "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html",
+        topics: [
+          "DNS record types: A, CNAME, Alias",
+          "Routing policies: Simple, Weighted, Latency, Geolocation, Failover",
+          "Health checks and DNS failover",
+          "Private hosted zones and Resolver endpoints",
+        ],
+      },
+      {
+        title: "Amazon SQS – Developer Guide",
+        url: "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html",
+        topics: [
+          "Standard vs. FIFO queues",
+          "Visibility timeout and duplicate processing",
+          "Dead Letter Queues and DLQ redrive",
+          "Long polling and message retention",
+        ],
+      },
+      {
+        title: "Amazon SNS – Developer Guide",
+        url: "https://docs.aws.amazon.com/sns/latest/dg/welcome.html",
+        topics: [
+          "Fan-out pattern: SNS → multiple SQS queues",
+          "Subscription filter policies",
+          "SNS FIFO topics for ordered fan-out",
+        ],
+      },
+      {
+        title: "AWS Lambda – Developer Guide",
+        url: "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html",
+        topics: [
+          "Invocation models: synchronous, asynchronous, poll-based",
+          "Reserved and Provisioned Concurrency",
+          "VPC connectivity and cold starts",
+          "Event source mappings and bisect-on-error",
+          "Lambda Layers and container images",
+        ],
+      },
+      {
+        title: "AWS CloudFormation – User Guide",
+        url: "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html",
+        topics: [
+          "Template sections: Parameters, Conditions, Resources, Outputs",
+          "Change Sets for previewing updates",
+          "Drift detection and stack policies",
+          "Nested stacks and StackSets",
+          "cfn-init and cfn-signal for instance readiness",
+        ],
+      },
+      {
+        title: "Amazon DynamoDB – Developer Guide",
+        url: "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html",
+        topics: [
+          "Partition key design and hot partition avoidance",
+          "GSI vs. LSI — creation time, throughput, consistency",
+          "Provisioned vs. On-Demand capacity modes",
+          "DynamoDB Streams, DAX, Global Tables",
+          "TTL for automatic item expiry",
+        ],
+      },
+      {
+        title: "Amazon CloudWatch – User Guide",
+        url: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html",
+        topics: [
+          "EC2 metrics vs. custom metrics (CloudWatch Agent)",
+          "Metric Filters on CloudWatch Logs",
+          "Composite alarms",
+          "CloudTrail vs. CloudWatch vs. Config",
+        ],
+      },
+      {
+        title: "AWS Security Services Overview",
+        url: "https://aws.amazon.com/products/security/",
+        topics: [
+          "KMS: customer managed keys and envelope encryption",
+          "Secrets Manager vs. SSM Parameter Store",
+          "GuardDuty: threat detection without agents",
+          "WAF, Shield Standard, Shield Advanced",
+          "Inspector (CVE scanning) and Macie (PII discovery)",
+          "CloudHSM: FIPS 140-2 Level 3",
+        ],
+      },
+      {
+        title: "Amazon Kinesis – Developer Guide",
+        url: "https://docs.aws.amazon.com/streams/latest/dev/introduction.html",
+        topics: [
+          "KDS: real-time, shards, retention, Enhanced Fan-Out",
+          "KDF: near-real-time delivery to S3/Redshift/OpenSearch",
+          "KDS vs. KDF vs. SQS selection criteria",
+        ],
+      },
+      {
+        title: "AWS Storage Services Overview",
+        url: "https://docs.aws.amazon.com/whitepapers/latest/aws-storage-services-overview/aws-storage-services-overview.html",
+        topics: [
+          "EFS: shared NFS, multi-AZ, auto-scaling",
+          "FSx for Windows, Lustre, NetApp ONTAP",
+          "Storage Gateway: File, Tape, Volume",
+          "DataSync and Snow Family for migration",
+        ],
+      },
+    ],
+  },
+  {
     certId: "clf-c02",
     sources: [
       {

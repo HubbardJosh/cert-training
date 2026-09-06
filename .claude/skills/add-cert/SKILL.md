@@ -220,7 +220,11 @@ import { <name1>Guide } from "./<file1>";
 // ... all imports
 
 export const allGuides: ServiceGuide[] = [
-  <name1>Guide,
+  // <Domain A>
+  <guide1>,
+  <guide2>,
+  // <Domain B>
+  <guide3>,
   // ...
 ];
 
@@ -233,6 +237,8 @@ export const guidesByDomain = allGuides.reduce<Record<string, ServiceGuide[]>>(
   {},
 );
 ```
+
+**Group guides by domain** in `allGuides` with a comment header for each domain (e.g. `// Security`, `// Fundamentals`, `// Deployment`). Within each group, order guides by conceptual dependency — foundational concepts before services that build on them. This is cosmetic (the app uses `guidesByDomain` for display), but keeps the index readable and consistent with all other certs.
 
 ---
 
@@ -411,6 +417,8 @@ Edit `src/screens/CertSelectScreen.tsx`.
 If the `"Anthropic"` group already exists, add the new cert entry to its `certs` array.
 
 Also update the screen title logic if it currently hardcodes `"AWS Certifications"` — when Claude certs exist it should read `"Certifications"`.
+
+**Update adjacent certs' prev/next pointers**: after inserting the new cert entry, scan all other entries in `AWS_GROUPS` (or `ANTHROPIC_GROUPS`) and update any `prev` or `next` strings that should now reference the new cert. For example, if the new cert sits between CLF-C02 and DVA-C02 in the learning path, update DVA-C02's `prev` to include the new cert code and CLF-C02's `next` to include it. Use the `prev`/`next` values from the cert descriptor as the source of truth for what adjacencies exist, then apply the inverse on the other side.
 
 ---
 
