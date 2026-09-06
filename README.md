@@ -102,8 +102,8 @@ npm install -g expo-cli
 ### Clone and install
 
 ```bash
-git clone https://github.com/<your-username>/aws-training.git
-cd aws-training
+git clone https://github.com/HubbardJosh/cert-training.git
+cd cert-training
 npm install
 ```
 
