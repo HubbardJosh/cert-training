@@ -6,6 +6,7 @@ import {
   WeakTopic,
   MissedQuestion,
 } from "../types";
+import { CertMeta } from "../context/CertContext";
 
 const STORAGE_KEY = "aws_training_progress_dva";
 
@@ -82,6 +83,49 @@ export function getOverallAccuracy(progress: UserProgress): number {
   return Math.round(
     (progress.totalCorrect / progress.totalQuestionsAnswered) * 100,
   );
+}
+
+/**
+ * Composite exam readiness score (0–100):
+ *   60% domain-weighted quiz accuracy (unattempted weighted domains contribute 0%)
+ *   30% domain coverage (how many weighted domains have been attempted)
+ *   10% flashcard mastery (known / total)
+ */
+export function getExamReadiness(
+  progress: UserProgress,
+  certMeta: CertMeta,
+  totalFlashcards: number,
+): number {
+  const weights = certMeta.domainWeights;
+  const weightedDomains = Object.keys(weights) as Domain[];
+  if (weightedDomains.length === 0) return getOverallAccuracy(progress);
+
+  // Domain-weighted accuracy: sum(weight * accuracy) over all weighted domains
+  let weightedAccuracy = 0;
+  let domainsAttempted = 0;
+  for (const domain of weightedDomains) {
+    const w = weights[domain] ?? 0;
+    const score = progress.domainScores[domain];
+    if (score && score.attempted > 0) {
+      weightedAccuracy += w * (score.correct / score.attempted);
+      domainsAttempted++;
+    }
+  }
+
+  // Domain coverage: fraction of weighted domains attempted
+  const domainCoverage = domainsAttempted / weightedDomains.length;
+
+  // Flashcard mastery
+  const knownCards = Object.values(progress.studiedCards).filter(
+    (s) => s === "known",
+  ).length;
+  const flashcardMastery =
+    totalFlashcards > 0 ? knownCards / totalFlashcards : 0;
+
+  const composite =
+    0.6 * weightedAccuracy + 0.3 * domainCoverage + 0.1 * flashcardMastery;
+
+  return Math.round(composite * 100);
 }
 
 export function getGuideProgress(

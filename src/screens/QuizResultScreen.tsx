@@ -24,10 +24,11 @@ import {
 import {
   loadProgress,
   getDomainAccuracy,
-  getOverallAccuracy,
+  getExamReadiness,
   getMissedQuizQuestions,
 } from "../utils/storage";
 import { useCert } from "../context/CertContext";
+import { useCertData } from "../context/useCertData";
 import { UserProgress, Domain } from "../types";
 import { RootStackParamList } from "../navigation";
 import { useTheme } from "../context/ThemeContext";
@@ -44,6 +45,7 @@ const DOMAINS: Domain[] = [
 export default function QuizResultScreen() {
   const navigation = useNavigation<Nav>();
   const { certMeta } = useCert();
+  const { flashcards } = useCertData();
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const { colors } = useTheme();
   const styles = makeStyles(colors);
@@ -84,7 +86,11 @@ export default function QuizResultScreen() {
   const passed = pct >= 72;
   const formatTime = (s: number) => `${Math.floor(s / 60)}m ${s % 60}s`;
 
-  const overallAccuracy = getOverallAccuracy(progress);
+  const overallAccuracy = getExamReadiness(
+    progress,
+    certMeta,
+    flashcards.length,
+  );
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
@@ -316,7 +322,7 @@ export default function QuizResultScreen() {
             colors={colors}
           />
           <StatBox
-            label="Overall Accuracy"
+            label="Exam Readiness"
             value={`${overallAccuracy}%`}
             icon="checkmark-circle"
             color={colors.correct}

@@ -28,7 +28,7 @@ import {
   resetAllQuizzes,
   resetDomainScore,
   getDomainAccuracy,
-  getOverallAccuracy,
+  getExamReadiness,
   getGuidesCompleted,
   getGuidesViewed,
   toggleNeedsReview,
@@ -195,7 +195,11 @@ export default function ProgressScreen() {
     (g) => progress.guideProgress[g.id] !== undefined,
   );
 
-  const overallAccuracy = getOverallAccuracy(progress);
+  const overallAccuracy = getExamReadiness(
+    progress,
+    certMeta,
+    flashcards.length,
+  );
   const weakTopics = getSortedWeakTopics(progress);
   const knownCards = Object.values(progress.studiedCards).filter(
     (s) => s === "known",

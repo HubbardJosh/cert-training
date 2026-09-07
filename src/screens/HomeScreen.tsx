@@ -21,7 +21,7 @@ import {
 import {
   loadProgress,
   getDomainAccuracy,
-  getOverallAccuracy,
+  getExamReadiness,
 } from "../utils/storage";
 import { UserProgress, Domain } from "../types";
 import { RootStackParamList } from "../navigation";
@@ -55,7 +55,9 @@ export default function HomeScreen() {
     }, [certMeta.storageKey]),
   );
 
-  const overallAccuracy = progress ? getOverallAccuracy(progress) : 0;
+  const overallAccuracy = progress
+    ? getExamReadiness(progress, certMeta, flashcards.length)
+    : 0;
   const totalStudied = progress
     ? Object.values(progress.studiedCards).filter((s) => s === "known").length
     : 0;
@@ -107,7 +109,7 @@ export default function HomeScreen() {
           <StatCard
             icon="checkmark-circle"
             color={colors.correct}
-            label="Accuracy"
+            label="Readiness"
             value={`${overallAccuracy}%`}
             colors={colors}
           />
