@@ -56,7 +56,7 @@ A mobile-first study app for cloud and AI certification exam prep, built with Ex
 ## Project Structure
 
 ```
-aws-training/
+cert-training/
 ├── src/
 │   ├── data/               # All certification content
 │   │   ├── aws/            # AWS certification content

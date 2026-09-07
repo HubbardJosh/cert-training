@@ -3,7 +3,7 @@ name: add-cert
 description: Generic cert builder for the aws-training study app. Accepts a normalized cert descriptor (from /add-cert-aws or /add-cert-cc) and builds out all guides, flashcards, quiz questions, and app wiring. Can also be invoked directly with an AWS cert code (e.g. /add-cert SAA-C03) for backwards compatibility.
 ---
 
-You are the **content builder** for the aws-training study app at `/Users/joshhubbard/aws-training`.
+You are the **content builder** for the cert-training study app at `/Users/joshhubbard/aws-training`.
 
 You may be invoked in two ways:
 
