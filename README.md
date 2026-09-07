@@ -18,9 +18,9 @@ A mobile-first study app for cloud and AI certification exam prep, built with Ex
 
 ### Anthropic / Claude Certifications
 
-| Cert       | Name                               | Questions | Time    | Passing Score |
-| ---------- | ---------------------------------- | --------- | ------- | ------------- |
-| **CCAO-F** | Claude AI Operations – Foundations | 60        | 120 min | 720/1000      |
+| Cert       | Name                                         | Questions | Time    | Passing Score |
+| ---------- | -------------------------------------------- | --------- | ------- | ------------- |
+| **CCAO-F** | Anthropic Claude AI Operations – Foundations | 60        | 120 min | 720/1000      |
 
 ---
 
@@ -59,17 +59,18 @@ A mobile-first study app for cloud and AI certification exam prep, built with Ex
 aws-training/
 ├── src/
 │   ├── data/               # All certification content
-│   │   ├── dva/            # DVA-C02 flashcards, quiz questions, guides
-│   │   ├── clf/            # CLF-C02 content
-│   │   ├── saa/            # SAA-C03 content
-│   │   ├── aif/            # AIF-C01 content
-│   │   ├── mls/            # MLS-C01 content
-│   │   └── ccao/           # CCAO-F content
+│   │   ├── aws/            # AWS certification content
+│   │   │   ├── clf/        # CLF-C02 flashcards, quiz questions, guides
+│   │   │   ├── dva/        # DVA-C02 content
+│   │   │   ├── saa/        # SAA-C03 content
+│   │   │   ├── aif/        # AIF-C01 content
+│   │   │   └── mls/        # MLS-C01 content
+│   │   └── anthropic/      # Anthropic certification content
+│   │       └── ccao/       # CCAO-F content
 │   ├── screens/            # 12 screen components
 │   ├── navigation/         # Bottom tab + stack navigator setup
-│   ├── context/            # CertContext, ThemeContext
+│   ├── context/            # CertContext, ThemeContext, useCertData
 │   ├── components/         # Shared UI components
-│   ├── hooks/              # useCertData and other custom hooks
 │   ├── utils/              # Storage helpers, theme utilities
 │   └── types/              # TypeScript type definitions
 ├── assets/                 # App icon, splash screen
@@ -93,11 +94,7 @@ Each certification folder contains:
 
 - [Node.js](https://nodejs.org/) v18 or later
 - [npm](https://www.npmjs.com/) (comes with Node)
-- [Expo CLI](https://docs.expo.dev/more/expo-cli/) — install globally if not already present:
-
-```bash
-npm install -g expo-cli
-```
+- [Expo CLI](https://docs.expo.dev/more/expo-cli/) — available via `npx` (no global install required)
 
 ### Clone and install
 
