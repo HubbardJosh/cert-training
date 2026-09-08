@@ -1102,16 +1102,18 @@ function makeQuizStyles(colors: ThemeColors) {
     explanation: {
       flexDirection: "row",
       gap: spacing.xs,
-      backgroundColor: colors.surfaceElevated,
+      backgroundColor: colors.surface,
       borderRadius: radius.sm,
+      borderLeftWidth: 3,
+      borderLeftColor: colors.textSecondary,
       padding: spacing.sm,
       marginTop: spacing.xs,
     },
     explanationText: {
       flex: 1,
-      fontSize: fontSize.xs,
-      color: colors.textMuted,
-      lineHeight: 18,
+      fontSize: fontSize.sm,
+      color: colors.textSecondary,
+      lineHeight: 20,
     },
     actions: { marginTop: spacing.xs },
     actionBtn: {
