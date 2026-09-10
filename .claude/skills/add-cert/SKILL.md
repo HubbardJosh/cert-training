@@ -192,6 +192,7 @@ export const <camelCaseName>Guide: ServiceGuide = {
 - Write as many sections as needed to cover every sub-topic the exam tests
 - Each section body is full prose (3–6 sentences), not bullet lists
 - Every section should have a `quiz` question testing the most important concept in that section
+- **Answer index distribution**: `correctIndex` values across all section quizzes in a guide file must be evenly spread across positions 0–3. Do not place the correct answer at the same index repeatedly — vary them so no single position dominates.
 
 **Abbreviation usage:**
 
@@ -300,6 +301,7 @@ Hard rules:
 - **Never use `correctIndex` (singular)** in QuizQuestion — always `correctIndices` (array)
 - ~80% single, ~20% multi
 - All questions must be exam-realistic and scenario-based where possible
+- **Answer index distribution**: correct answers must be evenly spread across all positions (0, 1, 2, 3 for single; across all 5 positions for multi). No index should appear as the correct answer more than ~30% of the time across the full question set. Do not cluster correct answers at index 0 or any other position.
 
 ---
 
