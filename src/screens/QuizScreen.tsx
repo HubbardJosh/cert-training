@@ -373,27 +373,58 @@ export default function QuizScreen() {
         {currentQ.options.map((option, idx) => {
           const isSelected = selectedOptions.includes(idx);
           const isCorrectOption = currentQ.correctIndices.includes(idx);
+          // missed = correct option the user didn't select (only meaningful for multi)
+          const isMissed =
+            submitted &&
+            currentQ.type === "multi" &&
+            isCorrectOption &&
+            !isSelected;
+
           let bgColor = colors.surface;
           let borderColor = colors.border;
           let textColor = colors.textPrimary;
           let icon: string | null = null;
 
           if (submitted) {
-            if (isCorrectOption) {
+            if (isMissed) {
               bgColor = colors.correct + "22";
               borderColor = colors.correct;
               textColor = colors.correct;
               icon = "checkmark-circle";
-            } else if (isSelected && !isCorrectOption) {
+            } else if (isCorrectOption && isSelected) {
+              bgColor = colors.correct + "22";
+              borderColor = colors.correct;
+              textColor = colors.correct;
+              icon = "checkmark-circle";
+            } else if (!isCorrectOption && isSelected) {
               bgColor = colors.incorrect + "22";
               borderColor = colors.incorrect;
               textColor = colors.incorrect;
               icon = "close-circle";
+            } else if (isCorrectOption && currentQ.type === "single") {
+              // single-answer: always highlight the correct option green
+              bgColor = colors.correct + "22";
+              borderColor = colors.correct;
+              textColor = colors.correct;
+              icon = "checkmark-circle";
             }
           } else if (isSelected) {
             bgColor = colors.primary + "22";
             borderColor = colors.primary;
           }
+
+          const checkboxColor = isMissed
+            ? colors.correct
+            : isCorrectOption && isSelected
+              ? colors.correct
+              : isSelected && !isCorrectOption
+                ? colors.incorrect
+                : isCorrectOption && currentQ.type === "single" && submitted
+                  ? colors.correct
+                  : undefined;
+
+          const showInnerRing =
+            currentQ.type === "multi" && isSelected && submitted;
 
           return (
             <TouchableOpacity
@@ -403,25 +434,31 @@ export default function QuizScreen() {
               disabled={submitted}
               activeOpacity={0.8}
             >
+              {showInnerRing && (
+                <View
+                  style={[styles.innerRing, { borderColor: "#F5A623CC" }]}
+                  pointerEvents="none"
+                />
+              )}
               <View style={styles.optionLeft}>
                 <View
                   style={[
                     currentQ.type === "single" ? styles.radio : styles.checkbox,
                     isSelected && !submitted && { borderColor: colors.primary },
-                    submitted &&
-                      isCorrectOption && {
-                        borderColor: colors.correct,
-                        backgroundColor: colors.correct,
-                      },
-                    submitted &&
-                      isSelected &&
-                      !isCorrectOption && {
-                        borderColor: colors.incorrect,
-                        backgroundColor: colors.incorrect,
-                      },
+                    checkboxColor && submitted
+                      ? {
+                          borderColor: checkboxColor,
+                          backgroundColor: isMissed
+                            ? "transparent"
+                            : checkboxColor,
+                        }
+                      : undefined,
                   ]}
                 >
-                  {(isSelected || (submitted && isCorrectOption)) && (
+                  {(isSelected ||
+                    (submitted &&
+                      isCorrectOption &&
+                      (currentQ.type === "single" || isSelected))) && (
                     <View
                       style={[
                         currentQ.type === "single"
@@ -442,7 +479,15 @@ export default function QuizScreen() {
                 <Ionicons
                   name={icon as any}
                   size={20}
-                  color={isCorrectOption ? colors.correct : colors.incorrect}
+                  color={
+                    isMissed
+                      ? colors.correct
+                      : isCorrectOption && isSelected
+                        ? colors.correct
+                        : isCorrectOption && currentQ.type === "single"
+                          ? colors.correct
+                          : colors.incorrect
+                  }
                 />
               )}
             </TouchableOpacity>
@@ -680,6 +725,13 @@ function makeStyles(colors: ThemeColors) {
       borderRadius: radius.md,
       borderWidth: 1.5,
       gap: spacing.sm,
+    },
+    innerRing: {
+      position: "absolute",
+      inset: 3,
+      borderRadius: radius.md - 2,
+      borderWidth: 1.5,
+      pointerEvents: "none",
     },
     optionLeft: { width: 24, alignItems: "center" },
     radio: {
