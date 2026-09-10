@@ -366,10 +366,7 @@ export default function QuizScreen() {
               </Text>
             </View>
           </View>
-          <AbbreviatedText
-            text={currentQ.question}
-            style={styles.questionText}
-          />
+          <Text style={styles.questionText}>{currentQ.question}</Text>
         </View>
 
         {/* Options */}
@@ -438,10 +435,9 @@ export default function QuizScreen() {
                   )}
                 </View>
               </View>
-              <AbbreviatedText
-                text={option}
-                style={{ ...styles.optionText, color: textColor }}
-              />
+              <Text style={{ ...styles.optionText, color: textColor }}>
+                {option}
+              </Text>
               {submitted && icon && (
                 <Ionicons
                   name={icon as any}
