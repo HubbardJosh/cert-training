@@ -38,11 +38,11 @@ Three key factors drive most AWS bills: **compute** (EC2, Lambda, Fargate), **st
           question: "Which type of data transfer on AWS is generally free?",
           options: [
             "Data transferred out from AWS to the internet",
-            "Data transferred between AWS services within the same region",
             "Data transferred between AWS regions",
-            "Data transferred from on-premises to AWS over Direct Connect",
+            "Data transferred between AWS services within the same Availability Zone",
+            "Data transferred between Availability Zones within the same region",
           ],
-          correctIndex: 1,
+          correctIndex: 2,
           explanation:
             "Data transferred between AWS services within the same Availability Zone is free. Data transferred between AZs within the same region incurs a per-GB charge. Data transferred out to the internet (egress) is charged per GB. Data transferred between regions is also charged. Inbound data transfer (ingress) from the internet to AWS is free.",
         },
@@ -66,7 +66,7 @@ Three key factors drive most AWS bills: **compute** (EC2, Lambda, Fargate), **st
 
 **AWS Free Tier** offers three types of free usage: **Always Free** (permanent, like 1M Lambda requests/month), **12 Months Free** (available for 12 months after first sign-up, like t2.micro EC2 hours), and **Trials** (short-term free trials of specific services). The Free Tier is designed to let you explore AWS and build small applications without cost.
 
-**Data Transfer Costs** are often a surprise to new AWS users. Data transferred **into** AWS (ingress) is free. Data transferred **out** to the internet (egress) is charged per GB and can become significant at scale. Data transferred between AWS services in the same region is generally free. Data transferred between regions is charged.
+**Data Transfer Costs** are often a surprise to new AWS users. Data transferred **into** AWS (ingress) is free. Data transferred **out** to the internet (egress) is charged per GB and can become significant at scale. Data transferred between AWS services within the same Availability Zone is free, but cross-AZ transfers within the same region incur a per-GB charge. Data transferred between regions is also charged.
 
 **Multiple pricing dimensions** exist for each service. An EC2 instance has separate charges for the instance hours, EBS volumes, Elastic IPs, and data transfer out. S3 has charges for storage, API requests, and data retrieval (for Infrequent Access and Glacier classes). Understanding all dimensions of a service's pricing is important for accurate cost estimation.
 
@@ -96,7 +96,7 @@ The **AWS Pricing Calculator** (calculator.aws) lets you estimate your monthly b
           ],
           correctIndex: 3,
           explanation:
-            "Data transferred out from AWS to the internet (egress) is charged per GB and can become significant at scale. Data transferred into AWS (ingress) is free. Data between services in the same region is generally free.",
+            "Data transferred out from AWS to the internet (egress) is charged per GB and can become significant at scale. Data transferred into AWS (ingress) is free. Data transferred within the same Availability Zone is free, but cross-AZ transfers within the same region incur a per-GB charge.",
         },
         {
           question: "What is the AWS Pricing Calculator used for?",
