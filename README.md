@@ -41,9 +41,9 @@ A mobile-first study app for cloud and AI certification exam prep, built with Ex
 
 | Layer             | Technology                                       |
 | ----------------- | ------------------------------------------------ |
-| Framework         | Expo ~54.0.0 (managed workflow)                  |
-| Language          | TypeScript 5.9                                   |
-| UI Runtime        | React Native 0.81 / React 19                     |
+| Framework         | Expo ~57.0.0 (managed workflow)                  |
+| Language          | TypeScript 6.0                                   |
+| UI Runtime        | React Native 0.86 / React 19.2                   |
 | Navigation        | React Navigation v7 (bottom tabs + native stack) |
 | Storage           | AsyncStorage (local, persistent)                 |
 | State             | React Context API                                |
@@ -92,7 +92,7 @@ Each certification folder contains:
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) v18 or later
+- [Node.js](https://nodejs.org/) v22.13 or later (required by Expo SDK 57)
 - [npm](https://www.npmjs.com/) (comes with Node)
 - [Expo CLI](https://docs.expo.dev/more/expo-cli/) — available via `npx` (no global install required)
 
@@ -123,12 +123,14 @@ This opens the Expo dev server. From there you can:
 
 ### Option 1 — Expo Go (quickest, development builds only)
 
+Expo Go supports **SDK 57** (the current version of this app).
+
 1. Install **Expo Go** from the [App Store](https://apps.apple.com/app/expo-go/id982107779) (iOS) or [Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent) (Android).
 2. Run `npm start` in the project directory.
 3. Scan the QR code shown in your terminal with the Expo Go app (Android) or your Camera app (iOS).
 4. The app loads instantly — no build step required.
 
-> **Note:** Expo Go works great for development and personal use. The app runs inside the Expo Go container rather than as a standalone app on your home screen.
+> **Note:** Expo Go runs the app inside its own container rather than as a standalone app on your home screen. It's great for development and personal use. If you need a standalone install, use Option 2 (EAS build) instead.
 
 ### Option 2 — Standalone build via EAS (installs as a real app)
 
