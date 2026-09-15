@@ -54,13 +54,8 @@ For the Cloud Practitioner exam, the key concept is that you pick an instance ty
       quiz: [
         {
           question:
-            "Which EC2 instance family is best suited for a memory-intensive workload like an in-memory database?",
-          options: [
-            "T family (burstable general purpose)",
-            "C family (compute optimized)",
-            "I family (storage optimized)",
-            "R or X family (memory optimized)",
-          ],
+            "You need to run SAP HANA on EC2, which requires hundreds of GB of RAM. Which instance family prefix should you look for?",
+          options: ["T", "C", "I", "R"],
           correctIndex: 3,
           explanation:
             "The R and X families are Memory Optimized instances that provide large amounts of RAM. They are suited for in-memory databases, real-time big data analytics, and other memory-intensive workloads.",
@@ -352,13 +347,8 @@ For high availability, you spread instances across multiple **Availability Zones
     },
     {
       question:
-        "Which EC2 instance family would you choose for a high-traffic video transcoding workload that is CPU-intensive?",
-      options: [
-        "C family (compute optimized)",
-        "T family (burstable general purpose)",
-        "I family (storage optimized)",
-        "R family (memory optimized)",
-      ],
+        "A batch job transcodes 4K video at high throughput and needs a high vCPU-to-memory ratio. Which EC2 instance family prefix should you select?",
+      options: ["C", "T", "I", "R"],
       correctIndex: 0,
       explanation:
         "The C family (Compute Optimized) provides a higher ratio of CPU to memory and is designed for CPU-intensive workloads like video transcoding, batch processing, high-performance web servers, and scientific modeling.",

@@ -34,7 +34,7 @@ export const sqsSnsGuide: ServiceGuide = {
       heading: "SQS FIFO Queues",
       body: `**FIFO queues** guarantee that messages are processed in the exact order they are sent and that each message is processed exactly once (exactly-once processing within a 5-minute deduplication window). FIFO queues require a **Message Group ID** — messages with the same group ID are processed in order within that group. Different group IDs can be processed in parallel (parallel ordering within groups).
 
-FIFO queues support up to 300 TPS without batching and 3,000 TPS with batching (10 messages per batch) in the default mode. With **High-Throughput FIFO mode** enabled, limits increase to 3,000 TPS without batching and 30,000 TPS with batching. This throughput limit is per queue and is lower than Standard queues (nearly unlimited TPS). FIFO queue names must end in \`.fifo\`. Deduplication is achieved via the **Message Deduplication ID** — if two messages with the same deduplication ID are sent within 5 minutes, only one is delivered.`,
+FIFO queues support up to 300 TPS without batching and 3,000 TPS with batching (10 messages per batch) in the default mode. With **High-Throughput FIFO mode** enabled, limits increase to up to 70,000 TPS without batching and 700,000 messages/sec with batching in major regions (us-east-1, us-west-2, eu-west-1); throughput is lower in smaller regions. This throughput limit is per queue and is lower than Standard queues (nearly unlimited TPS). FIFO queue names must end in \`.fifo\`. Deduplication is achieved via the **Message Deduplication ID** — if two messages with the same deduplication ID are sent within 5 minutes, only one is delivered.`,
       quiz: [
         {
           question:
@@ -142,7 +142,7 @@ EventBridge is the most flexible event routing service in AWS. It supports **sch
     "SQS message retention: 4 days default, 1 min to 14 days configurable",
     "SQS max message size: 256 KB (use Extended Client Library + S3 for larger)",
     "Standard SQS: at-least-once delivery, best-effort ordering, unlimited TPS",
-    "FIFO SQS: exactly-once, strict ordering, 300 TPS (3,000 with batching); High-Throughput mode: 3,000 TPS (30,000 with batching)",
+    "FIFO SQS: exactly-once, strict ordering, 300 TPS (3,000 with batching); High-Throughput mode: up to 70,000 TPS (700,000/sec with batching) in major regions",
     "DLQ: receives messages after maxReceiveCount failures — use for poison message isolation",
     "SNS fan-out: one publish → all subscribers receive simultaneously",
     "SNS → SQS fan-out: each queue buffers independently — reliable fan-out",

@@ -238,12 +238,12 @@ DLQs should be monitored with CloudWatch alarms — messages arriving in the DLQ
     },
     {
       question:
-        "Which SQS queue type should be used when message order and exactly-once processing are required?",
+        "A payment processing service must ensure that each transaction message is processed in the order it was submitted and never processed more than once. Which SQS queue type meets both requirements?",
       options: [
-        "Standard queue with message deduplication ID",
-        "Standard queue with visibility timeout set to maximum",
-        "FIFO queue, which guarantees strict ordering and exactly-once processing",
-        "Dead Letter Queue configured as the primary queue",
+        "Standard queue with a visibility timeout set to the maximum",
+        "Standard queue with a message deduplication ID on each send",
+        "FIFO queue",
+        "Dead Letter Queue used as the primary processing queue",
       ],
       correctIndex: 2,
       explanation:

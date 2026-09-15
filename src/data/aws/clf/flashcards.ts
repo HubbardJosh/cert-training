@@ -332,9 +332,9 @@ export const flashcards: FlashCard[] = [
     domain: "development",
     question: "What database engines does Amazon RDS support?",
     answer:
-      "RDS supports six engines: Amazon Aurora (MySQL/PostgreSQL-compatible), MySQL, PostgreSQL, MariaDB, Oracle Database, and Microsoft SQL Server.",
+      "RDS supports seven engines: Amazon Aurora (MySQL/PostgreSQL-compatible), MySQL, PostgreSQL, MariaDB, Oracle Database, Microsoft SQL Server, and IBM Db2.",
     keyPoints: [
-      "Aurora, MySQL, PostgreSQL, MariaDB, Oracle, SQL Server",
+      "Aurora, MySQL, PostgreSQL, MariaDB, Oracle, SQL Server, IBM Db2",
       "Aurora is AWS's cloud-native engine with highest performance",
       "Managed — AWS handles patching and backups",
     ],

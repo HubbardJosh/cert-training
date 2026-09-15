@@ -335,14 +335,14 @@ export const quizQuestions: QuizQuestion[] = [
     question:
       "A data team needs to run sentiment analysis on 80,000 customer reviews collected over the past month. Results are needed by morning for a Monday presentation. Which approach is MOST cost-effective?",
     options: [
-      "Anthropic Batch API — 50% cost discount for async processing; submitting 80,000 requests processes within 24 hours",
+      "Anthropic Batch API — 50% cost discount for async processing; submitting 80,000 requests (most batches complete within 1 hour, max 24 hours)",
       "Claude Fable 5.1 via standard API — highest capability model for accurate sentiment analysis",
       "Standard API with parallel threads — real-time processing at full price",
       "Claude.ai Pro with Projects — projects handle bulk document processing automatically",
     ],
     correctIndices: [0],
     explanation:
-      "The Batch API provides a 50% cost discount on all API usage for asynchronous processing of up to 100,000 requests, with results delivered within 24 hours. Submitting 80,000 reviews overnight and retrieving results by morning is exactly the use case it is designed for. Claude.ai Projects are for persistent workspaces, not bulk programmatic processing. Standard API parallel threads process in real-time at full price. Fable 5.1 is the most expensive model — model tier should be chosen by quality need, not volume.",
+      "The Batch API provides a 50% cost discount on all API usage for asynchronous processing of up to 100,000 requests. Most batches complete within 1 hour (maximum 24 hours). Submitting 80,000 reviews overnight and retrieving results by morning is exactly the use case it is designed for. Claude.ai Projects are for persistent workspaces, not bulk programmatic processing. Standard API parallel threads process in real-time at full price. Fable 5.1 is the most expensive model — model tier should be chosen by quality need, not volume.",
     tags: ["workflow", "batch-api", "cost", "domain-4"],
   },
   {
@@ -758,7 +758,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctIndices: [2],
     explanation:
-      "The Batch API (50% cost discount, up to 100,000 requests, processes within 24 hours) is designed for exactly this kind of high-volume offline processing. Employment and grant decisions are high-risk use cases under Anthropic's policy — human review and AI disclosure are required. Projects have knowledge storage limits and are not designed for bulk programmatic analysis. Streaming is for real-time interactive features, not batch analysis. Model tier should match quality needs, not volume — Haiku or Sonnet may be sufficient and far cheaper for structured analysis tasks.",
+      "The Batch API (50% cost discount, up to 100,000 requests, most batches complete within 1 hour; max 24 hours) is designed for exactly this kind of high-volume offline processing. Employment and grant decisions are high-risk use cases under Anthropic's policy — human review and AI disclosure are required. Projects have knowledge storage limits and are not designed for bulk programmatic analysis. Streaming is for real-time interactive features, not batch analysis. Model tier should match quality needs, not volume — Haiku or Sonnet may be sufficient and far cheaper for structured analysis tasks.",
     tags: ["workflow", "batch-api", "governance", "domain-4"],
   },
   {

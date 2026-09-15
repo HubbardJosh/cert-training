@@ -250,12 +250,12 @@ Only **Business and Enterprise Support** provide access to all Trusted Advisor c
     },
     {
       question:
-        "Which AWS Support plan provides a dedicated Technical Account Manager (TAM)?",
+        "Which AWS Support plan assigns a single named Technical Account Manager (TAM) who proactively monitors and engages with a specific customer account?",
       options: [
         "Developer Support",
         "Business Support",
-        "Enterprise On-Ramp (pool of TAMs)",
-        "Enterprise Support (dedicated TAM)",
+        "Enterprise On-Ramp",
+        "Enterprise Support",
       ],
       correctIndex: 3,
       explanation:

@@ -12,7 +12,7 @@ export const bedrockGuide: ServiceGuide = {
   sections: [
     {
       heading: "What Amazon Bedrock Is",
-      body: `Amazon Bedrock sits at the center of AWS's generative AI strategy. Rather than forcing you to train your own large language models from scratch — an endeavor that requires massive compute clusters, petabytes of data, and months of time — Bedrock gives you immediate API access to a curated catalog of **foundation models** built by companies such as Anthropic (Claude), Meta (Llama), Mistral AI, Cohere, AI21 Labs, and Amazon itself (Titan and Nova families). These models are already trained on enormous corpora of text, code, and imagery, so they arrive with broad capabilities out of the box.
+      body: `Amazon Bedrock sits at the center of AWS's generative AI strategy. Rather than forcing you to train your own large language models from scratch — an endeavor that requires massive compute clusters, petabytes of data, and months of time — Bedrock gives you immediate API access to a curated catalog of **foundation models** built by companies such as Anthropic (Claude), Meta (Llama), Mistral AI, Cohere, AI21 Labs, Stability AI (Stable Diffusion), and Amazon itself (Titan and Nova families). These models are already trained on enormous corpora of text, code, and imagery, so they arrive with broad capabilities out of the box.
 
 The service is fully serverless. You don't provision EC2 instances, manage GPU clusters, or worry about model serving infrastructure. You make an API call, Bedrock routes your request to the appropriate model endpoint, and you receive a response. This abstraction means your team can focus on the application layer — prompt design, retrieval pipelines, output validation — rather than ML infrastructure.`,
       quiz: [
@@ -53,7 +53,7 @@ The service is fully serverless. You don't provision EC2 instances, manage GPU c
           ],
           correctIndex: 2,
           explanation:
-            "Amazon Nova (along with Amazon Titan) is Amazon's own family of foundation models available through Bedrock. Third-party providers in Bedrock include Anthropic, Meta, Mistral, Cohere, and AI21 Labs. Nova is not an embedding-only model or a fine-tuning service.",
+            "Amazon Nova (along with Amazon Titan) is Amazon's own family of foundation models available through Bedrock. Third-party providers in Bedrock include Anthropic, Meta, Mistral, Cohere, AI21 Labs, and Stability AI. Nova is not an embedding-only model or a fine-tuning service.",
         },
       ],
     },
@@ -312,7 +312,7 @@ Tools are defined as **Action Groups** — you write an OpenAPI schema describin
 
   keyFacts: [
     "Fully managed — no GPU or ML infrastructure to manage",
-    "Model catalog includes Anthropic Claude, Meta Llama, Mistral, Cohere, AI21, Amazon Titan/Nova",
+    "Model catalog includes Anthropic Claude, Meta Llama, Mistral, Cohere, AI21, Stability AI, Amazon Titan/Nova",
     "Converse API provides a unified interface across all model providers",
     "Knowledge Bases implements managed RAG with automatic chunking, embedding, and vector storage",
     "Bedrock Agents uses ReAct loop to plan and execute multi-step tasks with Lambda-backed tools",

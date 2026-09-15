@@ -14,7 +14,7 @@ export const claudeModelsGuide: ServiceGuide = {
       heading: "The Claude Model Family",
       body: `Claude models are organized into four tiers: **Fable**, **Opus**, **Sonnet**, and **Haiku**. Claude Fable 5.1 sits at the top — Anthropic's most capable model, with always-on adaptive thinking and a 1M token context window, designed for the most demanding reasoning and analysis tasks. Claude Opus 5 handles complex agentic work and deep analysis, also with a 1M token context window. Claude Sonnet 5 is the balanced default for production applications that need strong reasoning at reasonable cost, with a 1M token context window. Claude Haiku 4.5 is the fastest and most compact model, optimized for tasks requiring near-instant responses at the lowest cost per token, with a 200K token context window.
 
-Model versions use named pinned snapshot IDs without date suffixes (e.g., \`claude-fable-5-1\`, \`claude-opus-5\`, \`claude-sonnet-5\`, \`claude-haiku-4-5\`). From the Claude 4.6 generation onward, the canonical model ID is a named snapshot — the date suffix format used by older model generations (e.g., \`claude-3-5-sonnet-20241022\`) is no longer the pattern for current models. The model ID used in API calls must exactly match a published model string — there are no aliases like "latest" in production use.
+Model versions use named snapshot IDs. From the Claude 4.6 generation onward, Fable, Opus, and Sonnet use dateless named snapshots (e.g., \`claude-fable-5-1\`, \`claude-opus-5\`, \`claude-sonnet-5\`). Haiku 4.5, from the earlier 4.5 generation, retains a date suffix in its pinned snapshot (\`claude-haiku-4-5-20251001\`); the alias \`claude-haiku-4-5\` also works. The date-suffix format (e.g., \`claude-3-5-sonnet-20241022\`) is the older pattern — not used by Fable 5.1, Opus 5, or Sonnet 5. The model ID used in API calls must exactly match a published model string — there are no aliases like "latest" in production use.
 
 The key selection axes are: **intelligence** (how well the model reasons through hard problems), **speed** (time to first token and tokens per second), and **cost** (input and output token pricing). Fable 5.1 scores highest on intelligence with always-on adaptive thinking. Haiku 4.5 inverts all three — fastest and cheapest. Sonnet 5 sits in the middle across all axes and is often the pragmatic default.`,
       quiz: [
@@ -35,7 +35,7 @@ The key selection axes are: **intelligence** (how well the model reasons through
     },
     {
       heading: "Model Versioning and Stability",
-      body: `Current Claude models use named pinned snapshot IDs without date suffixes — for example, \`claude-fable-5-1\`, \`claude-opus-5\`, \`claude-sonnet-5\`, and \`claude-haiku-4-5\`. From the Claude 4.6 generation onward, the date-suffix pattern (e.g., \`claude-3-5-sonnet-20241022\`) is no longer used; model IDs are named snapshots. Anthropic does not support a \`latest\` alias because production systems require stability: the same model ID must produce deterministically similar outputs over time to avoid unexpected regressions.
+      body: `Current Claude models use named pinned snapshot IDs — for example, \`claude-fable-5-1\`, \`claude-opus-5\`, \`claude-sonnet-5\`. From the Claude 4.6 generation onward, the date-suffix pattern (e.g., \`claude-3-5-sonnet-20241022\`) is no longer used for Fable, Opus, and Sonnet; their model IDs are dateless named snapshots. The exception is Haiku 4.5, which comes from the earlier 4.5 generation and has a dated pinned snapshot ID (\`claude-haiku-4-5-20251001\`); the dateless alias \`claude-haiku-4-5\` also works. Anthropic does not support a \`latest\` alias because production systems require stability: the same model ID must produce deterministically similar outputs over time to avoid unexpected regressions.
 
 When Anthropic releases a newer version (e.g., \`claude-sonnet-5\` supersedes an earlier Sonnet generation), operators choose their own upgrade timing. Older model versions are deprecated on a published schedule with advance notice, typically many months. Deprecated models continue to serve requests until a final sunset date, after which they return an error. Monitoring model deprecation notices and planning migrations is a key AI operations responsibility.
 
@@ -128,9 +128,9 @@ Not all Claude models support vision — check the model's capability card in th
   ],
 
   keyFacts: [
-    "Four model tiers: Fable 5.1 (most capable, always-on adaptive thinking), Opus 5 (complex agentic work), Sonnet 5 (balanced default), Haiku 4.5 (fastest/cheapest)",
+    "Four model tiers: Fable 5.1 (most capable, always-on adaptive thinking), Opus 5 (complex agentic work, supports adaptive thinking), Sonnet 5 (balanced default, supports adaptive thinking), Haiku 4.5 (fastest/cheapest, no adaptive thinking)",
     "Fable 5.1, Opus 5, and Sonnet 5 support up to 1M token context windows; Haiku 4.5 supports 200K tokens",
-    "Current model IDs are named pinned snapshots without date suffixes: claude-fable-5-1, claude-opus-5, claude-sonnet-5, claude-haiku-4-5",
+    "Model IDs: claude-fable-5-1, claude-opus-5, claude-sonnet-5 (dateless snapshots); claude-haiku-4-5 is the alias for claude-haiku-4-5-20251001 (date suffix retained from the 4.5 generation)",
     "From the Claude 4.6 generation onward, date-suffixed IDs (e.g., claude-3-5-sonnet-20241022) are no longer the pattern — named snapshots are canonical",
     "No 'latest' alias exists for production use — pin the exact named snapshot ID",
     "Input and output tokens are billed separately; output tokens cost more",
@@ -148,8 +148,8 @@ Not all Claude models support vision — check the model's capability card in th
   ],
 
   examTips: [
-    "Know all four tiers: Fable 5.1 (top capability + adaptive thinking), Opus 5 (complex agentic), Sonnet 5 (balanced default), Haiku 4.5 (fastest/cheapest)",
-    "Current model IDs are named snapshots without date suffixes — e.g., claude-haiku-4-5, not claude-3-haiku-20240307",
+    "Know all four tiers: Fable 5.1 (top capability + always-on adaptive thinking), Opus 5 (complex agentic + adaptive thinking), Sonnet 5 (balanced default + adaptive thinking), Haiku 4.5 (fastest/cheapest, no adaptive thinking/effort parameter)",
+    "Fable 5.1/Opus 5/Sonnet 5 use dateless snapshot IDs; Haiku 4.5's pinned snapshot is claude-haiku-4-5-20251001 (claude-haiku-4-5 is the alias)",
     "Context window: 1M tokens for Fable 5.1 / Opus 5 / Sonnet 5; 200K for Haiku 4.5",
     "Context window overflow causes an API error, not silent truncation",
     "Vision capability is model-specific — not all Claude models accept images",

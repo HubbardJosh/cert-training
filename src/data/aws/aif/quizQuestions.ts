@@ -49,12 +49,12 @@ export const quizQuestions: QuizQuestion[] = [
     options: [
       "Hugging Face open-source models exclusively",
       "OpenAI, Google DeepMind, and Microsoft Azure",
-      "Anthropic, Meta, Mistral, Cohere, AI21, and Amazon",
+      "Anthropic, Meta, Mistral, Cohere, AI21, Stability AI, and Amazon",
       "Only Amazon's own Titan models",
     ],
     correctIndices: [2],
     explanation:
-      "Amazon Bedrock offers foundation models from Anthropic (Claude), Meta (Llama), Mistral, Cohere, AI21 Labs, and Amazon's own Titan models — all accessible through a single unified API without needing separate provider accounts.",
+      "Amazon Bedrock offers foundation models from Anthropic (Claude), Meta (Llama), Mistral, Cohere, AI21 Labs, Stability AI (Stable Diffusion), and Amazon's own Titan/Nova models — all accessible through a single unified API without needing separate provider accounts.",
     tags: ["bedrock", "model-providers", "foundation-models"],
   },
   {

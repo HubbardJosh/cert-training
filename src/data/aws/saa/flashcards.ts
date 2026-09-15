@@ -66,7 +66,7 @@ export const flashcards: FlashCard[] = [
       "Used by Cognito Identity Pools for mobile/web app access",
       "Used by Kubernetes IRSA (IAM Roles for Service Accounts)",
       "AssumeRole is for IAM principal→role. AssumeRoleWithSAML is for enterprise SSO",
-      "Temporary credentials expire in 15 min to 36 hours",
+      "AssumeRole credentials expire in 15 min to 12 hours (max); GetSessionToken supports up to 36 hours",
     ],
     tags: ["iam", "sts", "federation", "oidc", "cognito"],
   },

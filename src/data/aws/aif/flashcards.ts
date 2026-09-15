@@ -1356,7 +1356,7 @@ export const flashcards: FlashCard[] = [
     difficulty: "medium",
     question: "What is AWS Trainium and what problem does it solve?",
     answer:
-      "AWS Trainium is a purpose-built ML training chip designed by AWS. It delivers high throughput for training large deep learning models (especially transformers) at lower cost than GPU instances. Trainium2 chips power Trn1/Trn2 EC2 instances, which can be 50% cheaper than comparable GPU instances for training.",
+      "AWS Trainium is a purpose-built ML training chip designed by AWS. It delivers high throughput for training large deep learning models (especially transformers) at lower cost than GPU instances. Trn1 instances use the first-generation Trainium chip; Trn2 instances use the Trainium2 chip. Both can be 50% cheaper than comparable GPU instances for training.",
     keyPoints: [
       "Purpose-built for ML training (not inference)",
       "Powers Trn1 and Trn2 EC2 instance families",
@@ -1422,9 +1422,9 @@ export const flashcards: FlashCard[] = [
     question:
       "What EC2 instance families are powered by AWS Trainium and Inferentia chips?",
     answer:
-      "Trainium powers the Trn1 and Trn2 instance families (for training). Inferentia powers the Inf1 (Inferentia1) and Inf2 (Inferentia2) instance families (for inference). These instances are available in SageMaker Training Jobs and Endpoints, and directly as EC2 instances.",
+      "Trainium (first-gen) powers Trn1 instances; Trainium2 powers Trn2 instances (both for training). Inferentia powers the Inf1 (Inferentia1) and Inf2 (Inferentia2) instance families (for inference). These instances are available in SageMaker Training Jobs and Endpoints, and directly as EC2 instances.",
     keyPoints: [
-      "Trn1/Trn2: Trainium — training workloads",
+      "Trn1: Trainium (first-gen); Trn2: Trainium2 — both for training workloads",
       "Inf1/Inf2: Inferentia — inference workloads",
       "Available in EC2, SageMaker, and EKS",
       "Inf2 significantly more powerful than Inf1 for LLMs",
@@ -1574,14 +1574,16 @@ export const flashcards: FlashCard[] = [
     difficulty: "easy",
     question: "What is responsible AI and what are its core dimensions?",
     answer:
-      "Responsible AI is the practice of building and deploying AI systems that are fair, transparent, accountable, safe, and privacy-preserving. AWS's Responsible AI framework has eight dimensions: Fairness, Explainability, Robustness, Privacy & Security, Safety, Controllability, Transparency, and Veracity & Robustness.",
+      "Responsible AI is the practice of building and deploying AI systems that are fair, transparent, accountable, safe, and privacy-preserving. AWS's Responsible AI framework has eight dimensions: Fairness, Explainability, Privacy & Security, Safety, Controllability, Veracity & Robustness, Governance, and Transparency.",
     keyPoints: [
       "Fairness: no discrimination based on protected attributes",
       "Explainability: understand why the model made a decision",
       "Privacy & Security: protect personal data used in training and inference",
       "Safety: prevent harmful outputs and real-world harms",
-      "Transparency: openness about how the AI works and when it is used",
       "Controllability: humans can correct, adjust, or shut down AI systems",
+      "Veracity & Robustness: accurate and stable outputs under varied conditions",
+      "Governance: policies, accountability, and oversight structures",
+      "Transparency: openness about how the AI works and when it is used",
     ],
     tags: ["responsible-ai", "fairness", "explainability", "ethics"],
   },

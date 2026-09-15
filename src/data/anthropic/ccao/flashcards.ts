@@ -309,11 +309,11 @@ export const flashcards: FlashCard[] = [
     question:
       "What is the Anthropic Batch API and which workflow scenarios is it designed for?",
     answer:
-      "The Batch API provides 50% cost reduction for offline, asynchronous processing of up to 100,000 requests, completed within 24 hours. Results are available for 29 days. Designed for: nightly data processing, bulk content generation, large-scale evaluation runs — not real-time features.",
+      "The Batch API provides 50% cost reduction for offline, asynchronous processing of up to 100,000 requests. Most batches complete within 1 hour; maximum 24 hours. Results are available for 29 days. Designed for: nightly data processing, bulk content generation, large-scale evaluation runs — not real-time features.",
     keyPoints: [
       "50% discount vs. standard API pricing",
       "Up to 100,000 requests per batch, 256 MB max batch size",
-      "Processing within 24 hours; results available for 29 days",
+      "Most batches complete within 1 hour; maximum 24 hours; results available for 29 days",
       "Not for interactive or real-time features — asynchronous only",
     ],
     tags: ["workflow", "batch-api", "domain-4"],
@@ -547,7 +547,7 @@ export const flashcards: FlashCard[] = [
       "Model downgrade is the single biggest cost/speed improvement",
       "Evaluate quality before downgrading — don't assume Haiku is insufficient",
       "Batch API: 50% off for async, offline workloads",
-      "Prompt caching (API): ~90% discount on repeated large prompt segments",
+      "Prompt caching (API): ~90% discount on repeated large prompt segments for most models; ~97.5% discount for Fable 5.1",
     ],
     tags: ["troubleshooting", "optimization", "cost", "domain-7"],
   },

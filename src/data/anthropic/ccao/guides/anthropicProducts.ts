@@ -104,11 +104,11 @@ Cacheable content must appear **before** non-cacheable content in the prompt. Th
     },
     {
       heading: "The Batch API",
-      body: `The **Anthropic Batch API** allows sending large numbers of requests for asynchronous processing at a **50% discount** compared to standard API pricing. Instead of sending requests one at a time and waiting for responses, you submit a batch of up to 100,000 requests and Anthropic processes them within 24 hours. This is designed for offline workloads — data processing pipelines, document analysis, evaluation runs, content generation at scale — where immediate responses are not required.
+      body: `The **Anthropic Batch API** allows sending large numbers of requests for asynchronous processing at a **50% discount** compared to standard API pricing. Instead of sending requests one at a time and waiting for responses, you submit a batch of up to 100,000 requests and Anthropic processes them asynchronously — most batches complete within 1 hour, with a maximum of 24 hours. This is designed for offline workloads — data processing pipelines, document analysis, evaluation runs, content generation at scale — where immediate responses are not required.
 
 Batch requests are submitted as a JSONL file where each line is an individual API request with a custom ID. When processing completes, results are available for download as a JSONL file where each line contains the custom ID and the corresponding response. If any individual request in the batch fails, it fails independently — successful requests in the batch are not affected.
 
-The Batch API should not be used for interactive features where users are waiting for responses — it has no latency guarantees beyond "within 24 hours." The 50% cost reduction makes it appropriate for high-volume offline workloads where cost optimization is more important than real-time response.`,
+The Batch API should not be used for interactive features where users are waiting for responses — it has no real-time latency guarantee (most batches complete within 1 hour, but the outer bound is 24 hours). The 50% cost reduction makes it appropriate for high-volume offline workloads where cost optimization is more important than real-time response.`,
       quiz: [
         {
           question:
@@ -135,8 +135,8 @@ The Batch API should not be used for interactive features where users are waitin
     "Official SDKs: anthropic (Python), @anthropic-ai/sdk (npm/TypeScript)",
     "SDK provides automatic retry, type safety, streaming helpers out of the box",
     "Prompt cache has two TTL tiers: 5-minute (write cost 1.25x base input price) and 1-hour (write cost 2x base input price)",
-    "Cache reads cost ~10% of base input token price for most models (~90% discount vs. uncached)",
-    "Batch API: 50% discount, async processing within 24 hours, up to 100K requests",
+    "Cache reads cost ~10% of base input token price for Opus 5, Sonnet 5, and Haiku 4.5; ~2.5% for Fable 5.1 (~97.5% discount)",
+    "Batch API: 50% discount, async processing (most <1 hour; max 24 hours), up to 100K requests",
     "Batch API is for offline workloads only — not suitable for real-time features",
   ],
 
@@ -150,8 +150,8 @@ The Batch API should not be used for interactive features where users are waitin
   examTips: [
     "Claude.ai ≠ API access — separate products, separate credentials",
     "Workbench = where to test prompts before writing code",
-    "Prompt cache TTL tiers: 5-minute (1.25x write cost) and 1-hour (2x write cost) — match the TTL to your call frequency; cache reads always cost ~10%",
-    "Batch API = 50% cost reduction but async (up to 24 hours) — offline workloads only",
+    "Prompt cache TTL tiers: 5-minute (1.25x write cost) and 1-hour (2x write cost) — match the TTL to your call frequency; cache reads cost ~10% (2.5% for Fable 5.1)",
+    "Batch API = 50% cost reduction but async (most <1 hour; max 24 hours) — offline workloads only",
     "SDK vs raw HTTP: SDK provides retry logic, streaming helpers, type safety",
     "Console = key management, usage metrics, billing — not per-request logs",
   ],

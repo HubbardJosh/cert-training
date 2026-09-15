@@ -52,7 +52,7 @@ Well-structured system prompts use clear sections, explicit instructions, and ex
           ],
           correctIndex: 0,
           explanation:
-            "Prompt caching is specifically designed for this pattern. By marking the system prompt with a cache_control block, subsequent requests that send the same system prompt pay only a cache read price (~10% of normal input cost) instead of the full input token price. The Batch API reduces per-request overhead for offline jobs but doesn't reduce token costs. Streaming and temperature affect output behavior, not input token billing.",
+            "Prompt caching is specifically designed for this pattern. By marking the system prompt with a cache_control block, subsequent requests that send the same system prompt pay only a cache read price (~10% of normal input cost for most models) instead of the full input token price. The Batch API reduces per-request overhead for offline jobs but doesn't reduce token costs. Streaming and temperature affect output behavior, not input token billing.",
         },
       ],
     },

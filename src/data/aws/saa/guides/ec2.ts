@@ -17,13 +17,8 @@ For the exam: **C-family** for CPU-intensive workloads (encoding, ML inference, 
       quiz: [
         {
           question:
-            "A company is deploying an in-memory database that requires 512 GB of RAM. Which EC2 instance family should they choose?",
-          options: [
-            "R-family (memory optimized)",
-            "C-family (compute optimized)",
-            "M-family (general purpose)",
-            "I-family (storage optimized)",
-          ],
+            "A company needs to run SAP HANA, which requires 512 GB of RAM. Which EC2 instance family prefix should they target?",
+          options: ["R", "C", "M", "I"],
           correctIndex: 0,
           explanation:
             "R-family instances are memory-optimized, designed for in-memory databases (like Redis on EC2, SAP HANA), real-time analytics, and other RAM-heavy workloads. C-family is for CPU-intensive tasks; I-family for high-throughput local NVMe storage.",

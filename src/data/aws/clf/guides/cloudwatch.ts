@@ -330,7 +330,7 @@ For the Cloud Practitioner exam, the key CloudWatch concepts are: metrics for pe
     },
     {
       question:
-        "Which CloudWatch feature allows you to search and analyze log data using an interactive query language?",
+        "A developer needs to run ad-hoc queries across multiple CloudWatch log groups to find all ERROR events in the last hour and count them by source. Which CloudWatch feature supports this?",
       options: [
         "CloudWatch Dashboards",
         "CloudWatch Log Insights",

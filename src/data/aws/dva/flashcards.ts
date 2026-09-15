@@ -731,11 +731,11 @@ export const flashcards: FlashCard[] = [
     question:
       "What is the difference between Secrets Manager and SSM Parameter Store?",
     answer:
-      "Secrets Manager: built-in auto-rotation via Lambda, cross-account sharing, $0.40/secret/month, designed for secrets (DB passwords, API keys). SSM Parameter Store: free (Standard), $0.05/10K API calls (Advanced), up to 8KB (Standard), no auto-rotation, simpler use cases (config, flags).",
+      "Secrets Manager: built-in auto-rotation via Lambda, cross-account sharing, $0.40/secret/month, designed for secrets (DB passwords, API keys). SSM Parameter Store: free (Standard), $0.05/parameter/month + $0.05/10K API calls (Advanced), up to 8KB (Advanced), no auto-rotation, simpler use cases (config, flags).",
     keyPoints: [
       "Secrets Manager: auto-rotation, higher cost",
       "SSM Parameter Store Standard: free, 4KB max",
-      "SSM Parameter Store Advanced: $0.05/10K calls, 8KB max",
+      "SSM Parameter Store Advanced: $0.05/parameter/month + $0.05/10K API calls, 8KB max",
       "Both integrate with Lambda, ECS, EC2 for secrets injection",
     ],
     tags: ["secrets-manager", "ssm", "parameter-store", "secrets", "rotation"],
@@ -1016,7 +1016,7 @@ export const flashcards: FlashCard[] = [
       "Redis: persistence (AOF/RDB), replication, cluster mode, Lua scripting, geospatial, streams, pub/sub, sorted sets. Memcached: multi-threaded, no persistence, no replication, simpler. Use Redis for complex data structures, persistence, or HA. Use Memcached for simple caching with horizontal scaling.",
     keyPoints: [
       "Redis: Multi-AZ with automatic failover (cluster mode disabled)",
-      "Redis Cluster Mode: sharded across 1–90 shards",
+      "Redis Cluster Mode: sharded across up to 500 shards",
       "Memcached: no persistence, no HA",
       "Redis supports read replicas; Memcached does not",
     ],
@@ -1743,7 +1743,7 @@ export const flashcards: FlashCard[] = [
     question:
       "How does ElastiCache Redis Cluster Mode affect data distribution?",
     answer:
-      "In Cluster Mode Enabled, data is sharded across 1–90 node groups using hash slots (0–16383). Each key maps to a slot; each node group owns a range. Horizontal scaling by adding/removing shards. All operations on multiple keys must use hash tags to ensure keys land in the same slot.",
+      "In Cluster Mode Enabled, data is sharded across up to 500 node groups using hash slots (0–16383). Each key maps to a slot; each node group owns a range. Horizontal scaling by adding/removing shards. All operations on multiple keys must use hash tags to ensure keys land in the same slot.",
     keyPoints: [
       "16384 hash slots distributed across shards",
       "Hash tags: {user}.session and {user}.cart land on same shard",
@@ -2905,7 +2905,7 @@ export const flashcards: FlashCard[] = [
     difficulty: "medium",
     question: "What is SSM Parameter Store and what are its parameter types?",
     answer:
-      "Parameter Store stores configuration data and secrets as key-value pairs. Types: String, StringList, SecureString (encrypted with KMS). Tiers: Standard (free, 4KB max, 10K parameters) and Advanced ($0.05/10K API calls, 8KB max, 100K parameters, parameter policies).",
+      "Parameter Store stores configuration data and secrets as key-value pairs. Types: String, StringList, SecureString (encrypted with KMS). Tiers: Standard (free, 4KB max, 10K parameters) and Advanced ($0.05/parameter/month + $0.05/10K API calls, 8KB max, 100K parameters, parameter policies).",
     keyPoints: [
       "SecureString: encrypted at rest with KMS; use for passwords/keys",
       "Parameter hierarchy: /myapp/prod/db-password for organization",

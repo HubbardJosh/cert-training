@@ -12,7 +12,7 @@ export const configurationAndKnowledgeManagementGuide: ServiceGuide = {
   sections: [
     {
       heading: "Claude Projects Overview",
-      body: `**Claude Projects** are persistent workspaces available on Pro, Max, Team, and Enterprise plans on Claude.ai. A Project groups together three things: a set of **project instructions** (a system prompt applied to every conversation in the project), **knowledge files** (uploaded documents Claude can reference), and the **conversation history** of all chats created within the project.
+      body: `**Claude Projects** are persistent workspaces available on Pro, Max, Team, and Enterprise plans on Claude.ai. A Project groups together two persistent elements: a set of **project instructions** (a system prompt applied to every conversation in the project) and **knowledge files** (uploaded documents Claude can reference). Each conversation within a project starts fresh with those same instructions and knowledge — conversation history is not shared across conversations within the project.
 
 Without Projects, each Claude.ai conversation starts fresh — Claude has no memory of previous sessions and no pre-configured behavior. Projects change this by ensuring the same instructions and knowledge are present at the start of every conversation, eliminating the need to re-paste context each time.
 

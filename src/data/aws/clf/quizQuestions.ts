@@ -1005,7 +1005,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctIndices: [3],
     explanation:
-      "Amazon CloudFront is a fast CDN service that delivers data, videos, applications, and APIs globally with low latency and high transfer speeds. It caches content at over 400 edge locations worldwide, serving requests from the location nearest to the end user.",
+      "Amazon CloudFront is a fast CDN service that delivers data, videos, applications, and APIs globally with low latency and high transfer speeds. It caches content at over 600 edge locations worldwide, serving requests from the location nearest to the end user.",
     tags: ["cloudfront", "cdn", "edge", "fundamentals"],
   },
   {
@@ -1311,7 +1311,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctIndices: [1],
     explanation:
-      "AWS Edge Locations (Points of Presence) are sites used by CloudFront to cache copies of content closer to viewers, and by Route 53 for DNS resolution. There are 400+ edge locations globally — far more than AWS Regions — enabling low-latency content delivery worldwide.",
+      "AWS Edge Locations (Points of Presence) are sites used by CloudFront to cache copies of content closer to viewers, and by Route 53 for DNS resolution. There are 600+ edge locations globally — far more than AWS Regions — enabling low-latency content delivery worldwide.",
     tags: ["edge-locations", "cloudfront", "route53", "global-infrastructure"],
   },
   {
@@ -1439,7 +1439,7 @@ export const quizQuestions: QuizQuestion[] = [
     options: ["Business", "Developer", "Basic", "Enterprise"],
     correctIndices: [0],
     explanation:
-      "Basic and Developer plans only provide access to 6 core Trusted Advisor checks (service limits and security basics). The Business plan is the minimum to unlock all Trusted Advisor checks across cost optimization, performance, security, fault tolerance, and service limits.",
+      "Basic and Developer plans only provide access to 7 core Trusted Advisor checks (service limits and security basics). The Business plan is the minimum to unlock all Trusted Advisor checks across cost optimization, performance, security, fault tolerance, and service limits.",
     tags: ["support-plans", "trusted-advisor", "business"],
   },
 
@@ -1649,7 +1649,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctIndices: [2],
     explanation:
-      "AWS Trusted Advisor checks your AWS environment against best practices in five categories: Cost Optimization (unused resources), Performance (throttling, underutilized), Security (open ports, MFA), Fault Tolerance (backups, multi-AZ), and Service Limits (approaching limits). Basic and Developer plans include only 6 core checks.",
+      "AWS Trusted Advisor checks your AWS environment against best practices in five categories: Cost Optimization (unused resources), Performance (throttling, underutilized), Security (open ports, MFA), Fault Tolerance (backups, multi-AZ), and Service Limits (approaching limits). Basic and Developer plans include only 7 core checks.",
     tags: ["trusted-advisor", "categories", "fundamentals"],
   },
   {
