@@ -137,6 +137,10 @@ export const CLF_ABBREVIATIONS: Record<string, string> = {
   SDK: "Software Development Kit — libraries and tools for building with a specific service",
   CLI: "Command Line Interface — text-based tool for interacting with AWS (aws CLI)",
 
+  // Well-Architected Tool
+  HRI: "High Risk Issue — critical finding from the AWS Well-Architected Tool requiring prompt attention",
+  MRI: "Medium Risk Issue — moderate finding from the AWS Well-Architected Tool recommended for remediation",
+
   // Well-Architected pillars (CLF loves these)
   OE: "Operational Excellence — running and monitoring systems to deliver business value",
   REL: "Reliability — recovering from failures and meeting demand dynamically",
