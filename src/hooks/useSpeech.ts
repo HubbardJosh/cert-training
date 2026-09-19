@@ -5,7 +5,7 @@ import { useSpeechContext } from "../context/SpeechContext";
 export type SpeechState = "idle" | "playing" | "paused";
 
 export function useSpeech() {
-  const { selectedVoiceId } = useSpeechContext();
+  const { selectedVoiceId, speechRate } = useSpeechContext();
   const [activeSectionIndex, setActiveSectionIndex] = useState<number | null>(
     null,
   );
@@ -31,6 +31,7 @@ export function useSpeech() {
 
       Speech.speak(text, {
         voice: selectedVoiceId ?? undefined,
+        rate: speechRate,
         onDone: () => {
           setActiveSectionIndex(null);
           updateState("idle");
@@ -44,7 +45,7 @@ export function useSpeech() {
         },
       });
     },
-    [selectedVoiceId],
+    [selectedVoiceId, speechRate],
   );
 
   const stop = useCallback(() => {

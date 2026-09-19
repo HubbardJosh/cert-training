@@ -15,7 +15,7 @@ import { VoiceQuality } from "expo-speech";
 import { useNavigation } from "@react-navigation/native";
 import { spacing, radius, fontSize, ThemeColors } from "../utils/theme";
 import { useTheme } from "../context/ThemeContext";
-import { useSpeechContext } from "../context/SpeechContext";
+import { useSpeechContext, SPEECH_RATES } from "../context/SpeechContext";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
@@ -23,6 +23,8 @@ export default function SettingsScreen() {
   const {
     selectedVoiceId,
     setSelectedVoiceId,
+    speechRate,
+    setSpeechRate,
     availableVoices,
     voicesLoaded,
     refreshVoices,
@@ -105,6 +107,42 @@ export default function SettingsScreen() {
               {themeMode === "system" ? "System" : isDark ? "Dark" : "Light"}
             </Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Speed */}
+        <Text
+          style={[
+            styles.sectionLabel,
+            { marginTop: spacing.md, marginBottom: spacing.xs },
+          ]}
+        >
+          Reading Speed
+        </Text>
+        <View style={styles.card}>
+          <View style={styles.speedRow}>
+            {SPEECH_RATES.map(({ label, value }) => {
+              const active = speechRate === value;
+              return (
+                <TouchableOpacity
+                  key={value}
+                  style={[
+                    styles.speedBtn,
+                    active && { backgroundColor: colors.primary },
+                  ]}
+                  onPress={() => setSpeechRate(value)}
+                >
+                  <Text
+                    style={[
+                      styles.speedBtnText,
+                      { color: active ? "#fff" : colors.textSecondary },
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
 
         {/* Voice */}
@@ -273,6 +311,22 @@ function makeStyles(colors: ThemeColors) {
     scroll: { flex: 1 },
     content: { padding: spacing.md },
 
+    speedRow: {
+      flexDirection: "row",
+      padding: spacing.sm,
+      gap: spacing.xs,
+    },
+    speedBtn: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: spacing.sm,
+      borderRadius: radius.md,
+      backgroundColor: colors.surfaceElevated,
+    },
+    speedBtnText: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
+    },
     sectionLabelRow: {
       flexDirection: "row",
       alignItems: "center",

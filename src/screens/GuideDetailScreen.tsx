@@ -5,8 +5,11 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Modal,
+  Pressable,
 } from "react-native";
 import { useSpeech } from "../hooks/useSpeech";
+import { useSpeechContext, SPEECH_RATES } from "../context/SpeechContext";
 import CodeHighlighter from "react-native-code-highlighter";
 import {
   atomOneDark,
@@ -658,6 +661,8 @@ export default function GuideDetailScreen() {
   );
 
   const { activeSectionIndex, speak, stop } = useSpeech();
+  const { speechRate, setSpeechRate } = useSpeechContext();
+  const [speedModalVisible, setSpeedModalVisible] = useState(false);
 
   const handleSpeakSection = useCallback(
     (i: number) => {
@@ -818,6 +823,11 @@ export default function GuideDetailScreen() {
                         e.stopPropagation();
                         handleSpeakSection(i);
                       }}
+                      onLongPress={(e) => {
+                        e.stopPropagation();
+                        setSpeedModalVisible(true);
+                      }}
+                      delayLongPress={400}
                       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     >
                       <Ionicons
@@ -945,6 +955,49 @@ export default function GuideDetailScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      <Modal
+        visible={speedModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSpeedModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setSpeedModalVisible(false)}
+        >
+          <Pressable style={styles.modalCard} onPress={() => {}}>
+            <Text style={styles.modalTitle}>Reading Speed</Text>
+            <View style={styles.modalRateRow}>
+              {SPEECH_RATES.map(({ label, value }) => {
+                const active = speechRate === value;
+                return (
+                  <TouchableOpacity
+                    key={value}
+                    style={[
+                      styles.modalRateBtn,
+                      active && { backgroundColor: meta.color },
+                    ]}
+                    onPress={() => {
+                      setSpeechRate(value);
+                      setSpeedModalVisible(false);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.modalRateText,
+                        { color: active ? "#fff" : colors.textSecondary },
+                      ]}
+                    >
+                      {label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1536,6 +1589,40 @@ function makeStyles(colors: ThemeColors) {
     },
     speakBtn: {
       padding: 2,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalCard: {
+      backgroundColor: colors.surface,
+      borderRadius: radius.lg,
+      padding: spacing.lg,
+      width: "80%",
+      gap: spacing.md,
+    },
+    modalTitle: {
+      fontSize: fontSize.md,
+      fontWeight: "700",
+      color: colors.textPrimary,
+      textAlign: "center",
+    },
+    modalRateRow: {
+      flexDirection: "row",
+      gap: spacing.xs,
+    },
+    modalRateBtn: {
+      flex: 1,
+      alignItems: "center",
+      paddingVertical: spacing.sm,
+      borderRadius: radius.md,
+      backgroundColor: colors.surfaceElevated,
+    },
+    modalRateText: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
     },
 
     tabSectionTitle: {
