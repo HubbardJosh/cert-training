@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useSpeech } from "../hooks/useSpeech";
 import CodeHighlighter from "react-native-code-highlighter";
 import {
   atomOneDark,
@@ -557,6 +558,22 @@ function TopicQuiz({
   );
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function extractPlainText(heading: string, body: string): string {
+  const lines = body.split("\n").map((line) => {
+    if (line.trim().startsWith("```")) return "";
+    const stripped = line
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/^#+\s*/, "")
+      .replace(/^[-*]\s+/, "")
+      .replace(/^\d+\.\s+/, "");
+    return stripped.trim();
+  });
+  return `${heading}. ${lines.filter(Boolean).join(". ")}`;
+}
+
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function GuideDetailScreen() {
@@ -638,6 +655,21 @@ export default function GuideDetailScreen() {
       await saveProgress(updated, certMeta.storageKey);
     },
     [guide],
+  );
+
+  const { activeSectionIndex, speak, stop } = useSpeech();
+
+  const handleSpeakSection = useCallback(
+    (i: number) => {
+      if (activeSectionIndex === i) {
+        stop();
+        return;
+      }
+      const section = guide?.sections[i];
+      if (!section) return;
+      speak(i, extractPlainText(section.heading, section.body));
+    },
+    [activeSectionIndex, guide, speak, stop],
   );
 
   const styles = makeStyles(colors);
@@ -780,6 +812,28 @@ export default function GuideDetailScreen() {
                       )}
                     </View>
                     <Text style={styles.sectionHeading}>{section.heading}</Text>
+                    <TouchableOpacity
+                      style={styles.speakBtn}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleSpeakSection(i);
+                      }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Ionicons
+                        name={
+                          activeSectionIndex === i
+                            ? "stop-circle-outline"
+                            : "volume-medium-outline"
+                        }
+                        size={18}
+                        color={
+                          activeSectionIndex === i
+                            ? meta.color
+                            : colors.textMuted
+                        }
+                      />
+                    </TouchableOpacity>
                     <Ionicons
                       name={
                         expandedSection === i ? "chevron-up" : "chevron-down"
@@ -1479,6 +1533,9 @@ function makeStyles(colors: ThemeColors) {
       borderTopWidth: 1,
       borderTopColor: colors.border,
       paddingTop: spacing.md,
+    },
+    speakBtn: {
+      padding: 2,
     },
 
     tabSectionTitle: {

@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { spacing } from "../utils/theme";
 import { CertProvider } from "../context/CertContext";
+import { SpeechProvider } from "../context/SpeechContext";
 import { AbbreviationTooltipProvider } from "../components/AbbreviatedText";
 import { useTheme } from "../context/ThemeContext";
 
@@ -20,6 +21,7 @@ import GuideListScreen from "../screens/GuideListScreen";
 import GuideDetailScreen from "../screens/GuideDetailScreen";
 import MissedQuestionsScreen from "../screens/MissedQuestionsScreen";
 import SourcesScreen from "../screens/SourcesScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 export type RootStackParamList = {
   CertSelect: undefined;
@@ -30,6 +32,7 @@ export type RootStackParamList = {
   GuideDetail: { id: string };
   MissedQuestions: { source: "guide" | "quiz" };
   Sources: undefined;
+  Settings: undefined;
 };
 
 export type TabParamList = {
@@ -120,6 +123,7 @@ function RootNavigator() {
       <Stack.Screen name="GuideDetail" component={GuideDetailScreen} />
       <Stack.Screen name="MissedQuestions" component={MissedQuestionsScreen} />
       <Stack.Screen name="Sources" component={SourcesScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   );
 }
@@ -127,11 +131,13 @@ function RootNavigator() {
 export default function Navigation() {
   return (
     <CertProvider>
-      <AbbreviationTooltipProvider>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </AbbreviationTooltipProvider>
+      <SpeechProvider>
+        <AbbreviationTooltipProvider>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </AbbreviationTooltipProvider>
+      </SpeechProvider>
     </CertProvider>
   );
 }

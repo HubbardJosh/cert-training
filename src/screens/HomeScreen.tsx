@@ -45,7 +45,7 @@ export default function HomeScreen() {
   const { certMeta } = useCert();
   const { flashcards, quizQuestions } = useCertData();
   const [progress, setProgress] = useState<UserProgress | null>(null);
-  const { colors, isDark, themeMode, toggleTheme } = useTheme();
+  const { colors } = useTheme();
   const styles = makeStyles(colors);
   const DOMAIN_META = getDomainMeta(colors);
 
@@ -73,15 +73,12 @@ export default function HomeScreen() {
             <Text style={styles.greeting}>{certMeta.name}</Text>
             <Text style={styles.subtitle}>{certMeta.fullName}</Text>
           </View>
-          <TouchableOpacity style={styles.badge} onPress={toggleTheme}>
+          <TouchableOpacity
+            style={styles.badge}
+            onPress={() => navigation.navigate("Settings")}
+          >
             <Ionicons
-              name={
-                themeMode === "system"
-                  ? "phone-portrait-outline"
-                  : isDark
-                    ? "sunny"
-                    : "moon"
-              }
+              name="settings-outline"
               size={20}
               color={colors.primary}
             />
