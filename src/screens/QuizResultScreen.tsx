@@ -32,6 +32,7 @@ import { useCertData } from "../context/useCertData";
 import { UserProgress, Domain } from "../types";
 import { RootStackParamList } from "../navigation";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -94,311 +95,319 @@ export default function QuizResultScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Result hero */}
-        <View
-          style={[
-            styles.hero,
-            {
-              borderColor: passed
-                ? colors.correct + "55"
-                : colors.incorrect + "55",
-            },
-          ]}
-        >
+      <WebContainer>
+        <ScrollView contentContainerStyle={styles.content}>
+          {/* Result hero */}
           <View
             style={[
-              styles.heroIcon,
+              styles.hero,
               {
-                backgroundColor: passed
-                  ? colors.correct + "22"
-                  : colors.incorrect + "22",
+                borderColor: passed
+                  ? colors.correct + "55"
+                  : colors.incorrect + "55",
               },
             ]}
           >
-            <Ionicons
-              name={passed ? "trophy" : "reload"}
-              size={48}
-              color={passed ? colors.correct : colors.incorrect}
-            />
-          </View>
-          <Text
-            style={[
-              styles.heroTitle,
-              { color: passed ? colors.correct : colors.incorrect },
-            ]}
-          >
-            {passed ? "Great Work!" : "Keep Studying!"}
-          </Text>
-          <Text style={styles.heroScore}>
-            {score} / {total} correct
-          </Text>
-          <View style={styles.pctCircle}>
+            <View
+              style={[
+                styles.heroIcon,
+                {
+                  backgroundColor: passed
+                    ? colors.correct + "22"
+                    : colors.incorrect + "22",
+                },
+              ]}
+            >
+              <Ionicons
+                name={passed ? "trophy" : "reload"}
+                size={48}
+                color={passed ? colors.correct : colors.incorrect}
+              />
+            </View>
             <Text
               style={[
-                styles.pctText,
+                styles.heroTitle,
                 { color: passed ? colors.correct : colors.incorrect },
               ]}
             >
-              {pct}%
+              {passed ? "Great Work!" : "Keep Studying!"}
             </Text>
-            <Text style={styles.pctSub}>accuracy</Text>
-          </View>
-          <View style={styles.heroStats}>
-            <View style={styles.heroStat}>
-              <Ionicons
-                name="time-outline"
-                size={16}
-                color={colors.textSecondary}
-              />
-              <Text style={styles.heroStatText}>{formatTime(timeSeconds)}</Text>
-            </View>
-            <View style={styles.heroStat}>
-              <Ionicons
-                name="calculator-outline"
-                size={16}
-                color={colors.textSecondary}
-              />
-              <Text style={styles.heroStatText}>
-                ~{Math.round(timeSeconds / total)}s per question
-              </Text>
-            </View>
-          </View>
-          {passed ? (
-            <View style={styles.passBanner}>
-              <Ionicons
-                name="checkmark-circle"
-                size={16}
-                color={colors.correct}
-              />
-              <Text style={styles.passBannerText}>
-                Above passing threshold (72%+ ≈ 720/1000)
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={[
-                styles.passBanner,
-                { backgroundColor: colors.incorrect + "15" },
-              ]}
-            >
-              <Ionicons
-                name="alert-circle"
-                size={16}
-                color={colors.incorrect}
-              />
+            <Text style={styles.heroScore}>
+              {score} / {total} correct
+            </Text>
+            <View style={styles.pctCircle}>
               <Text
-                style={[styles.passBannerText, { color: colors.incorrect }]}
+                style={[
+                  styles.pctText,
+                  { color: passed ? colors.correct : colors.incorrect },
+                ]}
               >
-                Need {72 - pct}% more to reach passing threshold
+                {pct}%
               </Text>
+              <Text style={styles.pctSub}>accuracy</Text>
             </View>
-          )}
-        </View>
-
-        {/* Domain breakdown */}
-        <Text style={styles.sectionTitle}>Domain Performance</Text>
-        {DOMAINS.map((domain) => {
-          const meta = DOMAIN_META[domain];
-          const acc = getDomainAccuracy(progress, domain);
-          const { attempted, correct } = progress.domainScores[domain];
-          return (
-            <View key={domain} style={styles.domainRow}>
+            <View style={styles.heroStats}>
+              <View style={styles.heroStat}>
+                <Ionicons
+                  name="time-outline"
+                  size={16}
+                  color={colors.textSecondary}
+                />
+                <Text style={styles.heroStatText}>
+                  {formatTime(timeSeconds)}
+                </Text>
+              </View>
+              <View style={styles.heroStat}>
+                <Ionicons
+                  name="calculator-outline"
+                  size={16}
+                  color={colors.textSecondary}
+                />
+                <Text style={styles.heroStatText}>
+                  ~{Math.round(timeSeconds / total)}s per question
+                </Text>
+              </View>
+            </View>
+            {passed ? (
+              <View style={styles.passBanner}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={16}
+                  color={colors.correct}
+                />
+                <Text style={styles.passBannerText}>
+                  Above passing threshold (72%+ ≈ 720/1000)
+                </Text>
+              </View>
+            ) : (
               <View
                 style={[
-                  styles.domainIcon,
-                  { backgroundColor: meta.color + "22" },
+                  styles.passBanner,
+                  { backgroundColor: colors.incorrect + "15" },
                 ]}
               >
                 <Ionicons
-                  name={meta.icon as any}
+                  name="alert-circle"
                   size={16}
-                  color={meta.color}
+                  color={colors.incorrect}
                 />
+                <Text
+                  style={[styles.passBannerText, { color: colors.incorrect }]}
+                >
+                  Need {72 - pct}% more to reach passing threshold
+                </Text>
               </View>
-              <View style={styles.domainInfo}>
-                <View style={styles.domainTopRow}>
-                  <Text style={styles.domainLabel}>{meta.label}</Text>
-                  <Text
-                    style={[
-                      styles.domainAcc,
-                      {
-                        color:
-                          attempted === 0
-                            ? colors.textMuted
-                            : acc >= 80
-                              ? colors.correct
-                              : acc >= 60
-                                ? colors.warning
-                                : colors.incorrect,
-                      },
-                    ]}
-                  >
-                    {attempted === 0
-                      ? "No data"
-                      : `${acc}% (${correct}/${attempted})`}
-                  </Text>
-                </View>
-                <View style={styles.miniBarBg}>
-                  <View
-                    style={[
-                      styles.miniBarFill,
-                      {
-                        width: `${acc}%`,
-                        backgroundColor:
-                          acc >= 80
-                            ? colors.correct
-                            : acc >= 60
-                              ? colors.warning
-                              : colors.incorrect,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
-          );
-        })}
+            )}
+          </View>
 
-        {/* Recommendations */}
-        <Text style={styles.sectionTitle}>Study Recommendations</Text>
-        {DOMAINS.filter((d) => {
-          const acc = getDomainAccuracy(progress, d);
-          return progress.domainScores[d].attempted > 0 && acc < 80;
-        })
-          .sort(
-            (a, b) =>
-              getDomainAccuracy(progress, a) - getDomainAccuracy(progress, b),
-          )
-          .map((domain) => {
+          {/* Domain breakdown */}
+          <Text style={styles.sectionTitle}>Domain Performance</Text>
+          {DOMAINS.map((domain) => {
             const meta = DOMAIN_META[domain];
             const acc = getDomainAccuracy(progress, domain);
+            const { attempted, correct } = progress.domainScores[domain];
             return (
-              <View key={domain} style={styles.recCard}>
+              <View key={domain} style={styles.domainRow}>
                 <View
                   style={[
-                    styles.recIcon,
+                    styles.domainIcon,
                     { backgroundColor: meta.color + "22" },
                   ]}
                 >
                   <Ionicons
-                    name="warning-outline"
-                    size={18}
+                    name={meta.icon as any}
+                    size={16}
                     color={meta.color}
                   />
                 </View>
-                <View style={styles.recText}>
-                  <Text style={styles.recTitle}>
-                    Focus on {meta.label} ({acc}%)
-                  </Text>
-                  <Text style={styles.recSub}>
-                    {RECOMMENDATIONS[domain] ??
-                      "Review flashcards and retry quiz questions for this domain."}
-                  </Text>
+                <View style={styles.domainInfo}>
+                  <View style={styles.domainTopRow}>
+                    <Text style={styles.domainLabel}>{meta.label}</Text>
+                    <Text
+                      style={[
+                        styles.domainAcc,
+                        {
+                          color:
+                            attempted === 0
+                              ? colors.textMuted
+                              : acc >= 80
+                                ? colors.correct
+                                : acc >= 60
+                                  ? colors.warning
+                                  : colors.incorrect,
+                        },
+                      ]}
+                    >
+                      {attempted === 0
+                        ? "No data"
+                        : `${acc}% (${correct}/${attempted})`}
+                    </Text>
+                  </View>
+                  <View style={styles.miniBarBg}>
+                    <View
+                      style={[
+                        styles.miniBarFill,
+                        {
+                          width: `${acc}%`,
+                          backgroundColor:
+                            acc >= 80
+                              ? colors.correct
+                              : acc >= 60
+                                ? colors.warning
+                                : colors.incorrect,
+                        },
+                      ]}
+                    />
+                  </View>
                 </View>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Quiz", {
-                      domain,
-                      difficulty: "all",
-                      count: 10,
-                    })
-                  }
-                >
-                  <Ionicons name="play-circle" size={28} color={meta.color} />
-                </TouchableOpacity>
               </View>
             );
           })}
 
-        {/* Overall lifetime stats */}
-        <Text style={styles.sectionTitle}>Lifetime Stats</Text>
-        <View style={styles.statsGrid}>
-          <StatBox
-            label="Questions Answered"
-            value={progress.totalQuestionsAnswered.toString()}
-            icon="help-circle"
-            color={colors.primary}
-            colors={colors}
-          />
-          <StatBox
-            label="Exam Readiness"
-            value={`${overallAccuracy}%`}
-            icon="checkmark-circle"
-            color={colors.correct}
-            colors={colors}
-          />
-          <StatBox
-            label="Quizzes Taken"
-            value={progress.quizHistory.length.toString()}
-            icon="trophy"
-            color={colors.accent}
-            colors={colors}
-          />
-          <StatBox
-            label="Best Quiz Score"
-            value={
-              progress.quizHistory.length > 0
-                ? `${Math.max(...progress.quizHistory.map((a) => Math.round((a.score / a.total) * 100)))}%`
-                : "—"
-            }
-            icon="star"
-            color={colors.warning}
-            colors={colors}
-          />
-        </View>
+          {/* Recommendations */}
+          <Text style={styles.sectionTitle}>Study Recommendations</Text>
+          {DOMAINS.filter((d) => {
+            const acc = getDomainAccuracy(progress, d);
+            return progress.domainScores[d].attempted > 0 && acc < 80;
+          })
+            .sort(
+              (a, b) =>
+                getDomainAccuracy(progress, a) - getDomainAccuracy(progress, b),
+            )
+            .map((domain) => {
+              const meta = DOMAIN_META[domain];
+              const acc = getDomainAccuracy(progress, domain);
+              return (
+                <View key={domain} style={styles.recCard}>
+                  <View
+                    style={[
+                      styles.recIcon,
+                      { backgroundColor: meta.color + "22" },
+                    ]}
+                  >
+                    <Ionicons
+                      name="warning-outline"
+                      size={18}
+                      color={meta.color}
+                    />
+                  </View>
+                  <View style={styles.recText}>
+                    <Text style={styles.recTitle}>
+                      Focus on {meta.label} ({acc}%)
+                    </Text>
+                    <Text style={styles.recSub}>
+                      {RECOMMENDATIONS[domain] ??
+                        "Review flashcards and retry quiz questions for this domain."}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Quiz", {
+                        domain,
+                        difficulty: "all",
+                        count: 10,
+                      })
+                    }
+                  >
+                    <Ionicons name="play-circle" size={28} color={meta.color} />
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
 
-        {/* Actions */}
-        <View style={styles.actions}>
-          <TouchableOpacity
-            style={styles.retryBtn}
-            onPress={() =>
-              navigation.navigate("Quiz", {
-                domain: lastAttempt.domain,
-                difficulty: "all",
-                count: lastAttempt.total,
-              })
-            }
-          >
-            <Ionicons name="reload" size={20} color={colors.secondary} />
-            <Text style={styles.retryBtnText}>Retry Quiz</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.homeBtn2}
-            onPress={() =>
-              navigation.dispatch(
-                CommonActions.reset({ index: 0, routes: [{ name: "Tabs" }] }),
-              )
-            }
-          >
-            <Ionicons name="home-outline" size={20} color={colors.primary} />
-            <Text style={styles.homeBtnText2}>Dashboard</Text>
-          </TouchableOpacity>
-        </View>
-
-        {missedCount > 0 && (
-          <TouchableOpacity
-            style={styles.missedBtn}
-            onPress={() =>
-              navigation.navigate("MissedQuestions", { source: "quiz" })
-            }
-            activeOpacity={0.8}
-          >
-            <Ionicons name="close-circle" size={15} color={colors.incorrect} />
-            <Text style={styles.missedBtnText}>
-              Review {missedCount} missed question
-              {missedCount !== 1 ? "s" : ""}
-            </Text>
-            <Ionicons
-              name="chevron-forward"
-              size={14}
-              color={colors.incorrect + "99"}
+          {/* Overall lifetime stats */}
+          <Text style={styles.sectionTitle}>Lifetime Stats</Text>
+          <View style={styles.statsGrid}>
+            <StatBox
+              label="Questions Answered"
+              value={progress.totalQuestionsAnswered.toString()}
+              icon="help-circle"
+              color={colors.primary}
+              colors={colors}
             />
-          </TouchableOpacity>
-        )}
+            <StatBox
+              label="Exam Readiness"
+              value={`${overallAccuracy}%`}
+              icon="checkmark-circle"
+              color={colors.correct}
+              colors={colors}
+            />
+            <StatBox
+              label="Quizzes Taken"
+              value={progress.quizHistory.length.toString()}
+              icon="trophy"
+              color={colors.accent}
+              colors={colors}
+            />
+            <StatBox
+              label="Best Quiz Score"
+              value={
+                progress.quizHistory.length > 0
+                  ? `${Math.max(...progress.quizHistory.map((a) => Math.round((a.score / a.total) * 100)))}%`
+                  : "—"
+              }
+              icon="star"
+              color={colors.warning}
+              colors={colors}
+            />
+          </View>
 
-        <View style={{ height: 32 }} />
-      </ScrollView>
+          {/* Actions */}
+          <View style={styles.actions}>
+            <TouchableOpacity
+              style={styles.retryBtn}
+              onPress={() =>
+                navigation.navigate("Quiz", {
+                  domain: lastAttempt.domain,
+                  difficulty: "all",
+                  count: lastAttempt.total,
+                })
+              }
+            >
+              <Ionicons name="reload" size={20} color={colors.secondary} />
+              <Text style={styles.retryBtnText}>Retry Quiz</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.homeBtn2}
+              onPress={() =>
+                navigation.dispatch(
+                  CommonActions.reset({ index: 0, routes: [{ name: "Tabs" }] }),
+                )
+              }
+            >
+              <Ionicons name="home-outline" size={20} color={colors.primary} />
+              <Text style={styles.homeBtnText2}>Dashboard</Text>
+            </TouchableOpacity>
+          </View>
+
+          {missedCount > 0 && (
+            <TouchableOpacity
+              style={styles.missedBtn}
+              onPress={() =>
+                navigation.navigate("MissedQuestions", { source: "quiz" })
+              }
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name="close-circle"
+                size={15}
+                color={colors.incorrect}
+              />
+              <Text style={styles.missedBtnText}>
+                Review {missedCount} missed question
+                {missedCount !== 1 ? "s" : ""}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={14}
+                color={colors.incorrect + "99"}
+              />
+            </TouchableOpacity>
+          )}
+
+          <View style={{ height: 32 }} />
+        </ScrollView>
+      </WebContainer>
     </SafeAreaView>
   );
 }

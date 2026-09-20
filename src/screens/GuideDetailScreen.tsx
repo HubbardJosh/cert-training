@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useSpeech } from "../hooks/useSpeech";
 import { useSpeechContext, SPEECH_RATES } from "../context/SpeechContext";
+import WebContainer from "../components/WebContainer";
 import CodeHighlighter from "react-native-code-highlighter";
 import {
   atomOneDark,
@@ -769,235 +770,242 @@ export default function GuideDetailScreen() {
         ))}
       </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Intro always shown */}
-        <View style={styles.introCard}>
-          <AbbreviatedText text={guide.tagline} style={styles.tagline} />
-          <AbbreviatedText text={guide.intro} style={styles.intro} />
-        </View>
+      <WebContainer>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Intro always shown */}
+          <View style={styles.introCard}>
+            <AbbreviatedText text={guide.tagline} style={styles.tagline} />
+            <AbbreviatedText text={guide.intro} style={styles.intro} />
+          </View>
 
-        {/* Content tab: accordion sections */}
-        {activeTab === "content" && (
-          <>
-            {guide.sections.map((section, i) => {
-              const sectionRead = gp?.sectionsRead.includes(i) ?? false;
-              return (
-                <View key={i} style={styles.sectionCard}>
-                  <TouchableOpacity
-                    style={styles.sectionHeader}
-                    onPress={() => handleSectionToggle(i)}
-                    activeOpacity={0.7}
-                  >
-                    <View
-                      style={[
-                        styles.sectionNum,
-                        {
-                          backgroundColor: sectionRead
-                            ? colors.correct + "22"
-                            : meta.color + "22",
-                        },
-                      ]}
-                    >
-                      {sectionRead ? (
-                        <Ionicons
-                          name="checkmark"
-                          size={14}
-                          color={colors.correct}
-                        />
-                      ) : (
-                        <Text
-                          style={[styles.sectionNumText, { color: meta.color }]}
-                        >
-                          {i + 1}
-                        </Text>
-                      )}
-                    </View>
-                    <Text style={styles.sectionHeading}>{section.heading}</Text>
+          {/* Content tab: accordion sections */}
+          {activeTab === "content" && (
+            <>
+              {guide.sections.map((section, i) => {
+                const sectionRead = gp?.sectionsRead.includes(i) ?? false;
+                return (
+                  <View key={i} style={styles.sectionCard}>
                     <TouchableOpacity
-                      style={styles.speakBtn}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        handleSpeakSection(i);
-                      }}
-                      onLongPress={(e) => {
-                        e.stopPropagation();
-                        setSpeedModalVisible(true);
-                      }}
-                      delayLongPress={400}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      style={styles.sectionHeader}
+                      onPress={() => handleSectionToggle(i)}
+                      activeOpacity={0.7}
                     >
+                      <View
+                        style={[
+                          styles.sectionNum,
+                          {
+                            backgroundColor: sectionRead
+                              ? colors.correct + "22"
+                              : meta.color + "22",
+                          },
+                        ]}
+                      >
+                        {sectionRead ? (
+                          <Ionicons
+                            name="checkmark"
+                            size={14}
+                            color={colors.correct}
+                          />
+                        ) : (
+                          <Text
+                            style={[
+                              styles.sectionNumText,
+                              { color: meta.color },
+                            ]}
+                          >
+                            {i + 1}
+                          </Text>
+                        )}
+                      </View>
+                      <Text style={styles.sectionHeading}>
+                        {section.heading}
+                      </Text>
+                      <TouchableOpacity
+                        style={styles.speakBtn}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleSpeakSection(i);
+                        }}
+                        onLongPress={(e) => {
+                          e.stopPropagation();
+                          setSpeedModalVisible(true);
+                        }}
+                        delayLongPress={400}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      >
+                        <Ionicons
+                          name={
+                            activeSectionIndex === i
+                              ? "stop-circle-outline"
+                              : "volume-medium-outline"
+                          }
+                          size={18}
+                          color={
+                            activeSectionIndex === i
+                              ? meta.color
+                              : colors.textMuted
+                          }
+                        />
+                      </TouchableOpacity>
                       <Ionicons
                         name={
-                          activeSectionIndex === i
-                            ? "stop-circle-outline"
-                            : "volume-medium-outline"
+                          expandedSection === i ? "chevron-up" : "chevron-down"
                         }
-                        size={18}
-                        color={
-                          activeSectionIndex === i
-                            ? meta.color
-                            : colors.textMuted
-                        }
+                        size={16}
+                        color={colors.textMuted}
                       />
                     </TouchableOpacity>
-                    <Ionicons
-                      name={
-                        expandedSection === i ? "chevron-up" : "chevron-down"
-                      }
-                      size={16}
-                      color={colors.textMuted}
-                    />
-                  </TouchableOpacity>
 
-                  {expandedSection === i && (
-                    <View style={styles.sectionBody}>
-                      {section.quiz && section.quiz.length > 0 ? (
-                        <InlineQuiz
-                          questions={section.quiz}
-                          accentColor={meta.color}
-                          sectionBody={section.body}
-                          onComplete={() => handleSectionComplete(i)}
-                          onMiss={handleMiss}
-                          colors={colors}
-                          isDark={isDark}
-                        />
-                      ) : (
-                        <MarkdownBody
-                          text={section.body}
-                          colors={colors}
-                          isDark={isDark}
-                        />
-                      )}
-                    </View>
-                  )}
-                </View>
-              );
-            })}
-
-            {guide.topicQuiz && guide.topicQuiz.length > 0 && (
-              <View style={{ marginTop: spacing.md }}>
-                <TopicQuiz
-                  questions={guide.topicQuiz}
-                  accentColor={meta.color}
-                  serviceName={guide.service}
-                  onMiss={handleMiss}
-                  colors={colors}
-                />
-              </View>
-            )}
-          </>
-        )}
-
-        {/* Key Facts tab */}
-        {activeTab === "facts" && (
-          <View>
-            <Text style={styles.tabSectionTitle}>Key Facts to Remember</Text>
-            {guide.keyFacts.map((fact, i) => (
-              <View key={i} style={styles.factRow}>
-                <View
-                  style={[styles.factBullet, { backgroundColor: meta.color }]}
-                />
-                <AbbreviatedText text={fact} style={styles.factText} />
-              </View>
-            ))}
-
-            {guide.relatedServices.length > 0 && (
-              <>
-                <Text
-                  style={[styles.tabSectionTitle, { marginTop: spacing.lg }]}
-                >
-                  Related Services
-                </Text>
-                <View style={styles.relatedGrid}>
-                  {guide.relatedServices.map((svc, i) => (
-                    <View key={i} style={styles.relatedChip}>
-                      <Text style={styles.relatedText}>{svc}</Text>
-                    </View>
-                  ))}
-                </View>
-              </>
-            )}
-          </View>
-        )}
-
-        {/* Exam Tips tab */}
-        {activeTab === "exam" && (
-          <View>
-            <Text style={styles.tabSectionTitle}>Exam Tips</Text>
-            <View
-              style={[styles.examBanner, { borderLeftColor: colors.warning }]}
-            >
-              <Ionicons
-                name="school"
-                size={16}
-                color={colors.warning}
-                style={{ marginBottom: 4 }}
-              />
-              <Text style={styles.examBannerText}>
-                These are the highest-yield points for DVA-C02 exam questions on{" "}
-                {guide.service}.
-              </Text>
-            </View>
-            {guide.examTips.map((tip, i) => (
-              <View key={i} style={styles.tipCard}>
-                <View style={styles.tipNumber}>
-                  <Text style={styles.tipNumberText}>{i + 1}</Text>
-                </View>
-                <AbbreviatedText text={tip} style={styles.tipText} />
-              </View>
-            ))}
-          </View>
-        )}
-
-        <View style={{ height: 40 }} />
-      </ScrollView>
-
-      <Modal
-        visible={speedModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSpeedModalVisible(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setSpeedModalVisible(false)}
-        >
-          <Pressable style={styles.modalCard} onPress={() => {}}>
-            <Text style={styles.modalTitle}>Reading Speed</Text>
-            <View style={styles.modalRateRow}>
-              {SPEECH_RATES.map(({ label, value }) => {
-                const active = speechRate === value;
-                return (
-                  <TouchableOpacity
-                    key={value}
-                    style={[
-                      styles.modalRateBtn,
-                      active && { backgroundColor: meta.color },
-                    ]}
-                    onPress={() => {
-                      setSpeechRate(value);
-                      setSpeedModalVisible(false);
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.modalRateText,
-                        { color: active ? "#fff" : colors.textSecondary },
-                      ]}
-                    >
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
+                    {expandedSection === i && (
+                      <View style={styles.sectionBody}>
+                        {section.quiz && section.quiz.length > 0 ? (
+                          <InlineQuiz
+                            questions={section.quiz}
+                            accentColor={meta.color}
+                            sectionBody={section.body}
+                            onComplete={() => handleSectionComplete(i)}
+                            onMiss={handleMiss}
+                            colors={colors}
+                            isDark={isDark}
+                          />
+                        ) : (
+                          <MarkdownBody
+                            text={section.body}
+                            colors={colors}
+                            isDark={isDark}
+                          />
+                        )}
+                      </View>
+                    )}
+                  </View>
                 );
               })}
+
+              {guide.topicQuiz && guide.topicQuiz.length > 0 && (
+                <View style={{ marginTop: spacing.md }}>
+                  <TopicQuiz
+                    questions={guide.topicQuiz}
+                    accentColor={meta.color}
+                    serviceName={guide.service}
+                    onMiss={handleMiss}
+                    colors={colors}
+                  />
+                </View>
+              )}
+            </>
+          )}
+
+          {/* Key Facts tab */}
+          {activeTab === "facts" && (
+            <View>
+              <Text style={styles.tabSectionTitle}>Key Facts to Remember</Text>
+              {guide.keyFacts.map((fact, i) => (
+                <View key={i} style={styles.factRow}>
+                  <View
+                    style={[styles.factBullet, { backgroundColor: meta.color }]}
+                  />
+                  <AbbreviatedText text={fact} style={styles.factText} />
+                </View>
+              ))}
+
+              {guide.relatedServices.length > 0 && (
+                <>
+                  <Text
+                    style={[styles.tabSectionTitle, { marginTop: spacing.lg }]}
+                  >
+                    Related Services
+                  </Text>
+                  <View style={styles.relatedGrid}>
+                    {guide.relatedServices.map((svc, i) => (
+                      <View key={i} style={styles.relatedChip}>
+                        <Text style={styles.relatedText}>{svc}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </>
+              )}
             </View>
+          )}
+
+          {/* Exam Tips tab */}
+          {activeTab === "exam" && (
+            <View>
+              <Text style={styles.tabSectionTitle}>Exam Tips</Text>
+              <View
+                style={[styles.examBanner, { borderLeftColor: colors.warning }]}
+              >
+                <Ionicons
+                  name="school"
+                  size={16}
+                  color={colors.warning}
+                  style={{ marginBottom: 4 }}
+                />
+                <Text style={styles.examBannerText}>
+                  These are the highest-yield points for DVA-C02 exam questions
+                  on {guide.service}.
+                </Text>
+              </View>
+              {guide.examTips.map((tip, i) => (
+                <View key={i} style={styles.tipCard}>
+                  <View style={styles.tipNumber}>
+                    <Text style={styles.tipNumberText}>{i + 1}</Text>
+                  </View>
+                  <AbbreviatedText text={tip} style={styles.tipText} />
+                </View>
+              ))}
+            </View>
+          )}
+
+          <View style={{ height: 40 }} />
+        </ScrollView>
+
+        <Modal
+          visible={speedModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSpeedModalVisible(false)}
+        >
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={() => setSpeedModalVisible(false)}
+          >
+            <Pressable style={styles.modalCard} onPress={() => {}}>
+              <Text style={styles.modalTitle}>Reading Speed</Text>
+              <View style={styles.modalRateRow}>
+                {SPEECH_RATES.map(({ label, value }) => {
+                  const active = speechRate === value;
+                  return (
+                    <TouchableOpacity
+                      key={value}
+                      style={[
+                        styles.modalRateBtn,
+                        active && { backgroundColor: meta.color },
+                      ]}
+                      onPress={() => {
+                        setSpeechRate(value);
+                        setSpeedModalVisible(false);
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.modalRateText,
+                          { color: active ? "#fff" : colors.textSecondary },
+                        ]}
+                      >
+                        {label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </Modal>
+        </Modal>
+      </WebContainer>
     </SafeAreaView>
   );
 }

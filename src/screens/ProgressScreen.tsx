@@ -39,6 +39,7 @@ import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -217,495 +218,508 @@ export default function ProgressScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Your Progress</Text>
-        <Text style={styles.subtitle}>{certMeta.name} Exam Readiness</Text>
+      <WebContainer>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+        >
+          <Text style={styles.title}>Your Progress</Text>
+          <Text style={styles.subtitle}>{certMeta.name} Exam Readiness</Text>
 
-        {/* Readiness score */}
-        <View style={styles.readinessCard}>
-          <View style={styles.readinessLeft}>
-            <Text style={styles.readinessLabel}>Exam Readiness</Text>
-            <Text
-              style={[
-                styles.readinessScore,
-                {
-                  color:
-                    overallAccuracy >= 80
-                      ? colors.correct
-                      : overallAccuracy >= 60
-                        ? colors.warning
-                        : colors.incorrect,
-                },
-              ]}
-            >
-              {overallAccuracy}%
+          {/* Readiness score */}
+          <View style={styles.readinessCard}>
+            <View style={styles.readinessLeft}>
+              <Text style={styles.readinessLabel}>Exam Readiness</Text>
+              <Text
+                style={[
+                  styles.readinessScore,
+                  {
+                    color:
+                      overallAccuracy >= 80
+                        ? colors.correct
+                        : overallAccuracy >= 60
+                          ? colors.warning
+                          : colors.incorrect,
+                  },
+                ]}
+              >
+                {overallAccuracy}%
+              </Text>
+              <Text style={styles.readinessSub}>
+                {overallAccuracy >= 80
+                  ? "Ready to sit the exam!"
+                  : overallAccuracy >= 60
+                    ? "Getting close — keep going"
+                    : "Keep studying — you'll get there"}
+              </Text>
+            </View>
+            <View style={styles.readinessRight}>
+              <ReadinessGauge pct={overallAccuracy} colors={colors} />
+            </View>
+          </View>
+
+          {/* Flashcard mastery */}
+          <Text style={styles.sectionTitle}>Flashcard Mastery</Text>
+          <View style={styles.masteryCard}>
+            <View style={styles.masteryBar}>
+              <View
+                style={[
+                  styles.masterySegment,
+                  { flex: knownCards, backgroundColor: colors.correct },
+                ]}
+              />
+              <View
+                style={[
+                  styles.masterySegment,
+                  { flex: learningCards, backgroundColor: colors.warning },
+                ]}
+              />
+              <View
+                style={[
+                  styles.masterySegment,
+                  {
+                    flex: Math.max(unseenCards, 0.01),
+                    backgroundColor: colors.border,
+                  },
+                ]}
+              />
+            </View>
+            <View style={styles.masteryLegend}>
+              <LegendDot
+                color={colors.correct}
+                label={`Known (${knownCards})`}
+                colors={colors}
+              />
+              <LegendDot
+                color={colors.warning}
+                label={`Learning (${learningCards})`}
+                colors={colors}
+              />
+              <LegendDot
+                color={colors.border}
+                label={`Unseen (${unseenCards})`}
+                colors={colors}
+              />
+            </View>
+            <Text style={styles.masteryTotal}>
+              {knownCards} of {totalCards} cards mastered (
+              {Math.round((knownCards / totalCards) * 100)}%)
             </Text>
-            <Text style={styles.readinessSub}>
-              {overallAccuracy >= 80
-                ? "Ready to sit the exam!"
-                : overallAccuracy >= 60
-                  ? "Getting close — keep going"
-                  : "Keep studying — you'll get there"}
+          </View>
+
+          {/* Guide progress */}
+          <Text style={styles.sectionTitle}>Guide Progress</Text>
+          <View style={styles.masteryCard}>
+            <View style={styles.masteryBar}>
+              <View
+                style={[
+                  styles.masterySegment,
+                  { flex: guidesCompleted, backgroundColor: colors.correct },
+                ]}
+              />
+              <View
+                style={[
+                  styles.masterySegment,
+                  {
+                    flex: Math.max(guidesViewed - guidesCompleted, 0),
+                    backgroundColor: colors.warning,
+                  },
+                ]}
+              />
+              <View
+                style={[
+                  styles.masterySegment,
+                  {
+                    flex: Math.max(totalGuides - guidesViewed, 0.01),
+                    backgroundColor: colors.border,
+                  },
+                ]}
+              />
+            </View>
+            <View style={styles.masteryLegend}>
+              <LegendDot
+                color={colors.correct}
+                label={`Completed (${guidesCompleted})`}
+                colors={colors}
+              />
+              <LegendDot
+                color={colors.warning}
+                label={`In progress (${guidesViewed - guidesCompleted})`}
+                colors={colors}
+              />
+              <LegendDot
+                color={colors.border}
+                label={`Unread (${totalGuides - guidesViewed})`}
+                colors={colors}
+              />
+            </View>
+            <Text style={styles.masteryTotal}>
+              {guidesCompleted} of {totalGuides} guides completed (
+              {Math.round((guidesCompleted / totalGuides) * 100)}%)
             </Text>
           </View>
-          <View style={styles.readinessRight}>
-            <ReadinessGauge pct={overallAccuracy} colors={colors} />
-          </View>
-        </View>
 
-        {/* Flashcard mastery */}
-        <Text style={styles.sectionTitle}>Flashcard Mastery</Text>
-        <View style={styles.masteryCard}>
-          <View style={styles.masteryBar}>
-            <View
-              style={[
-                styles.masterySegment,
-                { flex: knownCards, backgroundColor: colors.correct },
-              ]}
-            />
-            <View
-              style={[
-                styles.masterySegment,
-                { flex: learningCards, backgroundColor: colors.warning },
-              ]}
-            />
-            <View
-              style={[
-                styles.masterySegment,
-                {
-                  flex: Math.max(unseenCards, 0.01),
-                  backgroundColor: colors.border,
-                },
-              ]}
-            />
-          </View>
-          <View style={styles.masteryLegend}>
-            <LegendDot
-              color={colors.correct}
-              label={`Known (${knownCards})`}
-              colors={colors}
-            />
-            <LegendDot
-              color={colors.warning}
-              label={`Learning (${learningCards})`}
-              colors={colors}
-            />
-            <LegendDot
-              color={colors.border}
-              label={`Unseen (${unseenCards})`}
-              colors={colors}
-            />
-          </View>
-          <Text style={styles.masteryTotal}>
-            {knownCards} of {totalCards} cards mastered (
-            {Math.round((knownCards / totalCards) * 100)}%)
-          </Text>
-        </View>
+          {/* Domain accuracy */}
+          <Text style={styles.sectionTitle}>Domain Accuracy</Text>
+          {DOMAINS.map((domain) => {
+            const meta = DOMAIN_META[domain];
+            const acc = getDomainAccuracy(progress, domain);
+            const { attempted, correct } = progress.domainScores[domain];
+            const domainCards = flashcards.filter(
+              (c) => c.domain === domain,
+            ).length;
+            const domainKnown = Object.entries(progress.studiedCards).filter(
+              ([id, status]) =>
+                status === "known" &&
+                flashcards.find((c) => c.id === id)?.domain === domain,
+            ).length;
 
-        {/* Guide progress */}
-        <Text style={styles.sectionTitle}>Guide Progress</Text>
-        <View style={styles.masteryCard}>
-          <View style={styles.masteryBar}>
-            <View
-              style={[
-                styles.masterySegment,
-                { flex: guidesCompleted, backgroundColor: colors.correct },
-              ]}
-            />
-            <View
-              style={[
-                styles.masterySegment,
-                {
-                  flex: Math.max(guidesViewed - guidesCompleted, 0),
-                  backgroundColor: colors.warning,
-                },
-              ]}
-            />
-            <View
-              style={[
-                styles.masterySegment,
-                {
-                  flex: Math.max(totalGuides - guidesViewed, 0.01),
-                  backgroundColor: colors.border,
-                },
-              ]}
-            />
-          </View>
-          <View style={styles.masteryLegend}>
-            <LegendDot
-              color={colors.correct}
-              label={`Completed (${guidesCompleted})`}
-              colors={colors}
-            />
-            <LegendDot
-              color={colors.warning}
-              label={`In progress (${guidesViewed - guidesCompleted})`}
-              colors={colors}
-            />
-            <LegendDot
-              color={colors.border}
-              label={`Unread (${totalGuides - guidesViewed})`}
-              colors={colors}
-            />
-          </View>
-          <Text style={styles.masteryTotal}>
-            {guidesCompleted} of {totalGuides} guides completed (
-            {Math.round((guidesCompleted / totalGuides) * 100)}%)
-          </Text>
-        </View>
-
-        {/* Domain accuracy */}
-        <Text style={styles.sectionTitle}>Domain Accuracy</Text>
-        {DOMAINS.map((domain) => {
-          const meta = DOMAIN_META[domain];
-          const acc = getDomainAccuracy(progress, domain);
-          const { attempted, correct } = progress.domainScores[domain];
-          const domainCards = flashcards.filter(
-            (c) => c.domain === domain,
-          ).length;
-          const domainKnown = Object.entries(progress.studiedCards).filter(
-            ([id, status]) =>
-              status === "known" &&
-              flashcards.find((c) => c.id === id)?.domain === domain,
-          ).length;
-
-          return (
-            <View key={domain} style={styles.domainCard}>
-              <View style={styles.domainHeader}>
-                <View
-                  style={[
-                    styles.domainIcon,
-                    { backgroundColor: meta.color + "22" },
-                  ]}
-                >
-                  <Ionicons
-                    name={meta.icon as any}
-                    size={18}
-                    color={meta.color}
-                  />
-                </View>
-                <View style={styles.domainInfo}>
-                  <Text style={styles.domainLabel}>{meta.label}</Text>
-                  <Text style={styles.domainWeight}>{meta.weight} of exam</Text>
-                </View>
-                <View style={styles.domainScoreBox}>
-                  <Text
+            return (
+              <View key={domain} style={styles.domainCard}>
+                <View style={styles.domainHeader}>
+                  <View
                     style={[
-                      styles.domainScore,
-                      {
-                        color:
-                          attempted === 0
-                            ? colors.textMuted
-                            : acc >= 80
+                      styles.domainIcon,
+                      { backgroundColor: meta.color + "22" },
+                    ]}
+                  >
+                    <Ionicons
+                      name={meta.icon as any}
+                      size={18}
+                      color={meta.color}
+                    />
+                  </View>
+                  <View style={styles.domainInfo}>
+                    <Text style={styles.domainLabel}>{meta.label}</Text>
+                    <Text style={styles.domainWeight}>
+                      {meta.weight} of exam
+                    </Text>
+                  </View>
+                  <View style={styles.domainScoreBox}>
+                    <Text
+                      style={[
+                        styles.domainScore,
+                        {
+                          color:
+                            attempted === 0
+                              ? colors.textMuted
+                              : acc >= 80
+                                ? colors.correct
+                                : acc >= 60
+                                  ? colors.warning
+                                  : colors.incorrect,
+                        },
+                      ]}
+                    >
+                      {attempted === 0 ? "–" : `${acc}%`}
+                    </Text>
+                    <Text style={styles.domainAttempted}>
+                      {attempted === 0
+                        ? "No quizzes yet"
+                        : `${correct}/${attempted} correct`}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.barRow}>
+                  <Text style={styles.barLabel}>Quiz</Text>
+                  <View style={styles.barBg}>
+                    <View
+                      style={[
+                        styles.barFill,
+                        {
+                          width: `${acc}%`,
+                          backgroundColor:
+                            acc >= 80
                               ? colors.correct
                               : acc >= 60
                                 ? colors.warning
                                 : colors.incorrect,
-                      },
-                    ]}
-                  >
-                    {attempted === 0 ? "–" : `${acc}%`}
-                  </Text>
-                  <Text style={styles.domainAttempted}>
-                    {attempted === 0
-                      ? "No quizzes yet"
-                      : `${correct}/${attempted} correct`}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={styles.barRow}>
-                <Text style={styles.barLabel}>Quiz</Text>
-                <View style={styles.barBg}>
-                  <View
-                    style={[
-                      styles.barFill,
-                      {
-                        width: `${acc}%`,
-                        backgroundColor:
-                          acc >= 80
-                            ? colors.correct
-                            : acc >= 60
-                              ? colors.warning
-                              : colors.incorrect,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-
-              <View style={styles.barRow}>
-                <Text style={styles.barLabel}>Cards</Text>
-                <View style={styles.barBg}>
-                  <View
-                    style={[
-                      styles.barFill,
-                      {
-                        width: `${Math.round((domainKnown / domainCards) * 100)}%`,
-                        backgroundColor: meta.color,
-                      },
-                    ]}
-                  />
-                </View>
-                <Text style={styles.barCount}>
-                  {domainKnown}/{domainCards}
-                </Text>
-              </View>
-            </View>
-          );
-        })}
-
-        {/* Weak Topics */}
-        <Text style={styles.sectionTitle}>Weak Topics</Text>
-        {weakTopics.length === 0 ? (
-          <View style={styles.emptyHistory}>
-            <Ionicons
-              name="checkmark-circle-outline"
-              size={36}
-              color={colors.textMuted}
-            />
-            <Text style={styles.emptyHistoryText}>
-              No weak topics yet — take a quiz to get started
-            </Text>
-          </View>
-        ) : (
-          weakTopics.map((topic) => (
-            <WeakTopicRow
-              key={topic.service}
-              topic={topic}
-              colors={colors}
-              onToggleReview={() => handleToggleReview(topic.service)}
-              onPractice={() =>
-                navigation.navigate("Quiz", {
-                  domain: "all",
-                  difficulty: "all",
-                  count: 10,
-                  service: topic.service,
-                })
-              }
-            />
-          ))
-        )}
-
-        {/* Quiz history */}
-        <Text style={styles.sectionTitle}>Recent Quiz History</Text>
-        {recentHistory.length === 0 ? (
-          <View style={styles.emptyHistory}>
-            <Ionicons
-              name="trophy-outline"
-              size={36}
-              color={colors.textMuted}
-            />
-            <Text style={styles.emptyHistoryText}>No quizzes taken yet</Text>
-          </View>
-        ) : (
-          recentHistory.map((attempt) => (
-            <HistoryRow key={attempt.id} attempt={attempt} colors={colors} />
-          ))
-        )}
-
-        {/* Stats summary */}
-        <Text style={styles.sectionTitle}>All-Time Stats</Text>
-        <View style={styles.statsGrid}>
-          <MiniStat
-            icon="help-circle"
-            color={colors.primary}
-            value={progress.totalQuestionsAnswered}
-            label="Questions"
-            colors={colors}
-          />
-          <MiniStat
-            icon="checkmark-circle"
-            color={colors.correct}
-            value={progress.totalCorrect}
-            label="Correct"
-            colors={colors}
-          />
-          <MiniStat
-            icon="trophy"
-            color={colors.accent}
-            value={progress.quizHistory.length}
-            label="Quizzes"
-            colors={colors}
-          />
-          <MiniStat
-            icon="book"
-            color={colors.warning}
-            value={knownCards + learningCards}
-            label="Cards Studied"
-            colors={colors}
-          />
-          <MiniStat
-            icon="library"
-            color={colors.accent}
-            value={guidesCompleted}
-            label="Guides Done"
-            colors={colors}
-          />
-        </View>
-
-        {/* Reset */}
-        {(() => {
-          const studiedCardCount = knownCards + learningCards;
-          const domainsWithAttempts = DOMAINS.filter(
-            (d) => progress.domainScores[d].attempted > 0,
-          );
-          const hasAnyReset =
-            studiedCardCount > 0 ||
-            progress.quizHistory.length > 0 ||
-            domainsWithAttempts.length > 0 ||
-            topicsWithProgress.length > 0;
-
-          if (!hasAnyReset) return null;
-
-          return (
-            <>
-              <Text style={styles.sectionTitle}>Reset Progress</Text>
-
-              {studiedCardCount > 0 && (
-                <ResetCategoryRow
-                  label="Flashcards"
-                  detail={`${studiedCardCount} of ${totalCards} studied`}
-                  icon="layers-outline"
-                  onReset={handleResetAllFlashcards}
-                  colors={colors}
-                />
-              )}
-
-              {progress.quizHistory.length > 0 && (
-                <ResetCategoryRow
-                  label="Quiz History"
-                  detail={`${progress.quizHistory.length} quiz${progress.quizHistory.length !== 1 ? "zes" : ""} · ${progress.totalQuestionsAnswered} questions answered`}
-                  icon="help-circle-outline"
-                  onReset={handleResetAllQuizzes}
-                  colors={colors}
-                />
-              )}
-
-              {domainsWithAttempts.length > 0 && (
-                <View style={styles.resetGroup}>
-                  <View style={styles.resetGroupHeader}>
-                    <Text style={styles.resetGroupLabel}>Domains</Text>
-                    <Text style={styles.resetGroupSub}>
-                      reset accuracy per domain
-                    </Text>
+                        },
+                      ]}
+                    />
                   </View>
-                  {domainsWithAttempts.map((domain, di) => {
-                    const meta = DOMAIN_META[domain];
-                    const { attempted, correct } =
-                      progress.domainScores[domain];
-                    return (
-                      <View
-                        key={domain}
-                        style={[
-                          styles.groupRow,
-                          di < domainsWithAttempts.length - 1 &&
-                            styles.groupRowDivider,
-                        ]}
-                      >
+                </View>
+
+                <View style={styles.barRow}>
+                  <Text style={styles.barLabel}>Cards</Text>
+                  <View style={styles.barBg}>
+                    <View
+                      style={[
+                        styles.barFill,
+                        {
+                          width: `${Math.round((domainKnown / domainCards) * 100)}%`,
+                          backgroundColor: meta.color,
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.barCount}>
+                    {domainKnown}/{domainCards}
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
+
+          {/* Weak Topics */}
+          <Text style={styles.sectionTitle}>Weak Topics</Text>
+          {weakTopics.length === 0 ? (
+            <View style={styles.emptyHistory}>
+              <Ionicons
+                name="checkmark-circle-outline"
+                size={36}
+                color={colors.textMuted}
+              />
+              <Text style={styles.emptyHistoryText}>
+                No weak topics yet — take a quiz to get started
+              </Text>
+            </View>
+          ) : (
+            weakTopics.map((topic) => (
+              <WeakTopicRow
+                key={topic.service}
+                topic={topic}
+                colors={colors}
+                onToggleReview={() => handleToggleReview(topic.service)}
+                onPractice={() =>
+                  navigation.navigate("Quiz", {
+                    domain: "all",
+                    difficulty: "all",
+                    count: 10,
+                    service: topic.service,
+                  })
+                }
+              />
+            ))
+          )}
+
+          {/* Quiz history */}
+          <Text style={styles.sectionTitle}>Recent Quiz History</Text>
+          {recentHistory.length === 0 ? (
+            <View style={styles.emptyHistory}>
+              <Ionicons
+                name="trophy-outline"
+                size={36}
+                color={colors.textMuted}
+              />
+              <Text style={styles.emptyHistoryText}>No quizzes taken yet</Text>
+            </View>
+          ) : (
+            recentHistory.map((attempt) => (
+              <HistoryRow key={attempt.id} attempt={attempt} colors={colors} />
+            ))
+          )}
+
+          {/* Stats summary */}
+          <Text style={styles.sectionTitle}>All-Time Stats</Text>
+          <View style={styles.statsGrid}>
+            <MiniStat
+              icon="help-circle"
+              color={colors.primary}
+              value={progress.totalQuestionsAnswered}
+              label="Questions"
+              colors={colors}
+            />
+            <MiniStat
+              icon="checkmark-circle"
+              color={colors.correct}
+              value={progress.totalCorrect}
+              label="Correct"
+              colors={colors}
+            />
+            <MiniStat
+              icon="trophy"
+              color={colors.accent}
+              value={progress.quizHistory.length}
+              label="Quizzes"
+              colors={colors}
+            />
+            <MiniStat
+              icon="book"
+              color={colors.warning}
+              value={knownCards + learningCards}
+              label="Cards Studied"
+              colors={colors}
+            />
+            <MiniStat
+              icon="library"
+              color={colors.accent}
+              value={guidesCompleted}
+              label="Guides Done"
+              colors={colors}
+            />
+          </View>
+
+          {/* Reset */}
+          {(() => {
+            const studiedCardCount = knownCards + learningCards;
+            const domainsWithAttempts = DOMAINS.filter(
+              (d) => progress.domainScores[d].attempted > 0,
+            );
+            const hasAnyReset =
+              studiedCardCount > 0 ||
+              progress.quizHistory.length > 0 ||
+              domainsWithAttempts.length > 0 ||
+              topicsWithProgress.length > 0;
+
+            if (!hasAnyReset) return null;
+
+            return (
+              <>
+                <Text style={styles.sectionTitle}>Reset Progress</Text>
+
+                {studiedCardCount > 0 && (
+                  <ResetCategoryRow
+                    label="Flashcards"
+                    detail={`${studiedCardCount} of ${totalCards} studied`}
+                    icon="layers-outline"
+                    onReset={handleResetAllFlashcards}
+                    colors={colors}
+                  />
+                )}
+
+                {progress.quizHistory.length > 0 && (
+                  <ResetCategoryRow
+                    label="Quiz History"
+                    detail={`${progress.quizHistory.length} quiz${progress.quizHistory.length !== 1 ? "zes" : ""} · ${progress.totalQuestionsAnswered} questions answered`}
+                    icon="help-circle-outline"
+                    onReset={handleResetAllQuizzes}
+                    colors={colors}
+                  />
+                )}
+
+                {domainsWithAttempts.length > 0 && (
+                  <View style={styles.resetGroup}>
+                    <View style={styles.resetGroupHeader}>
+                      <Text style={styles.resetGroupLabel}>Domains</Text>
+                      <Text style={styles.resetGroupSub}>
+                        reset accuracy per domain
+                      </Text>
+                    </View>
+                    {domainsWithAttempts.map((domain, di) => {
+                      const meta = DOMAIN_META[domain];
+                      const { attempted, correct } =
+                        progress.domainScores[domain];
+                      return (
                         <View
+                          key={domain}
                           style={[
-                            styles.resetDomainIcon,
-                            { backgroundColor: meta.color + "22" },
+                            styles.groupRow,
+                            di < domainsWithAttempts.length - 1 &&
+                              styles.groupRowDivider,
                           ]}
                         >
-                          <Ionicons
-                            name={meta.icon as any}
-                            size={14}
-                            color={meta.color}
-                          />
+                          <View
+                            style={[
+                              styles.resetDomainIcon,
+                              { backgroundColor: meta.color + "22" },
+                            ]}
+                          >
+                            <Ionicons
+                              name={meta.icon as any}
+                              size={14}
+                              color={meta.color}
+                            />
+                          </View>
+                          <View style={styles.topicResetInfo}>
+                            <Text style={styles.topicResetName}>
+                              {meta.label}
+                            </Text>
+                            <Text style={styles.topicResetMeta}>
+                              {correct}/{attempted} correct
+                            </Text>
+                          </View>
+                          <TouchableOpacity
+                            style={styles.topicResetBtn}
+                            onPress={() =>
+                              handleResetDomain(domain, meta.label)
+                            }
+                          >
+                            <Ionicons
+                              name="refresh-outline"
+                              size={14}
+                              color={colors.incorrect}
+                            />
+                            <Text style={styles.topicResetBtnText}>Reset</Text>
+                          </TouchableOpacity>
                         </View>
-                        <View style={styles.topicResetInfo}>
-                          <Text style={styles.topicResetName}>
-                            {meta.label}
-                          </Text>
-                          <Text style={styles.topicResetMeta}>
-                            {correct}/{attempted} correct
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          style={styles.topicResetBtn}
-                          onPress={() => handleResetDomain(domain, meta.label)}
-                        >
-                          <Ionicons
-                            name="refresh-outline"
-                            size={14}
-                            color={colors.incorrect}
-                          />
-                          <Text style={styles.topicResetBtnText}>Reset</Text>
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  })}
-                </View>
-              )}
-
-              {topicsWithProgress.length > 0 && (
-                <View style={styles.resetGroup}>
-                  <View style={styles.resetGroupHeader}>
-                    <Text style={styles.resetGroupLabel}>Guides</Text>
-                    <View style={styles.resetGroupHeaderRight}>
-                      <Text style={styles.resetGroupSub}>reset per topic</Text>
-                      <TouchableOpacity onPress={handleResetAllGuides}>
-                        <Text style={styles.resetAllLink}>Reset all</Text>
-                      </TouchableOpacity>
-                    </View>
+                      );
+                    })}
                   </View>
-                  {topicsWithProgress.map((g, gi) => {
-                    const gp = progress.guideProgress[g.id];
-                    const completed = gp?.completed ?? false;
-                    const sectionsRead = gp?.sectionsRead.length ?? 0;
-                    return (
-                      <View
-                        key={g.id}
-                        style={[
-                          styles.groupRow,
-                          gi < topicsWithProgress.length - 1 &&
-                            styles.groupRowDivider,
-                        ]}
-                      >
-                        {completed && (
-                          <Ionicons
-                            name="checkmark-circle"
-                            size={16}
-                            color={colors.correct}
-                          />
-                        )}
-                        <View style={styles.topicResetInfo}>
-                          <Text style={styles.topicResetName}>{g.service}</Text>
-                          <Text style={styles.topicResetMeta}>
-                            {completed
-                              ? "Completed"
-                              : `${sectionsRead} section${sectionsRead !== 1 ? "s" : ""} read`}
-                          </Text>
-                        </View>
-                        <TouchableOpacity
-                          style={styles.topicResetBtn}
-                          onPress={() => handleResetGuide(g.id, g.service)}
-                        >
-                          <Ionicons
-                            name="refresh-outline"
-                            size={14}
-                            color={colors.incorrect}
-                          />
-                          <Text style={styles.topicResetBtnText}>Reset</Text>
+                )}
+
+                {topicsWithProgress.length > 0 && (
+                  <View style={styles.resetGroup}>
+                    <View style={styles.resetGroupHeader}>
+                      <Text style={styles.resetGroupLabel}>Guides</Text>
+                      <View style={styles.resetGroupHeaderRight}>
+                        <Text style={styles.resetGroupSub}>
+                          reset per topic
+                        </Text>
+                        <TouchableOpacity onPress={handleResetAllGuides}>
+                          <Text style={styles.resetAllLink}>Reset all</Text>
                         </TouchableOpacity>
                       </View>
-                    );
-                  })}
-                </View>
-              )}
-            </>
-          );
-        })()}
+                    </View>
+                    {topicsWithProgress.map((g, gi) => {
+                      const gp = progress.guideProgress[g.id];
+                      const completed = gp?.completed ?? false;
+                      const sectionsRead = gp?.sectionsRead.length ?? 0;
+                      return (
+                        <View
+                          key={g.id}
+                          style={[
+                            styles.groupRow,
+                            gi < topicsWithProgress.length - 1 &&
+                              styles.groupRowDivider,
+                          ]}
+                        >
+                          {completed && (
+                            <Ionicons
+                              name="checkmark-circle"
+                              size={16}
+                              color={colors.correct}
+                            />
+                          )}
+                          <View style={styles.topicResetInfo}>
+                            <Text style={styles.topicResetName}>
+                              {g.service}
+                            </Text>
+                            <Text style={styles.topicResetMeta}>
+                              {completed
+                                ? "Completed"
+                                : `${sectionsRead} section${sectionsRead !== 1 ? "s" : ""} read`}
+                            </Text>
+                          </View>
+                          <TouchableOpacity
+                            style={styles.topicResetBtn}
+                            onPress={() => handleResetGuide(g.id, g.service)}
+                          >
+                            <Ionicons
+                              name="refresh-outline"
+                              size={14}
+                              color={colors.incorrect}
+                            />
+                            <Text style={styles.topicResetBtnText}>Reset</Text>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
+              </>
+            );
+          })()}
 
-        <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
-          <Ionicons name="trash-outline" size={18} color={colors.incorrect} />
-          <Text style={styles.resetBtnText}>Reset Everything</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
+            <Ionicons name="trash-outline" size={18} color={colors.incorrect} />
+            <Text style={styles.resetBtnText}>Reset Everything</Text>
+          </TouchableOpacity>
 
-        <View style={{ height: 32 }} />
-      </ScrollView>
+          <View style={{ height: 32 }} />
+        </ScrollView>
+      </WebContainer>
     </SafeAreaView>
   );
 }

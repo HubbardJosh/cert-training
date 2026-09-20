@@ -23,6 +23,7 @@ import {
 } from "../utils/storage";
 import { MissedQuestion, UserProgress } from "../types";
 import { RootStackParamList } from "../navigation";
+import WebContainer from "../components/WebContainer";
 
 type RouteT = RouteProp<RootStackParamList, "MissedQuestions">;
 
@@ -198,50 +199,52 @@ export default function MissedQuestionsScreen() {
         )}
       </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        {missed.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Ionicons name="ribbon" size={48} color={colors.correct} />
-            <Text style={styles.emptyTitle}>No missed questions</Text>
-            <Text style={styles.emptyBody}>
-              Questions you answer incorrectly in guide quizzes will appear here
-              for review.
-            </Text>
-          </View>
-        ) : (
-          <>
-            <TouchableOpacity
-              style={[styles.startBtn, { backgroundColor: colors.primary }]}
-              onPress={() => {
-                setQuizIndex(0);
-                setSelected(null);
-                setRevealed(false);
-                setDone(false);
-                setQuizMode(true);
-              }}
-            >
-              <Ionicons name="play" size={16} color="#fff" />
-              <Text style={styles.startBtnText}>
-                Start Review ({missed.length})
+      <WebContainer>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          {missed.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Ionicons name="ribbon" size={48} color={colors.correct} />
+              <Text style={styles.emptyTitle}>No missed questions</Text>
+              <Text style={styles.emptyBody}>
+                Questions you answer incorrectly in guide quizzes will appear
+                here for review.
               </Text>
-            </TouchableOpacity>
+            </View>
+          ) : (
+            <>
+              <TouchableOpacity
+                style={[styles.startBtn, { backgroundColor: colors.primary }]}
+                onPress={() => {
+                  setQuizIndex(0);
+                  setSelected(null);
+                  setRevealed(false);
+                  setDone(false);
+                  setQuizMode(true);
+                }}
+              >
+                <Ionicons name="play" size={16} color="#fff" />
+                <Text style={styles.startBtnText}>
+                  Start Review ({missed.length})
+                </Text>
+              </TouchableOpacity>
 
-            {missed.map((q) => (
-              <ListCard
-                key={q.id}
-                q={q}
-                colors={colors}
-                onDismiss={() => handleDismiss(q.id)}
-              />
-            ))}
-          </>
-        )}
-        <View style={{ height: 40 }} />
-      </ScrollView>
+              {missed.map((q) => (
+                <ListCard
+                  key={q.id}
+                  q={q}
+                  colors={colors}
+                  onDismiss={() => handleDismiss(q.id)}
+                />
+              ))}
+            </>
+          )}
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      </WebContainer>
     </SafeAreaView>
   );
 }

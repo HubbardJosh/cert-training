@@ -23,6 +23,7 @@ import { loadProgress, getMissedQuizQuestions } from "../utils/storage";
 import { useCert } from "../context/CertContext";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -107,267 +108,286 @@ export default function QuizMenuScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Practice Quiz</Text>
-        <Text style={styles.subtitle}>Configure your quiz session</Text>
-
-        {/* Exam info */}
-        <View style={styles.examCard}>
-          <Ionicons
-            name="information-circle-outline"
-            size={20}
-            color={colors.primary}
-          />
-          <View style={styles.examCardText}>
-            <Text style={styles.examCardTitle}>
-              {certMeta.name} Exam Format
-            </Text>
-            <Text style={styles.examCardSub}>{certMeta.examInfo}</Text>
-          </View>
-        </View>
-
-        {/* Missed questions */}
-        {missedCount > 0 && (
-          <TouchableOpacity
-            style={styles.missedBtn}
-            onPress={() =>
-              navigation.navigate("MissedQuestions", { source: "quiz" })
-            }
-            activeOpacity={0.8}
-          >
-            <Ionicons name="close-circle" size={15} color={colors.incorrect} />
-            <Text style={styles.missedBtnText}>
-              Review {missedCount} missed question
-              {missedCount !== 1 ? "s" : ""}
-            </Text>
-            <Ionicons
-              name="chevron-forward"
-              size={14}
-              color={colors.incorrect + "99"}
-            />
-          </TouchableOpacity>
-        )}
-
-        {/* Domain */}
-        <Text style={styles.sectionLabel}>Domain</Text>
-        <TouchableOpacity
-          style={[
-            styles.optionRow,
-            selectedDomain === "all" && styles.optionRowActive,
-          ]}
-          onPress={() => setSelectedDomain("all")}
+      <WebContainer>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
         >
-          <Ionicons name="grid-outline" size={20} color={colors.primary} />
-          <View style={styles.optionText}>
-            <Text style={styles.optionLabel}>All Domains</Text>
-            <Text style={styles.optionSub}>
-              {quizQuestions.length} total questions
-            </Text>
-          </View>
-          {selectedDomain === "all" && (
+          <Text style={styles.title}>Practice Quiz</Text>
+          <Text style={styles.subtitle}>Configure your quiz session</Text>
+
+          {/* Exam info */}
+          <View style={styles.examCard}>
             <Ionicons
-              name="checkmark-circle"
-              size={22}
+              name="information-circle-outline"
+              size={20}
               color={colors.primary}
             />
-          )}
-        </TouchableOpacity>
+            <View style={styles.examCardText}>
+              <Text style={styles.examCardTitle}>
+                {certMeta.name} Exam Format
+              </Text>
+              <Text style={styles.examCardSub}>{certMeta.examInfo}</Text>
+            </View>
+          </View>
 
-        {DOMAINS.map((d) => {
-          const meta = DOMAIN_META[d];
-          const count = quizQuestions.filter((q) => q.domain === d).length;
-          return (
+          {/* Missed questions */}
+          {missedCount > 0 && (
             <TouchableOpacity
-              key={d}
-              style={[
-                styles.optionRow,
-                selectedDomain === d && {
-                  ...styles.optionRowActive,
-                  borderColor: meta.color + "66",
-                },
-              ]}
-              onPress={() => setSelectedDomain(d)}
+              style={styles.missedBtn}
+              onPress={() =>
+                navigation.navigate("MissedQuestions", { source: "quiz" })
+              }
+              activeOpacity={0.8}
             >
-              <View
-                style={[
-                  styles.domainIcon,
-                  { backgroundColor: meta.color + "22" },
-                ]}
-              >
-                <Ionicons
-                  name={meta.icon as any}
-                  size={18}
-                  color={meta.color}
-                />
-              </View>
-              <View style={styles.optionText}>
-                <Text style={styles.optionLabel}>{meta.label}</Text>
-                <Text style={styles.optionSub}>
-                  {count} questions · {meta.weight} of exam
-                </Text>
-              </View>
-              {selectedDomain === d && (
-                <Ionicons
-                  name="checkmark-circle"
-                  size={22}
-                  color={meta.color}
-                />
-              )}
+              <Ionicons
+                name="close-circle"
+                size={15}
+                color={colors.incorrect}
+              />
+              <Text style={styles.missedBtnText}>
+                Review {missedCount} missed question
+                {missedCount !== 1 ? "s" : ""}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={14}
+                color={colors.incorrect + "99"}
+              />
             </TouchableOpacity>
-          );
-        })}
+          )}
 
-        {/* Difficulty */}
-        <Text style={styles.sectionLabel}>Difficulty</Text>
-        <View style={styles.pillRow}>
-          {(["all", "easy", "medium", "hard"] as const).map((d) => {
-            const color =
-              d === "all"
-                ? colors.primary
-                : d === "easy"
-                  ? colors.easy
-                  : d === "medium"
-                    ? colors.medium
-                    : colors.hard;
+          {/* Domain */}
+          <Text style={styles.sectionLabel}>Domain</Text>
+          <TouchableOpacity
+            style={[
+              styles.optionRow,
+              selectedDomain === "all" && styles.optionRowActive,
+            ]}
+            onPress={() => setSelectedDomain("all")}
+          >
+            <Ionicons name="grid-outline" size={20} color={colors.primary} />
+            <View style={styles.optionText}>
+              <Text style={styles.optionLabel}>All Domains</Text>
+              <Text style={styles.optionSub}>
+                {quizQuestions.length} total questions
+              </Text>
+            </View>
+            {selectedDomain === "all" && (
+              <Ionicons
+                name="checkmark-circle"
+                size={22}
+                color={colors.primary}
+              />
+            )}
+          </TouchableOpacity>
+
+          {DOMAINS.map((d) => {
+            const meta = DOMAIN_META[d];
+            const count = quizQuestions.filter((q) => q.domain === d).length;
             return (
               <TouchableOpacity
                 key={d}
                 style={[
-                  styles.pill,
-                  selectedDifficulty === d
-                    ? { backgroundColor: color, borderColor: color }
-                    : { borderColor: color + "55" },
+                  styles.optionRow,
+                  selectedDomain === d && {
+                    ...styles.optionRowActive,
+                    borderColor: meta.color + "66",
+                  },
                 ]}
-                onPress={() => setSelectedDifficulty(d)}
+                onPress={() => setSelectedDomain(d)}
+              >
+                <View
+                  style={[
+                    styles.domainIcon,
+                    { backgroundColor: meta.color + "22" },
+                  ]}
+                >
+                  <Ionicons
+                    name={meta.icon as any}
+                    size={18}
+                    color={meta.color}
+                  />
+                </View>
+                <View style={styles.optionText}>
+                  <Text style={styles.optionLabel}>{meta.label}</Text>
+                  <Text style={styles.optionSub}>
+                    {count} questions · {meta.weight} of exam
+                  </Text>
+                </View>
+                {selectedDomain === d && (
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={22}
+                    color={meta.color}
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+
+          {/* Difficulty */}
+          <Text style={styles.sectionLabel}>Difficulty</Text>
+          <View style={styles.pillRow}>
+            {(["all", "easy", "medium", "hard"] as const).map((d) => {
+              const color =
+                d === "all"
+                  ? colors.primary
+                  : d === "easy"
+                    ? colors.easy
+                    : d === "medium"
+                      ? colors.medium
+                      : colors.hard;
+              return (
+                <TouchableOpacity
+                  key={d}
+                  style={[
+                    styles.pill,
+                    selectedDifficulty === d
+                      ? { backgroundColor: color, borderColor: color }
+                      : { borderColor: color + "55" },
+                  ]}
+                  onPress={() => setSelectedDifficulty(d)}
+                >
+                  <Text
+                    style={[
+                      styles.pillText,
+                      {
+                        color:
+                          selectedDifficulty === d ? colors.secondary : color,
+                      },
+                    ]}
+                  >
+                    {d === "all"
+                      ? "All"
+                      : d.charAt(0).toUpperCase() + d.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* Question count */}
+          <Text style={styles.sectionLabel}>Number of Questions</Text>
+          <View style={styles.pillRow}>
+            {COUNTS.map((c) => (
+              <TouchableOpacity
+                key={c}
+                style={[
+                  styles.pill,
+                  selectedCount === c
+                    ? {
+                        backgroundColor: colors.primary,
+                        borderColor: colors.primary,
+                      }
+                    : { borderColor: colors.primary + "55" },
+                ]}
+                onPress={() => setSelectedCount(c)}
               >
                 <Text
                   style={[
                     styles.pillText,
                     {
                       color:
-                        selectedDifficulty === d ? colors.secondary : color,
+                        selectedCount === c ? colors.secondary : colors.primary,
                     },
                   ]}
                 >
-                  {d === "all" ? "All" : d.charAt(0).toUpperCase() + d.slice(1)}
+                  {c}
                 </Text>
               </TouchableOpacity>
-            );
-          })}
-        </View>
+            ))}
+          </View>
 
-        {/* Question count */}
-        <Text style={styles.sectionLabel}>Number of Questions</Text>
-        <View style={styles.pillRow}>
-          {COUNTS.map((c) => (
-            <TouchableOpacity
-              key={c}
+          {/* Available count */}
+          <View style={styles.availableRow}>
+            <Ionicons
+              name={
+                canStart ? "checkmark-circle-outline" : "alert-circle-outline"
+              }
+              size={16}
+              color={canStart ? colors.correct : colors.warning}
+            />
+            <Text
               style={[
-                styles.pill,
-                selectedCount === c
-                  ? {
-                      backgroundColor: colors.primary,
-                      borderColor: colors.primary,
-                    }
-                  : { borderColor: colors.primary + "55" },
+                styles.availableText,
+                { color: canStart ? colors.correct : colors.warning },
               ]}
-              onPress={() => setSelectedCount(c)}
             >
-              <Text
-                style={[
-                  styles.pillText,
-                  {
-                    color:
-                      selectedCount === c ? colors.secondary : colors.primary,
-                  },
-                ]}
-              >
-                {c}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+              {canStart
+                ? `${available.length} questions available · ${actualCount} will be selected`
+                : "No questions match these filters"}
+            </Text>
+          </View>
 
-        {/* Available count */}
-        <View style={styles.availableRow}>
-          <Ionicons
-            name={
-              canStart ? "checkmark-circle-outline" : "alert-circle-outline"
-            }
-            size={16}
-            color={canStart ? colors.correct : colors.warning}
-          />
-          <Text
-            style={[
-              styles.availableText,
-              { color: canStart ? colors.correct : colors.warning },
-            ]}
-          >
-            {canStart
-              ? `${available.length} questions available · ${actualCount} will be selected`
-              : "No questions match these filters"}
-          </Text>
-        </View>
-
-        {/* Start */}
-        <TouchableOpacity
-          style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
-          disabled={!canStart}
-          onPress={() =>
-            navigation.navigate("Quiz", {
-              domain: selectedDomain,
-              difficulty: selectedDifficulty,
-              count: actualCount,
-            })
-          }
-        >
-          <Ionicons
-            name="play"
-            size={20}
-            color={canStart ? colors.secondary : colors.textMuted}
-          />
-          <Text
-            style={[
-              styles.startBtnText,
-              !canStart && { color: colors.textMuted },
-            ]}
-          >
-            Start Quiz · {actualCount} Questions
-          </Text>
-        </TouchableOpacity>
-
-        {/* Quick modes */}
-        <Text style={styles.sectionLabel}>Quick Modes</Text>
-        {QUICK_MODES.map((mode) => (
+          {/* Start */}
           <TouchableOpacity
-            key={mode.label}
-            style={styles.quickMode}
+            style={[styles.startBtn, !canStart && styles.startBtnDisabled]}
+            disabled={!canStart}
             onPress={() =>
               navigation.navigate("Quiz", {
-                domain: mode.domain,
-                difficulty: mode.difficulty,
-                count: mode.count,
+                domain: selectedDomain,
+                difficulty: selectedDifficulty,
+                count: actualCount,
               })
             }
           >
-            <View
+            <Ionicons
+              name="play"
+              size={20}
+              color={canStart ? colors.secondary : colors.textMuted}
+            />
+            <Text
               style={[
-                styles.quickModeIcon,
-                { backgroundColor: mode.color + "22" },
+                styles.startBtnText,
+                !canStart && { color: colors.textMuted },
               ]}
             >
-              <Ionicons name={mode.icon as any} size={20} color={mode.color} />
-            </View>
-            <View style={styles.optionText}>
-              <Text style={styles.optionLabel}>{mode.label}</Text>
-              <Text style={styles.optionSub}>{mode.description}</Text>
-            </View>
-            <Ionicons name="arrow-forward" size={16} color={colors.textMuted} />
+              Start Quiz · {actualCount} Questions
+            </Text>
           </TouchableOpacity>
-        ))}
 
-        <View style={{ height: 32 }} />
-      </ScrollView>
+          {/* Quick modes */}
+          <Text style={styles.sectionLabel}>Quick Modes</Text>
+          {QUICK_MODES.map((mode) => (
+            <TouchableOpacity
+              key={mode.label}
+              style={styles.quickMode}
+              onPress={() =>
+                navigation.navigate("Quiz", {
+                  domain: mode.domain,
+                  difficulty: mode.difficulty,
+                  count: mode.count,
+                })
+              }
+            >
+              <View
+                style={[
+                  styles.quickModeIcon,
+                  { backgroundColor: mode.color + "22" },
+                ]}
+              >
+                <Ionicons
+                  name={mode.icon as any}
+                  size={20}
+                  color={mode.color}
+                />
+              </View>
+              <View style={styles.optionText}>
+                <Text style={styles.optionLabel}>{mode.label}</Text>
+                <Text style={styles.optionSub}>{mode.description}</Text>
+              </View>
+              <Ionicons
+                name="arrow-forward"
+                size={16}
+                color={colors.textMuted}
+              />
+            </TouchableOpacity>
+          ))}
+
+          <View style={{ height: 32 }} />
+        </ScrollView>
+      </WebContainer>
     </SafeAreaView>
   );
 }

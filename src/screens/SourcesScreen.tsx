@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { spacing, radius, fontSize, ThemeColors } from "../utils/theme";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
 import { useCert } from "../context/CertContext";
 import { SOURCES } from "../data/sources";
 
@@ -38,80 +39,83 @@ export default function SourcesScreen() {
         </View>
       </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.notice}>
-          <Ionicons
-            name="information-circle-outline"
-            size={16}
-            color={colors.info}
-          />
-          <Text style={styles.noticeText}>
-            All guide content and quiz questions for this certification are
-            verified against the official AWS documentation pages listed below.
-          </Text>
-        </View>
-
-        {certSources ? (
-          certSources.sources.map((source, i) => (
-            <View key={i} style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons
-                  name="document-text-outline"
-                  size={18}
-                  color={colors.primary}
-                />
-                <Text style={styles.cardTitle}>{source.title}</Text>
-              </View>
-
-              <View style={styles.topicsContainer}>
-                {source.topics.map((topic, j) => (
-                  <View key={j} style={styles.topicRow}>
-                    <View
-                      style={[
-                        styles.topicDot,
-                        { backgroundColor: colors.primary },
-                      ]}
-                    />
-                    <Text style={styles.topicText}>{topic}</Text>
-                  </View>
-                ))}
-              </View>
-
-              <TouchableOpacity
-                style={styles.urlBtn}
-                onPress={() => Linking.openURL(source.url)}
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name="open-outline"
-                  size={13}
-                  color={colors.primary}
-                />
-                <Text style={styles.urlText} numberOfLines={1}>
-                  {source.url}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ))
-        ) : (
-          <View style={styles.empty}>
+      <WebContainer>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.notice}>
             <Ionicons
-              name="library-outline"
-              size={40}
-              color={colors.textMuted}
+              name="information-circle-outline"
+              size={16}
+              color={colors.info}
             />
-            <Text style={styles.emptyText}>
-              No sources listed yet for this certification.
+            <Text style={styles.noticeText}>
+              All guide content and quiz questions for this certification are
+              verified against the official AWS documentation pages listed
+              below.
             </Text>
           </View>
-        )}
 
-        <View style={{ height: 32 }} />
-      </ScrollView>
+          {certSources ? (
+            certSources.sources.map((source, i) => (
+              <View key={i} style={styles.card}>
+                <View style={styles.cardHeader}>
+                  <Ionicons
+                    name="document-text-outline"
+                    size={18}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.cardTitle}>{source.title}</Text>
+                </View>
+
+                <View style={styles.topicsContainer}>
+                  {source.topics.map((topic, j) => (
+                    <View key={j} style={styles.topicRow}>
+                      <View
+                        style={[
+                          styles.topicDot,
+                          { backgroundColor: colors.primary },
+                        ]}
+                      />
+                      <Text style={styles.topicText}>{topic}</Text>
+                    </View>
+                  ))}
+                </View>
+
+                <TouchableOpacity
+                  style={styles.urlBtn}
+                  onPress={() => Linking.openURL(source.url)}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name="open-outline"
+                    size={13}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.urlText} numberOfLines={1}>
+                    {source.url}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ))
+          ) : (
+            <View style={styles.empty}>
+              <Ionicons
+                name="library-outline"
+                size={40}
+                color={colors.textMuted}
+              />
+              <Text style={styles.emptyText}>
+                No sources listed yet for this certification.
+              </Text>
+            </View>
+          )}
+
+          <View style={{ height: 32 }} />
+        </ScrollView>
+      </WebContainer>
     </SafeAreaView>
   );
 }

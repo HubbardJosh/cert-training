@@ -1,13 +1,16 @@
 import React from "react";
+import { View, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { spacing } from "../utils/theme";
+import { spacing, WEB_SIDEBAR_WIDTH } from "../utils/theme";
 import { CertProvider } from "../context/CertContext";
 import { SpeechProvider } from "../context/SpeechContext";
 import { AbbreviationTooltipProvider } from "../components/AbbreviatedText";
 import { useTheme } from "../context/ThemeContext";
+import { useBreakpoint } from "../hooks/useBreakpoint";
+import WebSidebar from "../components/WebSidebar";
 
 import CertSelectScreen from "../screens/CertSelectScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -48,19 +51,23 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function TabNavigator() {
   const { colors } = useTheme();
+  const { isDesktop } = useBreakpoint();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.secondary,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
-          height: 80,
-          paddingBottom: 16,
-          paddingTop: 8,
-        },
+        tabBarStyle: isDesktop
+          ? { display: "none" }
+          : {
+              backgroundColor: colors.secondary,
+              borderTopColor: colors.border,
+              borderTopWidth: 1,
+              height: 80,
+              paddingBottom: 16,
+              paddingTop: 8,
+            },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
@@ -112,18 +119,116 @@ function TabNavigator() {
   );
 }
 
+function WebLayout({ children }: { children: React.ReactNode }) {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        backgroundColor: colors.background,
+      }}
+    >
+      <WebSidebar />
+      <View style={{ flex: 1 }}>{children}</View>
+    </View>
+  );
+}
+
 function RootNavigator() {
+  const { isDesktop } = useBreakpoint();
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="CertSelect" component={CertSelectScreen} />
-      <Stack.Screen name="Tabs" component={TabNavigator} />
-      <Stack.Screen name="FlashCard" component={FlashCardScreen} />
-      <Stack.Screen name="Quiz" component={QuizScreen} />
-      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
-      <Stack.Screen name="GuideDetail" component={GuideDetailScreen} />
-      <Stack.Screen name="MissedQuestions" component={MissedQuestionsScreen} />
-      <Stack.Screen name="Sources" component={SourcesScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Tabs">
+        {() =>
+          isDesktop ? (
+            <WebLayout>
+              <TabNavigator />
+            </WebLayout>
+          ) : (
+            <TabNavigator />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name="FlashCard">
+        {(props) =>
+          isDesktop ? (
+            <WebLayout>
+              <FlashCardScreen {...(props as any)} />
+            </WebLayout>
+          ) : (
+            <FlashCardScreen {...(props as any)} />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name="Quiz">
+        {(props) =>
+          isDesktop ? (
+            <WebLayout>
+              <QuizScreen {...(props as any)} />
+            </WebLayout>
+          ) : (
+            <QuizScreen {...(props as any)} />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name="QuizResult">
+        {(props) =>
+          isDesktop ? (
+            <WebLayout>
+              <QuizResultScreen {...(props as any)} />
+            </WebLayout>
+          ) : (
+            <QuizResultScreen {...(props as any)} />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name="GuideDetail">
+        {(props) =>
+          isDesktop ? (
+            <WebLayout>
+              <GuideDetailScreen {...(props as any)} />
+            </WebLayout>
+          ) : (
+            <GuideDetailScreen {...(props as any)} />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name="MissedQuestions">
+        {(props) =>
+          isDesktop ? (
+            <WebLayout>
+              <MissedQuestionsScreen {...(props as any)} />
+            </WebLayout>
+          ) : (
+            <MissedQuestionsScreen {...(props as any)} />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name="Sources">
+        {(props) =>
+          isDesktop ? (
+            <WebLayout>
+              <SourcesScreen {...(props as any)} />
+            </WebLayout>
+          ) : (
+            <SourcesScreen {...(props as any)} />
+          )
+        }
+      </Stack.Screen>
+      <Stack.Screen name="Settings">
+        {(props) =>
+          isDesktop ? (
+            <WebLayout>
+              <SettingsScreen {...(props as any)} />
+            </WebLayout>
+          ) : (
+            <SettingsScreen {...(props as any)} />
+          )
+        }
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }

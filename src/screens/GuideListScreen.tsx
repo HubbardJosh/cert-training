@@ -24,6 +24,8 @@ import { UserProgress } from "../types";
 import { useCert } from "../context/CertContext";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
+import { useBreakpoint } from "../hooks/useBreakpoint";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -32,6 +34,7 @@ export default function GuideListScreen() {
   const { certMeta } = useCert();
   const { guides: allGuides } = useCertData();
   const { colors } = useTheme();
+  const { isDesktop } = useBreakpoint();
   const styles = makeStyles(colors);
   const DOMAIN_META = getDomainMeta(colors);
   const [search, setSearch] = useState("");
@@ -67,206 +70,222 @@ export default function GuideListScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Text style={styles.title}>Service Guides</Text>
-        <Text style={styles.subtitle}>
-          {allGuides.length} in-depth guides for {certMeta.name}
-        </Text>
-
-        {/* Search */}
-        <View style={styles.searchRow}>
-          <Ionicons
-            name="search"
-            size={16}
-            color={colors.textMuted}
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search services…"
-            placeholderTextColor={colors.textMuted}
-            value={search}
-            onChangeText={setSearch}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          {search.length > 0 && (
-            <TouchableOpacity onPress={() => setSearch("")}>
-              <Ionicons
-                name="close-circle"
-                size={16}
-                color={colors.textMuted}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Domain filter */}
+      <WebContainer>
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterRow}
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
         >
-          {availableDomains.map((d) => {
-            const meta = d === "all" ? null : DOMAIN_META[d];
-            const color = meta ? meta.color : colors.primary;
-            const label = meta ? meta.label : "All";
-            return (
-              <TouchableOpacity
-                key={d}
-                style={[
-                  styles.chip,
-                  domain === d
-                    ? { backgroundColor: color, borderColor: color }
-                    : { borderColor: color + "55" },
-                ]}
-                onPress={() => setDomain(d)}
-              >
-                <Text
-                  style={[
-                    styles.chipText,
-                    { color: domain === d ? colors.secondary : color },
-                  ]}
-                >
-                  {label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+          <Text style={styles.title}>Service Guides</Text>
+          <Text style={styles.subtitle}>
+            {allGuides.length} in-depth guides for {certMeta.name}
+          </Text>
 
-        {/* Missed questions button */}
-        {missedCount > 0 && (
-          <TouchableOpacity
-            style={styles.missedBtn}
-            onPress={() =>
-              navigation.navigate("MissedQuestions", { source: "guide" })
-            }
-            activeOpacity={0.8}
-          >
-            <Ionicons name="close-circle" size={15} color={colors.incorrect} />
-            <Text style={styles.missedBtnText}>
-              Review {missedCount} missed question
-              {missedCount !== 1 ? "s" : ""}
-            </Text>
+          {/* Search */}
+          <View style={styles.searchRow}>
             <Ionicons
-              name="chevron-forward"
-              size={14}
-              color={colors.incorrect + "99"}
+              name="search"
+              size={16}
+              color={colors.textMuted}
+              style={styles.searchIcon}
             />
-          </TouchableOpacity>
-        )}
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search services…"
+              placeholderTextColor={colors.textMuted}
+              value={search}
+              onChangeText={setSearch}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {search.length > 0 && (
+              <TouchableOpacity onPress={() => setSearch("")}>
+                <Ionicons
+                  name="close-circle"
+                  size={16}
+                  color={colors.textMuted}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
 
-        {/* Results count */}
-        <Text style={styles.resultCount}>
-          {filtered.length} guide{filtered.length !== 1 ? "s" : ""}
-        </Text>
+          {/* Domain filter */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.filterRow}
+          >
+            {availableDomains.map((d) => {
+              const meta = d === "all" ? null : DOMAIN_META[d];
+              const color = meta ? meta.color : colors.primary;
+              const label = meta ? meta.label : "All";
+              return (
+                <TouchableOpacity
+                  key={d}
+                  style={[
+                    styles.chip,
+                    domain === d
+                      ? { backgroundColor: color, borderColor: color }
+                      : { borderColor: color + "55" },
+                  ]}
+                  onPress={() => setDomain(d)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      { color: domain === d ? colors.secondary : color },
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
 
-        {/* Guide cards */}
-        {filtered.map((guide) => {
-          const meta = DOMAIN_META[guide.domain] ?? {
-            label: guide.domain,
-            color: colors.primary,
-            weight: "",
-            icon: "ellipse-outline",
-          };
-          const gp = progress?.guideProgress[guide.id];
-          const sectionsRead = gp?.sectionsRead.length ?? 0;
-          const isCompleted = gp?.completed ?? false;
-          const isViewed = !!gp;
-          return (
+          {/* Missed questions button */}
+          {missedCount > 0 && (
             <TouchableOpacity
-              key={guide.id}
-              style={[styles.card, isCompleted && styles.cardCompleted]}
+              style={styles.missedBtn}
               onPress={() =>
-                navigation.navigate("GuideDetail", { id: guide.id })
+                navigation.navigate("MissedQuestions", { source: "guide" })
               }
               activeOpacity={0.8}
             >
-              <View style={styles.cardHeader}>
-                <View
-                  style={[
-                    styles.iconBox,
-                    { backgroundColor: meta.color + "22" },
-                  ]}
-                >
-                  <Ionicons
-                    name={meta.icon as any}
-                    size={18}
-                    color={meta.color}
-                  />
-                </View>
-                <View style={styles.cardInfo}>
-                  <Text style={styles.cardTitle}>{guide.service}</Text>
-                  <Text style={styles.cardTagline} numberOfLines={1}>
-                    {guide.tagline}
-                  </Text>
-                </View>
-                {isCompleted ? (
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={colors.correct}
-                  />
-                ) : isViewed ? (
-                  <Ionicons
-                    name="ellipse"
-                    size={10}
-                    color={colors.primary}
-                    style={{ marginRight: 3 }}
-                  />
-                ) : (
-                  <Ionicons
-                    name="chevron-forward"
-                    size={16}
-                    color={colors.textMuted}
-                  />
-                )}
-              </View>
-              <View style={styles.cardFooter}>
-                <View
-                  style={[
-                    styles.domainBadge,
-                    { backgroundColor: meta.color + "22" },
-                  ]}
-                >
-                  <Text style={[styles.domainText, { color: meta.color }]}>
-                    {meta.label}
-                  </Text>
-                </View>
-                {isViewed ? (
-                  <Text
-                    style={[
-                      styles.sectionCount,
-                      { color: isCompleted ? colors.correct : colors.primary },
-                    ]}
-                  >
-                    {sectionsRead}/{guide.sections.length} sections read
-                  </Text>
-                ) : (
-                  <Text style={styles.sectionCount}>
-                    {guide.sections.length} sections · {guide.keyFacts.length}{" "}
-                    key facts
-                  </Text>
-                )}
-              </View>
+              <Ionicons
+                name="close-circle"
+                size={15}
+                color={colors.incorrect}
+              />
+              <Text style={styles.missedBtnText}>
+                Review {missedCount} missed question
+                {missedCount !== 1 ? "s" : ""}
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={14}
+                color={colors.incorrect + "99"}
+              />
             </TouchableOpacity>
-          );
-        })}
+          )}
 
-        {filtered.length === 0 && (
-          <View style={styles.empty}>
-            <Ionicons name="search" size={40} color={colors.textMuted} />
-            <Text style={styles.emptyText}>No guides match your search</Text>
+          {/* Results count */}
+          <Text style={styles.resultCount}>
+            {filtered.length} guide{filtered.length !== 1 ? "s" : ""}
+          </Text>
+
+          {/* Guide cards */}
+          <View style={isDesktop ? styles.twoColGrid : undefined}>
+            {filtered.map((guide) => {
+              const meta = DOMAIN_META[guide.domain] ?? {
+                label: guide.domain,
+                color: colors.primary,
+                weight: "",
+                icon: "ellipse-outline",
+              };
+              const gp = progress?.guideProgress[guide.id];
+              const sectionsRead = gp?.sectionsRead.length ?? 0;
+              const isCompleted = gp?.completed ?? false;
+              const isViewed = !!gp;
+              return (
+                <TouchableOpacity
+                  key={guide.id}
+                  style={[
+                    styles.card,
+                    isCompleted && styles.cardCompleted,
+                    isDesktop && { flexBasis: "48%", flexGrow: 1 },
+                  ]}
+                  onPress={() =>
+                    navigation.navigate("GuideDetail", { id: guide.id })
+                  }
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.cardHeader}>
+                    <View
+                      style={[
+                        styles.iconBox,
+                        { backgroundColor: meta.color + "22" },
+                      ]}
+                    >
+                      <Ionicons
+                        name={meta.icon as any}
+                        size={18}
+                        color={meta.color}
+                      />
+                    </View>
+                    <View style={styles.cardInfo}>
+                      <Text style={styles.cardTitle}>{guide.service}</Text>
+                      <Text style={styles.cardTagline} numberOfLines={1}>
+                        {guide.tagline}
+                      </Text>
+                    </View>
+                    {isCompleted ? (
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={20}
+                        color={colors.correct}
+                      />
+                    ) : isViewed ? (
+                      <Ionicons
+                        name="ellipse"
+                        size={10}
+                        color={colors.primary}
+                        style={{ marginRight: 3 }}
+                      />
+                    ) : (
+                      <Ionicons
+                        name="chevron-forward"
+                        size={16}
+                        color={colors.textMuted}
+                      />
+                    )}
+                  </View>
+                  <View style={styles.cardFooter}>
+                    <View
+                      style={[
+                        styles.domainBadge,
+                        { backgroundColor: meta.color + "22" },
+                      ]}
+                    >
+                      <Text style={[styles.domainText, { color: meta.color }]}>
+                        {meta.label}
+                      </Text>
+                    </View>
+                    {isViewed ? (
+                      <Text
+                        style={[
+                          styles.sectionCount,
+                          {
+                            color: isCompleted
+                              ? colors.correct
+                              : colors.primary,
+                          },
+                        ]}
+                      >
+                        {sectionsRead}/{guide.sections.length} sections read
+                      </Text>
+                    ) : (
+                      <Text style={styles.sectionCount}>
+                        {guide.sections.length} sections ·{" "}
+                        {guide.keyFacts.length} key facts
+                      </Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
-        )}
 
-        <View style={{ height: 32 }} />
-      </ScrollView>
+          {filtered.length === 0 && (
+            <View style={styles.empty}>
+              <Ionicons name="search" size={40} color={colors.textMuted} />
+              <Text style={styles.emptyText}>No guides match your search</Text>
+            </View>
+          )}
+
+          <View style={{ height: 32 }} />
+        </ScrollView>
+      </WebContainer>
     </SafeAreaView>
   );
 }
@@ -342,6 +361,11 @@ function makeStyles(colors: ThemeColors) {
       marginBottom: spacing.sm,
     },
 
+    twoColGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: spacing.sm,
+    },
     card: {
       backgroundColor: colors.surface,
       borderRadius: radius.lg,

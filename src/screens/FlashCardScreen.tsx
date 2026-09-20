@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,10 +25,10 @@ import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
 
 type Route = RouteProp<RootStackParamList, "FlashCard">;
 
-const { width } = Dimensions.get("window");
 const CARD_HEIGHT = 380;
 
 function shuffle<T>(arr: T[]): T[] {
@@ -47,6 +47,7 @@ export default function FlashCardScreen() {
   const { certMeta } = useCert();
   const { flashcards } = useCertData();
   const { colors } = useTheme();
+  const { width } = useWindowDimensions();
   const DOMAIN_META = getDomainMeta(colors);
 
   const [cards, setCards] = useState<FlashCard[]>([]);
@@ -116,7 +117,7 @@ export default function FlashCardScreen() {
       setFlipped(false);
       setIndex(nextIndex);
     },
-    [index, cards.length, slideAnim],
+    [index, cards.length, slideAnim, width],
   );
 
   const markCard = useCallback(
@@ -197,211 +198,224 @@ export default function FlashCardScreen() {
         </View>
       </View>
 
-      {/* Progress bar */}
-      <View style={styles.progressBarBg}>
-        <View
-          style={[
-            styles.progressBarFill,
-            {
-              width: `${((index + 1) / cards.length) * 100}%`,
-              backgroundColor: meta.color,
-            },
-          ]}
-        />
-      </View>
+      <WebContainer style={{ flex: 1 }}>
+        {/* Progress bar */}
+        <View style={styles.progressBarBg}>
+          <View
+            style={[
+              styles.progressBarFill,
+              {
+                width: `${((index + 1) / cards.length) * 100}%`,
+                backgroundColor: meta.color,
+              },
+            ]}
+          />
+        </View>
 
-      {/* Card */}
-      <View style={styles.cardContainer}>
-        <Animated.View
-          style={[styles.cardSlide, { transform: [{ translateX: slideAnim }] }]}
-        >
-          <Animated.View style={[styles.cardInner, { opacity: fadeAnim }]}>
-            <TouchableOpacity
-              style={[
-                styles.card,
-                {
-                  borderColor: meta.color + "44",
-                  backgroundColor: flipped
-                    ? colors.surfaceElevated
-                    : colors.surface,
-                },
-              ]}
-              onPress={handleFlip}
-              activeOpacity={0.97}
-            >
-              {!flipped ? (
-                <>
-                  <View style={styles.cardTopRow}>
-                    <View
-                      style={[
-                        styles.serviceBadge,
-                        { backgroundColor: meta.color + "22" },
-                      ]}
-                    >
-                      <Ionicons
-                        name={meta.icon as any}
-                        size={14}
-                        color={meta.color}
-                      />
-                      <Text
-                        style={[styles.serviceBadgeText, { color: meta.color }]}
-                      >
-                        {currentCard.service}
-                      </Text>
-                    </View>
-                    <View
-                      style={[
-                        styles.diffBadge,
-                        {
-                          backgroundColor:
-                            currentCard.difficulty === "easy"
-                              ? colors.easy + "22"
-                              : currentCard.difficulty === "medium"
-                                ? colors.medium + "22"
-                                : colors.hard + "22",
-                        },
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.diffBadgeText,
-                          {
-                            color:
-                              currentCard.difficulty === "easy"
-                                ? colors.easy
-                                : currentCard.difficulty === "medium"
-                                  ? colors.medium
-                                  : colors.hard,
-                          },
-                        ]}
-                      >
-                        {currentCard.difficulty}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.cardBody}>
-                    <Ionicons
-                      name="help-circle-outline"
-                      size={32}
-                      color={meta.color}
-                      style={styles.cardIcon}
-                    />
-                    <AbbreviatedText
-                      text={currentCard.question}
-                      style={styles.questionText}
-                      center
-                    />
-                  </View>
-
-                  <View style={styles.cardFooter}>
-                    {cardStatus && (
+        {/* Card */}
+        <View style={styles.cardContainer}>
+          <Animated.View
+            style={[
+              styles.cardSlide,
+              { transform: [{ translateX: slideAnim }] },
+            ]}
+          >
+            <Animated.View style={[styles.cardInner, { opacity: fadeAnim }]}>
+              <TouchableOpacity
+                style={[
+                  styles.card,
+                  {
+                    borderColor: meta.color + "44",
+                    backgroundColor: flipped
+                      ? colors.surfaceElevated
+                      : colors.surface,
+                  },
+                ]}
+                onPress={handleFlip}
+                activeOpacity={0.97}
+              >
+                {!flipped ? (
+                  <>
+                    <View style={styles.cardTopRow}>
                       <View
                         style={[
-                          styles.statusIndicator,
-                          {
-                            backgroundColor:
-                              cardStatus === "known"
-                                ? colors.correct + "22"
-                                : colors.warning + "22",
-                          },
+                          styles.serviceBadge,
+                          { backgroundColor: meta.color + "22" },
                         ]}
                       >
                         <Ionicons
-                          name={
-                            cardStatus === "known"
-                              ? "checkmark-circle"
-                              : "refresh-circle"
-                          }
+                          name={meta.icon as any}
                           size={14}
-                          color={
-                            cardStatus === "known"
-                              ? colors.correct
-                              : colors.warning
-                          }
+                          color={meta.color}
                         />
                         <Text
                           style={[
-                            styles.statusText,
+                            styles.serviceBadgeText,
+                            { color: meta.color },
+                          ]}
+                        >
+                          {currentCard.service}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          styles.diffBadge,
+                          {
+                            backgroundColor:
+                              currentCard.difficulty === "easy"
+                                ? colors.easy + "22"
+                                : currentCard.difficulty === "medium"
+                                  ? colors.medium + "22"
+                                  : colors.hard + "22",
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.diffBadgeText,
                             {
                               color:
-                                cardStatus === "known"
-                                  ? colors.correct
-                                  : colors.warning,
+                                currentCard.difficulty === "easy"
+                                  ? colors.easy
+                                  : currentCard.difficulty === "medium"
+                                    ? colors.medium
+                                    : colors.hard,
                             },
                           ]}
                         >
-                          {cardStatus === "known" ? "Known" : "Learning"}
+                          {currentCard.difficulty}
                         </Text>
                       </View>
-                    )}
-                    <View style={styles.cardHint}>
+                    </View>
+
+                    <View style={styles.cardBody}>
                       <Ionicons
-                        name="hand-left-outline"
-                        size={14}
-                        color={colors.textMuted}
+                        name="help-circle-outline"
+                        size={32}
+                        color={meta.color}
+                        style={styles.cardIcon}
                       />
-                      <Text style={styles.hintText}>Tap to reveal answer</Text>
+                      <AbbreviatedText
+                        text={currentCard.question}
+                        style={styles.questionText}
+                        center
+                      />
                     </View>
-                  </View>
-                </>
-              ) : (
-                <ScrollView
-                  contentContainerStyle={styles.backContent}
-                  showsVerticalScrollIndicator={false}
-                >
-                  <View style={styles.cardTopRow}>
-                    <Text style={styles.answerLabel}>Answer</Text>
-                    <View
-                      style={[
-                        styles.serviceBadge,
-                        { backgroundColor: meta.color + "22" },
-                      ]}
-                    >
-                      <Text
-                        style={[styles.serviceBadgeText, { color: meta.color }]}
-                      >
-                        {currentCard.service}
-                      </Text>
-                    </View>
-                  </View>
 
-                  <AbbreviatedText
-                    text={currentCard.answer}
-                    style={styles.answerText}
-                  />
-
-                  <View style={styles.keyPointsSection}>
-                    <Text style={styles.keyPointsLabel}>Key Points</Text>
-                    {currentCard.keyPoints.map((pt, i) => (
-                      <View key={i} style={styles.keyPoint}>
+                    <View style={styles.cardFooter}>
+                      {cardStatus && (
                         <View
                           style={[
-                            styles.bullet,
-                            { backgroundColor: meta.color },
+                            styles.statusIndicator,
+                            {
+                              backgroundColor:
+                                cardStatus === "known"
+                                  ? colors.correct + "22"
+                                  : colors.warning + "22",
+                            },
                           ]}
+                        >
+                          <Ionicons
+                            name={
+                              cardStatus === "known"
+                                ? "checkmark-circle"
+                                : "refresh-circle"
+                            }
+                            size={14}
+                            color={
+                              cardStatus === "known"
+                                ? colors.correct
+                                : colors.warning
+                            }
+                          />
+                          <Text
+                            style={[
+                              styles.statusText,
+                              {
+                                color:
+                                  cardStatus === "known"
+                                    ? colors.correct
+                                    : colors.warning,
+                              },
+                            ]}
+                          >
+                            {cardStatus === "known" ? "Known" : "Learning"}
+                          </Text>
+                        </View>
+                      )}
+                      <View style={styles.cardHint}>
+                        <Ionicons
+                          name="hand-left-outline"
+                          size={14}
+                          color={colors.textMuted}
                         />
-                        <AbbreviatedText
-                          text={pt}
-                          style={styles.keyPointText}
-                        />
+                        <Text style={styles.hintText}>
+                          Tap to reveal answer
+                        </Text>
                       </View>
-                    ))}
-                  </View>
+                    </View>
+                  </>
+                ) : (
+                  <ScrollView
+                    contentContainerStyle={styles.backContent}
+                    showsVerticalScrollIndicator={false}
+                  >
+                    <View style={styles.cardTopRow}>
+                      <Text style={styles.answerLabel}>Answer</Text>
+                      <View
+                        style={[
+                          styles.serviceBadge,
+                          { backgroundColor: meta.color + "22" },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.serviceBadgeText,
+                            { color: meta.color },
+                          ]}
+                        >
+                          {currentCard.service}
+                        </Text>
+                      </View>
+                    </View>
 
-                  <View style={styles.tagRow}>
-                    {currentCard.tags.map((tag) => (
-                      <View key={tag} style={styles.tag}>
-                        <Text style={styles.tagText}>{tag}</Text>
-                      </View>
-                    ))}
-                  </View>
-                </ScrollView>
-              )}
-            </TouchableOpacity>
+                    <AbbreviatedText
+                      text={currentCard.answer}
+                      style={styles.answerText}
+                    />
+
+                    <View style={styles.keyPointsSection}>
+                      <Text style={styles.keyPointsLabel}>Key Points</Text>
+                      {currentCard.keyPoints.map((pt, i) => (
+                        <View key={i} style={styles.keyPoint}>
+                          <View
+                            style={[
+                              styles.bullet,
+                              { backgroundColor: meta.color },
+                            ]}
+                          />
+                          <AbbreviatedText
+                            text={pt}
+                            style={styles.keyPointText}
+                          />
+                        </View>
+                      ))}
+                    </View>
+
+                    <View style={styles.tagRow}>
+                      {currentCard.tags.map((tag) => (
+                        <View key={tag} style={styles.tag}>
+                          <Text style={styles.tagText}>{tag}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </ScrollView>
+                )}
+              </TouchableOpacity>
+            </Animated.View>
           </Animated.View>
-        </Animated.View>
-      </View>
+        </View>
+      </WebContainer>
 
       {/* Controls */}
       <View style={styles.controls}>

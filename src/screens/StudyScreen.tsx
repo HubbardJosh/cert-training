@@ -21,6 +21,7 @@ import { Domain } from "../types";
 import { RootStackParamList } from "../navigation";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -60,170 +61,175 @@ export default function StudyScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Study Flashcards</Text>
-        <Text style={styles.subtitle}>
-          {filtered.length} card{filtered.length !== 1 ? "s" : ""} available
-        </Text>
-
-        {/* Domain filter */}
-        <Text style={styles.filterLabel}>Domain</Text>
+      <WebContainer>
         <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterRow}
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
         >
-          <FilterChip
-            label="All"
-            active={selectedDomain === "all"}
-            color={colors.primary}
-            onPress={() => setSelectedDomain("all")}
-            colors={colors}
-          />
-          {DOMAINS.map((d) => (
-            <FilterChip
-              key={d}
-              label={DOMAIN_META[d].label}
-              active={selectedDomain === d}
-              color={DOMAIN_META[d].color}
-              onPress={() => setSelectedDomain(d)}
-              colors={colors}
-            />
-          ))}
-        </ScrollView>
+          <Text style={styles.title}>Study Flashcards</Text>
+          <Text style={styles.subtitle}>
+            {filtered.length} card{filtered.length !== 1 ? "s" : ""} available
+          </Text>
 
-        {/* Difficulty filter */}
-        <Text style={styles.filterLabel}>Difficulty</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterRow}
-        >
-          {DIFFICULTIES.map((d) => (
-            <FilterChip
-              key={d}
-              label={
-                d === "all" ? "All" : d.charAt(0).toUpperCase() + d.slice(1)
-              }
-              active={selectedDifficulty === d}
-              color={
-                d === "all"
-                  ? colors.primary
-                  : d === "easy"
-                    ? colors.easy
-                    : d === "medium"
-                      ? colors.medium
-                      : colors.hard
-              }
-              onPress={() => setSelectedDifficulty(d)}
-              colors={colors}
-            />
-          ))}
-        </ScrollView>
-
-        {/* Start all button */}
-        {filtered.length > 0 && (
-          <TouchableOpacity
-            style={styles.startAllBtn}
-            onPress={() =>
-              navigation.navigate("FlashCard", {
-                domain: selectedDomain,
-                difficulty: selectedDifficulty,
-              })
-            }
+          {/* Domain filter */}
+          <Text style={styles.filterLabel}>Domain</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.filterRow}
           >
-            <Ionicons name="play-circle" size={20} color={colors.secondary} />
-            <Text style={styles.startAllText}>
-              Study All {filtered.length} Cards
-            </Text>
-          </TouchableOpacity>
-        )}
+            <FilterChip
+              label="All"
+              active={selectedDomain === "all"}
+              color={colors.primary}
+              onPress={() => setSelectedDomain("all")}
+              colors={colors}
+            />
+            {DOMAINS.map((d) => (
+              <FilterChip
+                key={d}
+                label={DOMAIN_META[d].label}
+                active={selectedDomain === d}
+                color={DOMAIN_META[d].color}
+                onPress={() => setSelectedDomain(d)}
+                colors={colors}
+              />
+            ))}
+          </ScrollView>
 
-        {/* Service groups */}
-        {serviceGroups.map(({ service, cards }) => {
-          const domain = cards[0].domain;
-          const meta = DOMAIN_META[domain];
-          return (
+          {/* Difficulty filter */}
+          <Text style={styles.filterLabel}>Difficulty</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.filterRow}
+          >
+            {DIFFICULTIES.map((d) => (
+              <FilterChip
+                key={d}
+                label={
+                  d === "all" ? "All" : d.charAt(0).toUpperCase() + d.slice(1)
+                }
+                active={selectedDifficulty === d}
+                color={
+                  d === "all"
+                    ? colors.primary
+                    : d === "easy"
+                      ? colors.easy
+                      : d === "medium"
+                        ? colors.medium
+                        : colors.hard
+                }
+                onPress={() => setSelectedDifficulty(d)}
+                colors={colors}
+              />
+            ))}
+          </ScrollView>
+
+          {/* Start all button */}
+          {filtered.length > 0 && (
             <TouchableOpacity
-              key={service}
-              style={styles.serviceCard}
+              style={styles.startAllBtn}
               onPress={() =>
                 navigation.navigate("FlashCard", {
                   domain: selectedDomain,
                   difficulty: selectedDifficulty,
-                  service,
                 })
               }
-              activeOpacity={0.8}
             >
-              <View style={styles.serviceHeader}>
-                <View
-                  style={[
-                    styles.serviceIcon,
-                    { backgroundColor: meta.color + "22" },
-                  ]}
-                >
+              <Ionicons name="play-circle" size={20} color={colors.secondary} />
+              <Text style={styles.startAllText}>
+                Study All {filtered.length} Cards
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {/* Service groups */}
+          {serviceGroups.map(({ service, cards }) => {
+            const domain = cards[0].domain;
+            const meta = DOMAIN_META[domain];
+            return (
+              <TouchableOpacity
+                key={service}
+                style={styles.serviceCard}
+                onPress={() =>
+                  navigation.navigate("FlashCard", {
+                    domain: selectedDomain,
+                    difficulty: selectedDifficulty,
+                    service,
+                  })
+                }
+                activeOpacity={0.8}
+              >
+                <View style={styles.serviceHeader}>
+                  <View
+                    style={[
+                      styles.serviceIcon,
+                      { backgroundColor: meta.color + "22" },
+                    ]}
+                  >
+                    <Ionicons
+                      name={meta.icon as any}
+                      size={18}
+                      color={meta.color}
+                    />
+                  </View>
+                  <View style={styles.serviceInfo}>
+                    <Text style={styles.serviceName}>{service}</Text>
+                    <Text style={styles.serviceMeta}>
+                      {meta.label} · {cards.length} card
+                      {cards.length !== 1 ? "s" : ""}
+                    </Text>
+                  </View>
+                  <View style={styles.difficultyDots}>
+                    {cards.map((c, i) => (
+                      <View
+                        key={i}
+                        style={[
+                          styles.dot,
+                          {
+                            backgroundColor:
+                              c.difficulty === "easy"
+                                ? colors.easy
+                                : c.difficulty === "medium"
+                                  ? colors.medium
+                                  : colors.hard,
+                          },
+                        ]}
+                      />
+                    ))}
+                  </View>
                   <Ionicons
-                    name={meta.icon as any}
-                    size={18}
-                    color={meta.color}
+                    name="chevron-forward"
+                    size={16}
+                    color={colors.textMuted}
                   />
                 </View>
-                <View style={styles.serviceInfo}>
-                  <Text style={styles.serviceName}>{service}</Text>
-                  <Text style={styles.serviceMeta}>
-                    {meta.label} · {cards.length} card
-                    {cards.length !== 1 ? "s" : ""}
-                  </Text>
+                <View style={styles.tagRow}>
+                  {cards
+                    .flatMap((c) => c.tags)
+                    .filter((t, i, arr) => arr.indexOf(t) === i)
+                    .slice(0, 5)
+                    .map((tag) => (
+                      <View key={tag} style={styles.tag}>
+                        <Text style={styles.tagText}>{tag}</Text>
+                      </View>
+                    ))}
                 </View>
-                <View style={styles.difficultyDots}>
-                  {cards.map((c, i) => (
-                    <View
-                      key={i}
-                      style={[
-                        styles.dot,
-                        {
-                          backgroundColor:
-                            c.difficulty === "easy"
-                              ? colors.easy
-                              : c.difficulty === "medium"
-                                ? colors.medium
-                                : colors.hard,
-                        },
-                      ]}
-                    />
-                  ))}
-                </View>
-                <Ionicons
-                  name="chevron-forward"
-                  size={16}
-                  color={colors.textMuted}
-                />
-              </View>
-              <View style={styles.tagRow}>
-                {cards
-                  .flatMap((c) => c.tags)
-                  .filter((t, i, arr) => arr.indexOf(t) === i)
-                  .slice(0, 5)
-                  .map((tag) => (
-                    <View key={tag} style={styles.tag}>
-                      <Text style={styles.tagText}>{tag}</Text>
-                    </View>
-                  ))}
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+              </TouchableOpacity>
+            );
+          })}
 
-        {filtered.length === 0 && (
-          <View style={styles.empty}>
-            <Ionicons name="search" size={40} color={colors.textMuted} />
-            <Text style={styles.emptyText}>No cards match these filters</Text>
-          </View>
-        )}
+          {filtered.length === 0 && (
+            <View style={styles.empty}>
+              <Ionicons name="search" size={40} color={colors.textMuted} />
+              <Text style={styles.emptyText}>No cards match these filters</Text>
+            </View>
+          )}
 
-        <View style={{ height: 32 }} />
-      </ScrollView>
+          <View style={{ height: 32 }} />
+        </ScrollView>
+      </WebContainer>
     </SafeAreaView>
   );
 }

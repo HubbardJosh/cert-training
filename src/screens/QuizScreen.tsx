@@ -37,6 +37,7 @@ import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
+import WebContainer from "../components/WebContainer";
 
 type Route = RouteProp<RootStackParamList, "Quiz">;
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -319,264 +320,272 @@ export default function QuizScreen() {
         </View>
       </View>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* Question */}
-        <View style={styles.questionCard}>
-          <View style={styles.questionMeta}>
-            <View
-              style={[
-                styles.serviceBadge,
-                { backgroundColor: meta.color + "22" },
-              ]}
-            >
-              <Text style={[styles.serviceBadgeText, { color: meta.color }]}>
-                {currentQ.service}
-              </Text>
-            </View>
-            <View
-              style={[
-                styles.diffBadge,
-                {
-                  backgroundColor:
-                    currentQ.difficulty === "easy"
-                      ? colors.easy + "22"
-                      : currentQ.difficulty === "medium"
-                        ? colors.medium + "22"
-                        : colors.hard + "22",
-                },
-              ]}
-            >
-              <Text
+      <WebContainer>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Question */}
+          <View style={styles.questionCard}>
+            <View style={styles.questionMeta}>
+              <View
                 style={[
-                  styles.diffBadgeText,
+                  styles.serviceBadge,
+                  { backgroundColor: meta.color + "22" },
+                ]}
+              >
+                <Text style={[styles.serviceBadgeText, { color: meta.color }]}>
+                  {currentQ.service}
+                </Text>
+              </View>
+              <View
+                style={[
+                  styles.diffBadge,
                   {
-                    color:
+                    backgroundColor:
                       currentQ.difficulty === "easy"
-                        ? colors.easy
+                        ? colors.easy + "22"
                         : currentQ.difficulty === "medium"
-                          ? colors.medium
-                          : colors.hard,
+                          ? colors.medium + "22"
+                          : colors.hard + "22",
                   },
                 ]}
               >
-                {currentQ.difficulty}
-              </Text>
-            </View>
-          </View>
-          <Text style={styles.questionText}>{currentQ.question}</Text>
-        </View>
-
-        {/* Options */}
-        {currentQ.options.map((option, idx) => {
-          const isSelected = selectedOptions.includes(idx);
-          const isCorrectOption = currentQ.correctIndices.includes(idx);
-          // missed = correct option the user didn't select (only meaningful for multi)
-          const isMissed =
-            submitted &&
-            currentQ.type === "multi" &&
-            isCorrectOption &&
-            !isSelected;
-
-          let bgColor = colors.surface;
-          let borderColor = colors.border;
-          let textColor = colors.textPrimary;
-          let icon: string | null = null;
-
-          if (submitted) {
-            if (isMissed) {
-              bgColor = colors.correct + "22";
-              borderColor = colors.correct;
-              textColor = colors.correct;
-              icon = "checkmark-circle";
-            } else if (isCorrectOption && isSelected) {
-              bgColor = colors.correct + "22";
-              borderColor = colors.correct;
-              textColor = colors.correct;
-              icon = "checkmark-circle";
-            } else if (!isCorrectOption && isSelected) {
-              bgColor = colors.incorrect + "22";
-              borderColor = colors.incorrect;
-              textColor = colors.incorrect;
-              icon = "close-circle";
-            } else if (isCorrectOption && currentQ.type === "single") {
-              // single-answer: always highlight the correct option green
-              bgColor = colors.correct + "22";
-              borderColor = colors.correct;
-              textColor = colors.correct;
-              icon = "checkmark-circle";
-            }
-          } else if (isSelected) {
-            bgColor = colors.primary + "22";
-            borderColor = colors.primary;
-          }
-
-          const checkboxColor = isMissed
-            ? colors.correct
-            : isCorrectOption && isSelected
-              ? colors.correct
-              : isSelected && !isCorrectOption
-                ? colors.incorrect
-                : isCorrectOption && currentQ.type === "single" && submitted
-                  ? colors.correct
-                  : undefined;
-
-          const showInnerRing =
-            currentQ.type === "multi" && isSelected && submitted;
-
-          return (
-            <TouchableOpacity
-              key={idx}
-              style={[styles.option, { backgroundColor: bgColor, borderColor }]}
-              onPress={() => toggleOption(idx)}
-              disabled={submitted}
-              activeOpacity={0.8}
-            >
-              {showInnerRing && (
-                <View
-                  style={[styles.innerRing, { borderColor: "#F5A623CC" }]}
-                  pointerEvents="none"
-                />
-              )}
-              <View style={styles.optionLeft}>
-                <View
+                <Text
                   style={[
-                    currentQ.type === "single" ? styles.radio : styles.checkbox,
-                    isSelected && !submitted && { borderColor: colors.primary },
-                    checkboxColor && submitted
-                      ? {
-                          borderColor: checkboxColor,
-                          backgroundColor: isMissed
-                            ? "transparent"
-                            : checkboxColor,
-                        }
-                      : undefined,
+                    styles.diffBadgeText,
+                    {
+                      color:
+                        currentQ.difficulty === "easy"
+                          ? colors.easy
+                          : currentQ.difficulty === "medium"
+                            ? colors.medium
+                            : colors.hard,
+                    },
                   ]}
                 >
-                  {(isSelected ||
-                    (submitted &&
-                      isCorrectOption &&
-                      (currentQ.type === "single" || isSelected))) && (
-                    <View
-                      style={[
-                        currentQ.type === "single"
-                          ? styles.radioDot
-                          : styles.checkMark,
-                        submitted
-                          ? { backgroundColor: colors.textPrimary }
-                          : { backgroundColor: colors.primary },
-                      ]}
-                    />
-                  )}
-                </View>
-              </View>
-              <Text style={{ ...styles.optionText, color: textColor }}>
-                {option}
-              </Text>
-              {submitted && icon && (
-                <Ionicons
-                  name={icon as any}
-                  size={20}
-                  color={
-                    isMissed
-                      ? colors.correct
-                      : isCorrectOption && isSelected
-                        ? colors.correct
-                        : isCorrectOption && currentQ.type === "single"
-                          ? colors.correct
-                          : colors.incorrect
-                  }
-                />
-              )}
-            </TouchableOpacity>
-          );
-        })}
-
-        {/* Explanation */}
-        {submitted && (
-          <View
-            style={[
-              styles.explanationCard,
-              {
-                borderColor: isCorrect
-                  ? colors.correct + "55"
-                  : colors.incorrect + "55",
-              },
-            ]}
-          >
-            <View style={styles.explanationHeader}>
-              <Ionicons
-                name={isCorrect ? "checkmark-circle" : "close-circle"}
-                size={22}
-                color={isCorrect ? colors.correct : colors.incorrect}
-              />
-              <Text
-                style={[
-                  styles.explanationTitle,
-                  { color: isCorrect ? colors.correct : colors.incorrect },
-                ]}
-              >
-                {isCorrect ? "Correct!" : "Incorrect"}
-              </Text>
-            </View>
-
-            {!isCorrect &&
-              currentQ.optionExplanations &&
-              selectedOptions
-                .filter((idx) => !currentQ.correctIndices.includes(idx))
-                .map((idx) => (
-                  <View key={idx} style={styles.wrongReasonBox}>
-                    <View style={styles.wrongReasonHeader}>
-                      <Ionicons
-                        name="close-circle"
-                        size={14}
-                        color={colors.incorrect}
-                      />
-                      <AbbreviatedText
-                        text={currentQ.options[idx]}
-                        style={styles.wrongReasonLabel}
-                      />
-                    </View>
-                    <AbbreviatedText
-                      text={currentQ.optionExplanations![idx]}
-                      style={styles.wrongReasonText}
-                    />
-                  </View>
-                ))}
-
-            <View style={styles.correctReasonBox}>
-              <View style={styles.explanationSubHeader}>
-                <Ionicons
-                  name="bulb-outline"
-                  size={15}
-                  color={colors.correct}
-                />
-                <Text style={styles.explanationSubTitle}>
-                  {isCorrect
-                    ? "Why this is correct"
-                    : "Why the correct answer is right"}
+                  {currentQ.difficulty}
                 </Text>
               </View>
-              <AbbreviatedText
-                text={currentQ.explanation}
-                style={styles.explanationText}
-              />
             </View>
-
-            <View style={styles.tagRow}>
-              {currentQ.tags.map((tag) => (
-                <View key={tag} style={styles.tag}>
-                  <Text style={styles.tagText}>{tag}</Text>
-                </View>
-              ))}
-            </View>
+            <Text style={styles.questionText}>{currentQ.question}</Text>
           </View>
-        )}
 
-        <View style={{ height: 16 }} />
-      </ScrollView>
+          {/* Options */}
+          {currentQ.options.map((option, idx) => {
+            const isSelected = selectedOptions.includes(idx);
+            const isCorrectOption = currentQ.correctIndices.includes(idx);
+            // missed = correct option the user didn't select (only meaningful for multi)
+            const isMissed =
+              submitted &&
+              currentQ.type === "multi" &&
+              isCorrectOption &&
+              !isSelected;
+
+            let bgColor = colors.surface;
+            let borderColor = colors.border;
+            let textColor = colors.textPrimary;
+            let icon: string | null = null;
+
+            if (submitted) {
+              if (isMissed) {
+                bgColor = colors.correct + "22";
+                borderColor = colors.correct;
+                textColor = colors.correct;
+                icon = "checkmark-circle";
+              } else if (isCorrectOption && isSelected) {
+                bgColor = colors.correct + "22";
+                borderColor = colors.correct;
+                textColor = colors.correct;
+                icon = "checkmark-circle";
+              } else if (!isCorrectOption && isSelected) {
+                bgColor = colors.incorrect + "22";
+                borderColor = colors.incorrect;
+                textColor = colors.incorrect;
+                icon = "close-circle";
+              } else if (isCorrectOption && currentQ.type === "single") {
+                // single-answer: always highlight the correct option green
+                bgColor = colors.correct + "22";
+                borderColor = colors.correct;
+                textColor = colors.correct;
+                icon = "checkmark-circle";
+              }
+            } else if (isSelected) {
+              bgColor = colors.primary + "22";
+              borderColor = colors.primary;
+            }
+
+            const checkboxColor = isMissed
+              ? colors.correct
+              : isCorrectOption && isSelected
+                ? colors.correct
+                : isSelected && !isCorrectOption
+                  ? colors.incorrect
+                  : isCorrectOption && currentQ.type === "single" && submitted
+                    ? colors.correct
+                    : undefined;
+
+            const showInnerRing =
+              currentQ.type === "multi" && isSelected && submitted;
+
+            return (
+              <TouchableOpacity
+                key={idx}
+                style={[
+                  styles.option,
+                  { backgroundColor: bgColor, borderColor },
+                ]}
+                onPress={() => toggleOption(idx)}
+                disabled={submitted}
+                activeOpacity={0.8}
+              >
+                {showInnerRing && (
+                  <View
+                    style={[styles.innerRing, { borderColor: "#F5A623CC" }]}
+                    pointerEvents="none"
+                  />
+                )}
+                <View style={styles.optionLeft}>
+                  <View
+                    style={[
+                      currentQ.type === "single"
+                        ? styles.radio
+                        : styles.checkbox,
+                      isSelected &&
+                        !submitted && { borderColor: colors.primary },
+                      checkboxColor && submitted
+                        ? {
+                            borderColor: checkboxColor,
+                            backgroundColor: isMissed
+                              ? "transparent"
+                              : checkboxColor,
+                          }
+                        : undefined,
+                    ]}
+                  >
+                    {(isSelected ||
+                      (submitted &&
+                        isCorrectOption &&
+                        (currentQ.type === "single" || isSelected))) && (
+                      <View
+                        style={[
+                          currentQ.type === "single"
+                            ? styles.radioDot
+                            : styles.checkMark,
+                          submitted
+                            ? { backgroundColor: colors.textPrimary }
+                            : { backgroundColor: colors.primary },
+                        ]}
+                      />
+                    )}
+                  </View>
+                </View>
+                <Text style={{ ...styles.optionText, color: textColor }}>
+                  {option}
+                </Text>
+                {submitted && icon && (
+                  <Ionicons
+                    name={icon as any}
+                    size={20}
+                    color={
+                      isMissed
+                        ? colors.correct
+                        : isCorrectOption && isSelected
+                          ? colors.correct
+                          : isCorrectOption && currentQ.type === "single"
+                            ? colors.correct
+                            : colors.incorrect
+                    }
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          })}
+
+          {/* Explanation */}
+          {submitted && (
+            <View
+              style={[
+                styles.explanationCard,
+                {
+                  borderColor: isCorrect
+                    ? colors.correct + "55"
+                    : colors.incorrect + "55",
+                },
+              ]}
+            >
+              <View style={styles.explanationHeader}>
+                <Ionicons
+                  name={isCorrect ? "checkmark-circle" : "close-circle"}
+                  size={22}
+                  color={isCorrect ? colors.correct : colors.incorrect}
+                />
+                <Text
+                  style={[
+                    styles.explanationTitle,
+                    { color: isCorrect ? colors.correct : colors.incorrect },
+                  ]}
+                >
+                  {isCorrect ? "Correct!" : "Incorrect"}
+                </Text>
+              </View>
+
+              {!isCorrect &&
+                currentQ.optionExplanations &&
+                selectedOptions
+                  .filter((idx) => !currentQ.correctIndices.includes(idx))
+                  .map((idx) => (
+                    <View key={idx} style={styles.wrongReasonBox}>
+                      <View style={styles.wrongReasonHeader}>
+                        <Ionicons
+                          name="close-circle"
+                          size={14}
+                          color={colors.incorrect}
+                        />
+                        <AbbreviatedText
+                          text={currentQ.options[idx]}
+                          style={styles.wrongReasonLabel}
+                        />
+                      </View>
+                      <AbbreviatedText
+                        text={currentQ.optionExplanations![idx]}
+                        style={styles.wrongReasonText}
+                      />
+                    </View>
+                  ))}
+
+              <View style={styles.correctReasonBox}>
+                <View style={styles.explanationSubHeader}>
+                  <Ionicons
+                    name="bulb-outline"
+                    size={15}
+                    color={colors.correct}
+                  />
+                  <Text style={styles.explanationSubTitle}>
+                    {isCorrect
+                      ? "Why this is correct"
+                      : "Why the correct answer is right"}
+                  </Text>
+                </View>
+                <AbbreviatedText
+                  text={currentQ.explanation}
+                  style={styles.explanationText}
+                />
+              </View>
+
+              <View style={styles.tagRow}>
+                {currentQ.tags.map((tag) => (
+                  <View key={tag} style={styles.tag}>
+                    <Text style={styles.tagText}>{tag}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          <View style={{ height: 16 }} />
+        </ScrollView>
+      </WebContainer>
 
       {/* Bottom controls */}
       <View style={styles.bottomBar}>

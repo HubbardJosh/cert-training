@@ -220,3 +220,7 @@ export const fontSize = {
   xxl: 24,
   xxxl: 30,
 };
+
+export const WEB_MAX_WIDTH = 1100;
+export const WEB_SIDEBAR_WIDTH = 220;
+export const DESKTOP_BREAKPOINT = 768;
