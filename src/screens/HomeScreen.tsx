@@ -439,7 +439,7 @@ export default function HomeScreen() {
             </>
           )}
 
-          {/* Exam tips + Sources — cert mode only */}
+          {/* Exam tips — cert mode only */}
           {!isTopicMode && (
             <>
               <Text style={styles.sectionTitle}>Exam Tips</Text>
@@ -454,27 +454,27 @@ export default function HomeScreen() {
                   <Text style={styles.tipText}>{tip}</Text>
                 </View>
               ))}
-              <TouchableOpacity
-                style={styles.sourcesBtn}
-                onPress={() => navigation.navigate("Sources")}
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name="document-text-outline"
-                  size={15}
-                  color={colors.textMuted}
-                />
-                <Text style={styles.sourcesBtnText}>
-                  View sources & references
-                </Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={14}
-                  color={colors.textMuted}
-                />
-              </TouchableOpacity>
             </>
           )}
+
+          {/* Sources link — always shown */}
+          <TouchableOpacity
+            style={styles.sourcesBtn}
+            onPress={() => navigation.navigate("Sources")}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="document-text-outline"
+              size={15}
+              color={colors.textMuted}
+            />
+            <Text style={styles.sourcesBtnText}>View sources & references</Text>
+            <Ionicons
+              name="chevron-forward"
+              size={14}
+              color={colors.textMuted}
+            />
+          </TouchableOpacity>
 
           <View style={{ height: 32 }} />
         </ScrollView>

@@ -257,7 +257,39 @@ Hard rules:
 
 ---
 
-## Step 9 — Write the topic barrel index
+## Step 9 — Write the sources file
+
+`src/data/topics/<slug>/sources.ts`:
+
+```ts
+import { Source } from "../../sources";
+
+// Source: <primary url fetched in Step 1>
+export const sources: Source[] = [
+  {
+    title: "<Official doc page title>",
+    url: "<exact URL fetched>",
+    topics: [
+      // Bullet-point list of specific facts, limits, and concepts covered by this page
+      // that informed the guides, flashcards, and quiz questions
+      "...",
+    ],
+  },
+  // One entry per documentation page fetched in Step 1
+];
+```
+
+Rules:
+
+- One entry per distinct documentation page that was fetched.
+- `topics` bullets should be specific — list the actual facts, limits, and API behaviors from that page that appear in the content (not generic descriptions of what the page covers).
+- Include the primary service guide, any sub-topic pages (FIFO, security, DLQ, etc.), and any cross-service integration pages referenced.
+- URLs must be exact — copy them from the WebFetch calls in Step 1.
+- If a page was unreachable, still include it with a note: `"// TODO: verify — page unreachable during authoring"` as the first topic bullet.
+
+---
+
+## Step 10 — Write the topic barrel index
 
 `src/data/topics/<slug>/index.ts`:
 
@@ -265,11 +297,12 @@ Hard rules:
 export { allGuides } from "./guides";
 export { flashcards } from "./flashcards";
 export { quizQuestions } from "./quizQuestions";
+export { sources } from "./sources";
 ```
 
 ---
 
-## Step 10 — Register in TopicContext
+## Step 11 — Register in TopicContext
 
 Edit `src/context/TopicContext.tsx` — add an entry to `TOPIC_META`:
 
@@ -288,11 +321,11 @@ Edit `src/context/TopicContext.tsx` — add an entry to `TOPIC_META`:
 
 ---
 
-## Step 11 — Wire up in useTopicData
+## Step 12 — Wire up in useTopicData
 
 Edit `src/context/useTopicData.ts`:
 
-1. Add three imports:
+1. Add four imports:
 
    ```ts
    import { allGuides as <camelSlug>Guides } from "../data/topics/<slug>/guides";
@@ -312,7 +345,28 @@ Edit `src/context/useTopicData.ts`:
 
 ---
 
-## Step 12 — Verify
+## Step 13 — Register sources in SourcesScreen
+
+Edit `src/screens/SourcesScreen.tsx`:
+
+1. Add an import for the new topic's sources:
+
+   ```ts
+   import { sources as <camelSlug>Sources } from "../data/topics/<slug>/sources";
+   ```
+
+2. Add an entry to the `TOPIC_SOURCES` map inside the component:
+
+   ```ts
+   const TOPIC_SOURCES: Record<string, Source[]> = {
+     // existing entries...
+     "<id>": <camelSlug>Sources,
+   };
+   ```
+
+---
+
+## Step 14 — Verify
 
 ```bash
 npx tsc --noEmit 2>&1
@@ -329,13 +383,14 @@ Do not skip this step.
 
 ---
 
-## Step 13 — Format and report
+## Step 15 — Format and report
 
 ```bash
 npx prettier --write \
   "src/data/topics/<slug>/**/*.ts" \
   src/context/TopicContext.tsx \
-  src/context/useTopicData.ts
+  src/context/useTopicData.ts \
+  src/screens/SourcesScreen.tsx
 ```
 
 Report:
@@ -344,5 +399,6 @@ Report:
 - Number of guide files created and total sections written
 - Total flashcard count
 - Total quiz question count
+- Sources file: number of documentation pages listed
 - Primary sources fetched
 - Any areas where you had to fall back to model knowledge (flag these for verification)

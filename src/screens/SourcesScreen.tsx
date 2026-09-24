@@ -14,15 +14,38 @@ import { spacing, radius, fontSize, ThemeColors } from "../utils/theme";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
 import { useCert } from "../context/CertContext";
+import { useTopic } from "../context/TopicContext";
 import { SOURCES } from "../data/sources";
+import { sources as agentcoreSources } from "../data/topics/bedrock-agentcore/sources";
+import { sources as amazonSqsSources } from "../data/topics/amazon-sqs/sources";
+import { Source } from "../data/sources";
 
 export default function SourcesScreen() {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const { certId, certMeta } = useCert();
+  const { topicId, topicMeta } = useTopic();
+  const isTopicMode = topicId !== null;
   const styles = makeStyles(colors);
 
-  const certSources = SOURCES.find((s) => s.certId === certId);
+  const TOPIC_SOURCES: Record<string, Source[]> = {
+    "bedrock-agentcore": agentcoreSources,
+    "amazon-sqs": amazonSqsSources,
+  };
+
+  const activeSources: Source[] | undefined = isTopicMode
+    ? TOPIC_SOURCES[topicId!]
+    : SOURCES.find((s) => s.certId === certId)?.sources;
+
+  const displayName = isTopicMode
+    ? (topicMeta?.name ?? "Topic")
+    : certMeta.name;
+  const accentColor = isTopicMode
+    ? (topicMeta?.color ?? colors.primary)
+    : colors.primary;
+  const noticeText = isTopicMode
+    ? "All guide content and quiz questions for this topic are verified against the official documentation pages listed below."
+    : "All guide content and quiz questions for this certification are verified against the official AWS documentation pages listed below.";
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
@@ -35,7 +58,7 @@ export default function SourcesScreen() {
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={styles.title}>Sources</Text>
-          <Text style={styles.subtitle}>{certMeta.name}</Text>
+          <Text style={styles.subtitle}>{displayName}</Text>
         </View>
       </View>
 
@@ -51,21 +74,17 @@ export default function SourcesScreen() {
               size={16}
               color={colors.info}
             />
-            <Text style={styles.noticeText}>
-              All guide content and quiz questions for this certification are
-              verified against the official AWS documentation pages listed
-              below.
-            </Text>
+            <Text style={styles.noticeText}>{noticeText}</Text>
           </View>
 
-          {certSources ? (
-            certSources.sources.map((source, i) => (
+          {activeSources && activeSources.length > 0 ? (
+            activeSources.map((source, i) => (
               <View key={i} style={styles.card}>
                 <View style={styles.cardHeader}>
                   <Ionicons
                     name="document-text-outline"
                     size={18}
-                    color={colors.primary}
+                    color={accentColor}
                   />
                   <Text style={styles.cardTitle}>{source.title}</Text>
                 </View>
@@ -76,7 +95,7 @@ export default function SourcesScreen() {
                       <View
                         style={[
                           styles.topicDot,
-                          { backgroundColor: colors.primary },
+                          { backgroundColor: accentColor },
                         ]}
                       />
                       <Text style={styles.topicText}>{topic}</Text>
@@ -89,12 +108,11 @@ export default function SourcesScreen() {
                   onPress={() => Linking.openURL(source.url)}
                   activeOpacity={0.7}
                 >
-                  <Ionicons
-                    name="open-outline"
-                    size={13}
-                    color={colors.primary}
-                  />
-                  <Text style={styles.urlText} numberOfLines={1}>
+                  <Ionicons name="open-outline" size={13} color={accentColor} />
+                  <Text
+                    style={[styles.urlText, { color: accentColor }]}
+                    numberOfLines={1}
+                  >
                     {source.url}
                   </Text>
                 </TouchableOpacity>
