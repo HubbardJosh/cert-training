@@ -25,6 +25,7 @@ import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
 import { useTopic } from "../context/TopicContext";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
+import ScreenHeader from "../components/ScreenHeader";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -111,6 +112,7 @@ export default function QuizMenuScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
+      <ScreenHeader />
       <WebContainer>
         <ScrollView
           style={styles.scroll}

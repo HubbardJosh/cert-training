@@ -28,6 +28,7 @@ import { useCert } from "../context/CertContext";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
+import ScreenHeader from "../components/ScreenHeader";
 import { useBreakpoint } from "../hooks/useBreakpoint";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -66,6 +67,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
+      <ScreenHeader />
       <WebContainer>
         <ScrollView
           style={styles.scroll}
@@ -73,30 +75,8 @@ export default function HomeScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.greeting}>{certMeta.name}</Text>
-              <Text style={styles.subtitle}>{certMeta.fullName}</Text>
-            </View>
-            <TouchableOpacity
-              style={styles.badge}
-              onPress={() => navigation.navigate("Settings")}
-            >
-              <Ionicons
-                name="settings-outline"
-                size={20}
-                color={colors.primary}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.badge, { marginLeft: spacing.xs }]}
-              onPress={() => navigation.navigate("CertSelect")}
-            >
-              <Ionicons
-                name="swap-horizontal"
-                size={22}
-                color={colors.primary}
-              />
-            </TouchableOpacity>
+            <Text style={styles.greeting}>{certMeta.name}</Text>
+            <Text style={styles.subtitle}>{certMeta.fullName}</Text>
           </View>
 
           {/* Exam info banner */}
@@ -370,9 +350,6 @@ function makeStyles(colors: ThemeColors) {
     content: { padding: spacing.md },
 
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
       marginBottom: spacing.md,
     },
     greeting: {
@@ -385,15 +362,6 @@ function makeStyles(colors: ThemeColors) {
       color: colors.textSecondary,
       marginTop: 2,
     },
-    badge: {
-      width: 44,
-      height: 44,
-      borderRadius: radius.full,
-      backgroundColor: colors.primary + "22",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-
     examBanner: {
       flexDirection: "row",
       alignItems: "center",

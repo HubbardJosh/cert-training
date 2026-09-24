@@ -40,6 +40,7 @@ import { useCert } from "../context/CertContext";
 import { useCertData } from "../context/useCertData";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
+import ScreenHeader from "../components/ScreenHeader";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -218,6 +219,7 @@ export default function ProgressScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
+      <ScreenHeader />
       <WebContainer>
         <ScrollView
           style={styles.scroll}

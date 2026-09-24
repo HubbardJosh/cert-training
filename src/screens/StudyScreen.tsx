@@ -22,6 +22,7 @@ import { RootStackParamList } from "../navigation";
 import { useActiveData } from "../context/useActiveData";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
+import ScreenHeader from "../components/ScreenHeader";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -61,6 +62,7 @@ export default function StudyScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
+      <ScreenHeader />
       <WebContainer>
         <ScrollView
           style={styles.scroll}
