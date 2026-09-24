@@ -204,10 +204,7 @@ export default function GuideListScreen() {
                     isDesktop && { flexBasis: "48%", flexGrow: 1 },
                   ]}
                   onPress={() =>
-                    navigation.navigate(
-                      topicId ? "TopicGuideDetail" : "GuideDetail",
-                      { id: guide.id },
-                    )
+                    navigation.navigate("GuideDetail", { id: guide.id })
                   }
                   activeOpacity={0.8}
                 >

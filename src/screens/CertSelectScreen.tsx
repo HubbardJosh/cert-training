@@ -17,6 +17,7 @@ import {
   CERT_META,
   CertMeta,
 } from "../context/CertContext";
+import { useTopic } from "../context/TopicContext";
 import { RootStackParamList } from "../navigation";
 import { useTheme } from "../context/ThemeContext";
 
@@ -99,6 +100,7 @@ const TOPICS_COLOR = "#00BCD4";
 export default function CertSelectScreen() {
   const navigation = useNavigation<Nav>();
   const { certId, setCert } = useCert();
+  const { setTopic } = useTopic();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
 
@@ -106,6 +108,7 @@ export default function CertSelectScreen() {
 
   const handleSelect = (id: CertificationId) => {
     setCert(id);
+    setTopic(null);
     navigation.navigate("Tabs");
   };
 

@@ -44,7 +44,7 @@ export default function TopicSelectScreen() {
 
   const handleSelect = (id: string) => {
     setTopic(id);
-    navigation.navigate("TopicTabs");
+    navigation.navigate("Tabs");
   };
 
   return (

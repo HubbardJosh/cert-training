@@ -42,9 +42,7 @@ import {
 import { UserProgress } from "../types";
 import { GuideQuizQuestion } from "../types/guide";
 
-type RouteT =
-  | RouteProp<RootStackParamList, "GuideDetail">
-  | RouteProp<RootStackParamList, "TopicGuideDetail">;
+type RouteT = RouteProp<RootStackParamList, "GuideDetail">;
 
 type Tab = "content" | "facts" | "exam";
 

@@ -1,7 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useNavigationState } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   spacing,
   radius,
@@ -10,6 +12,11 @@ import {
   ThemeColors,
 } from "../utils/theme";
 import { useTheme } from "../context/ThemeContext";
+import { useCert } from "../context/CertContext";
+import { useTopic } from "../context/TopicContext";
+import { RootStackParamList } from "../navigation";
+
+type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 type TabName = "Home" | "Study" | "Guides" | "QuizMenu" | "Progress";
 
@@ -46,26 +53,50 @@ const TAB_ITEMS: {
   },
 ];
 
-export default function WebSidebar() {
-  const { colors } = useTheme();
-  const navigation = useNavigation<any>();
-  const styles = makeStyles(colors);
+interface Props {
+  tabProps: BottomTabBarProps;
+}
 
-  const activeRouteName = useNavigationState((state) => {
-    const tabsRoute = state?.routes.find((r) => r.name === "Tabs");
-    if (!tabsRoute || !("state" in tabsRoute) || !tabsRoute.state)
-      return "Home";
-    const tabState = tabsRoute.state as any;
-    const activeTab = tabState.routes?.[tabState.index ?? 0];
-    return activeTab?.name ?? "Home";
-  });
+export default function WebSidebar({ tabProps }: Props) {
+  const { colors } = useTheme();
+  const navigation = useNavigation<Nav>();
+  const styles = makeStyles(colors);
+  const { certMeta } = useCert();
+  const { topicId, topicMeta } = useTopic();
+  const isTopicMode = topicId !== null;
+
+  const activeRouteName =
+    tabProps.state.routes[tabProps.state.index]?.name ?? "Home";
+
+  const accentColor = isTopicMode ? topicMeta!.color : certMeta.color;
+  const displayName = isTopicMode ? topicMeta!.name : certMeta.name;
+  const displaySub = isTopicMode ? topicMeta!.fullName : certMeta.fullName;
+  const displayIcon = isTopicMode ? topicMeta!.icon : certMeta.icon;
 
   return (
     <View style={styles.sidebar}>
-      <View style={styles.logoArea}>
-        <Ionicons name="cloud" size={28} color={colors.primary} />
-        <Text style={styles.logoText}>AWS Study</Text>
-      </View>
+      <TouchableOpacity
+        style={styles.logoArea}
+        onPress={() => navigation.navigate("CertSelect")}
+        activeOpacity={0.8}
+      >
+        <View
+          style={[styles.logoIcon, { backgroundColor: accentColor + "22" }]}
+        >
+          <Ionicons name={displayIcon as any} size={22} color={accentColor} />
+        </View>
+        <View style={styles.logoText}>
+          <Text
+            style={[styles.logoName, { color: accentColor }]}
+            numberOfLines={1}
+          >
+            {displayName}
+          </Text>
+          <Text style={styles.logoSub} numberOfLines={1}>
+            {displaySub}
+          </Text>
+        </View>
+      </TouchableOpacity>
 
       <View style={styles.navItems}>
         {TAB_ITEMS.map(({ name, label, icon, activeIcon }) => {
@@ -77,7 +108,7 @@ export default function WebSidebar() {
                 styles.navItem,
                 active && { backgroundColor: colors.primary + "18" },
               ]}
-              onPress={() => navigation.navigate("Tabs", { screen: name })}
+              onPress={() => tabProps.navigation.navigate(name)}
               activeOpacity={0.7}
             >
               <Ionicons
@@ -126,7 +157,7 @@ export default function WebSidebar() {
             size={20}
             color={colors.textMuted}
           />
-          <Text style={styles.navLabel}>Switch Cert</Text>
+          <Text style={styles.navLabel}>Switch</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -136,13 +167,16 @@ export default function WebSidebar() {
 function makeStyles(colors: ThemeColors) {
   return StyleSheet.create({
     sidebar: {
+      position: "absolute",
+      left: 0,
+      top: 0,
+      bottom: 0,
       width: WEB_SIDEBAR_WIDTH,
-      height: "100%",
       backgroundColor: colors.surface,
       borderRightWidth: 1,
       borderRightColor: colors.border,
       paddingVertical: spacing.lg,
-      flexShrink: 0,
+      zIndex: 10,
     },
     logoArea: {
       flexDirection: "row",
@@ -151,10 +185,26 @@ function makeStyles(colors: ThemeColors) {
       paddingHorizontal: spacing.md,
       marginBottom: spacing.xl,
     },
+    logoIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: radius.md,
+      justifyContent: "center",
+      alignItems: "center",
+      flexShrink: 0,
+    },
     logoText: {
-      fontSize: fontSize.lg,
+      flex: 1,
+      gap: 1,
+    },
+    logoName: {
+      fontSize: fontSize.sm,
       fontWeight: "800",
-      color: colors.textPrimary,
+    },
+    logoSub: {
+      fontSize: 10,
+      color: colors.textMuted,
+      lineHeight: 13,
     },
     navItems: {
       flex: 1,

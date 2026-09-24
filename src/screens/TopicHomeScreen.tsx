@@ -186,7 +186,7 @@ export default function TopicHomeScreen() {
                 key={guide.id}
                 style={styles.guideCard}
                 onPress={() =>
-                  navigation.navigate("TopicGuideDetail", { id: guide.id })
+                  navigation.navigate("GuideDetail", { id: guide.id })
                 }
                 activeOpacity={0.8}
               >

@@ -30,6 +30,17 @@ export const TOPIC_META: Record<string, TopicMeta> = {
     storageKey: "topic_progress_bedrock_agentcore",
     category: "AWS AI & ML",
   },
+  "amazon-sqs": {
+    id: "amazon-sqs",
+    name: "Amazon SQS",
+    fullName: "Amazon Simple Queue Service — Deep Dive",
+    tagline:
+      "Fully managed message queuing: Standard vs FIFO, DLQs, visibility timeouts, and Lambda integration",
+    icon: "git-network-outline",
+    color: "#FF9900",
+    storageKey: "topic_progress_amazon_sqs",
+    category: "AWS Messaging",
+  },
 };
 
 interface TopicContextValue {

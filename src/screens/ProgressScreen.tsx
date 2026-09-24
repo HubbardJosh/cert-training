@@ -37,7 +37,8 @@ import {
 import { UserProgress, Domain, QuizAttempt, WeakTopic } from "../types";
 import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
-import { useCertData } from "../context/useCertData";
+import { useTopic } from "../context/TopicContext";
+import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
 import ScreenHeader from "../components/ScreenHeader";
@@ -54,14 +55,17 @@ const DOMAINS: Domain[] = [
 export default function ProgressScreen() {
   const navigation = useNavigation<Nav>();
   const { certMeta } = useCert();
-  const { flashcards, guides: allGuides } = useCertData();
+  const { topicId, topicMeta } = useTopic();
+  const isTopicMode = topicId !== null;
+  const activeStorageKey = useActiveStorageKey();
+  const { flashcards, guides: allGuides } = useActiveData();
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const { colors } = useTheme();
   const DOMAIN_META = getDomainMeta(colors);
 
   useEffect(() => {
-    loadProgress(certMeta.storageKey).then(setProgress);
-  }, [certMeta.storageKey]);
+    loadProgress(activeStorageKey).then(setProgress);
+  }, [activeStorageKey]);
 
   const handleReset = () => {
     Alert.alert(
@@ -73,8 +77,8 @@ export default function ProgressScreen() {
           text: "Reset",
           style: "destructive",
           onPress: async () => {
-            await resetProgress(certMeta.storageKey);
-            const fresh = await loadProgress(certMeta.storageKey);
+            await resetProgress(activeStorageKey);
+            const fresh = await loadProgress(activeStorageKey);
             setProgress(fresh);
           },
         },
@@ -86,7 +90,7 @@ export default function ProgressScreen() {
     if (!progress) return;
     const updated = toggleNeedsReview(progress, service);
     setProgress(updated);
-    await saveProgress(updated, certMeta.storageKey);
+    await saveProgress(updated, activeStorageKey);
   };
 
   const handleResetGuide = (guideId: string, service: string) => {
@@ -102,7 +106,7 @@ export default function ProgressScreen() {
             if (!progress) return;
             const updated = resetGuideProgress(progress, guideId, service);
             setProgress(updated);
-            await saveProgress(updated, certMeta.storageKey);
+            await saveProgress(updated, activeStorageKey);
           },
         },
       ],
@@ -122,7 +126,7 @@ export default function ProgressScreen() {
             if (!progress) return;
             const updated = resetAllGuides(progress);
             setProgress(updated);
-            await saveProgress(updated, certMeta.storageKey);
+            await saveProgress(updated, activeStorageKey);
           },
         },
       ],
@@ -142,7 +146,7 @@ export default function ProgressScreen() {
             if (!progress) return;
             const updated = resetAllFlashcards(progress);
             setProgress(updated);
-            await saveProgress(updated, certMeta.storageKey);
+            await saveProgress(updated, activeStorageKey);
           },
         },
       ],
@@ -162,7 +166,7 @@ export default function ProgressScreen() {
             if (!progress) return;
             const updated = resetAllQuizzes(progress);
             setProgress(updated);
-            await saveProgress(updated, certMeta.storageKey);
+            await saveProgress(updated, activeStorageKey);
           },
         },
       ],
@@ -182,7 +186,7 @@ export default function ProgressScreen() {
             if (!progress) return;
             const updated = resetDomainScore(progress, domain);
             setProgress(updated);
-            await saveProgress(updated, certMeta.storageKey);
+            await saveProgress(updated, activeStorageKey);
           },
         },
       ],
@@ -197,11 +201,9 @@ export default function ProgressScreen() {
     (g) => progress.guideProgress[g.id] !== undefined,
   );
 
-  const overallAccuracy = getExamReadiness(
-    progress,
-    certMeta,
-    flashcards.length,
-  );
+  const overallAccuracy = isTopicMode
+    ? 0
+    : getExamReadiness(progress, certMeta, flashcards.length);
   const weakTopics = getSortedWeakTopics(progress);
   const knownCards = Object.values(progress.studiedCards).filter(
     (s) => s === "known",
@@ -226,39 +228,45 @@ export default function ProgressScreen() {
           contentContainerStyle={styles.content}
         >
           <Text style={styles.title}>Your Progress</Text>
-          <Text style={styles.subtitle}>{certMeta.name} Exam Readiness</Text>
+          <Text style={styles.subtitle}>
+            {isTopicMode
+              ? (topicMeta?.name ?? "Topic") + " Study Progress"
+              : certMeta.name + " Exam Readiness"}
+          </Text>
 
-          {/* Readiness score */}
-          <View style={styles.readinessCard}>
-            <View style={styles.readinessLeft}>
-              <Text style={styles.readinessLabel}>Exam Readiness</Text>
-              <Text
-                style={[
-                  styles.readinessScore,
-                  {
-                    color:
-                      overallAccuracy >= 80
-                        ? colors.correct
-                        : overallAccuracy >= 60
-                          ? colors.warning
-                          : colors.incorrect,
-                  },
-                ]}
-              >
-                {overallAccuracy}%
-              </Text>
-              <Text style={styles.readinessSub}>
-                {overallAccuracy >= 80
-                  ? "Ready to sit the exam!"
-                  : overallAccuracy >= 60
-                    ? "Getting close — keep going"
-                    : "Keep studying — you'll get there"}
-              </Text>
+          {/* Readiness score — cert mode only */}
+          {!isTopicMode && (
+            <View style={styles.readinessCard}>
+              <View style={styles.readinessLeft}>
+                <Text style={styles.readinessLabel}>Exam Readiness</Text>
+                <Text
+                  style={[
+                    styles.readinessScore,
+                    {
+                      color:
+                        overallAccuracy >= 80
+                          ? colors.correct
+                          : overallAccuracy >= 60
+                            ? colors.warning
+                            : colors.incorrect,
+                    },
+                  ]}
+                >
+                  {overallAccuracy}%
+                </Text>
+                <Text style={styles.readinessSub}>
+                  {overallAccuracy >= 80
+                    ? "Ready to sit the exam!"
+                    : overallAccuracy >= 60
+                      ? "Getting close — keep going"
+                      : "Keep studying — you'll get there"}
+                </Text>
+              </View>
+              <View style={styles.readinessRight}>
+                <ReadinessGauge pct={overallAccuracy} colors={colors} />
+              </View>
             </View>
-            <View style={styles.readinessRight}>
-              <ReadinessGauge pct={overallAccuracy} colors={colors} />
-            </View>
-          </View>
+          )}
 
           {/* Flashcard mastery */}
           <Text style={styles.sectionTitle}>Flashcard Mastery</Text>
@@ -361,108 +369,114 @@ export default function ProgressScreen() {
             </Text>
           </View>
 
-          {/* Domain accuracy */}
-          <Text style={styles.sectionTitle}>Domain Accuracy</Text>
-          {DOMAINS.map((domain) => {
-            const meta = DOMAIN_META[domain];
-            const acc = getDomainAccuracy(progress, domain);
-            const { attempted, correct } = progress.domainScores[domain];
-            const domainCards = flashcards.filter(
-              (c) => c.domain === domain,
-            ).length;
-            const domainKnown = Object.entries(progress.studiedCards).filter(
-              ([id, status]) =>
-                status === "known" &&
-                flashcards.find((c) => c.id === id)?.domain === domain,
-            ).length;
+          {/* Domain accuracy — cert mode only */}
+          {!isTopicMode && (
+            <>
+              <Text style={styles.sectionTitle}>Domain Accuracy</Text>
+              {DOMAINS.map((domain) => {
+                const meta = DOMAIN_META[domain];
+                const acc = getDomainAccuracy(progress, domain);
+                const { attempted, correct } = progress.domainScores[domain];
+                const domainCards = flashcards.filter(
+                  (c) => c.domain === domain,
+                ).length;
+                const domainKnown = Object.entries(
+                  progress.studiedCards,
+                ).filter(
+                  ([id, status]) =>
+                    status === "known" &&
+                    flashcards.find((c) => c.id === id)?.domain === domain,
+                ).length;
 
-            return (
-              <View key={domain} style={styles.domainCard}>
-                <View style={styles.domainHeader}>
-                  <View
-                    style={[
-                      styles.domainIcon,
-                      { backgroundColor: meta.color + "22" },
-                    ]}
-                  >
-                    <Ionicons
-                      name={meta.icon as any}
-                      size={18}
-                      color={meta.color}
-                    />
-                  </View>
-                  <View style={styles.domainInfo}>
-                    <Text style={styles.domainLabel}>{meta.label}</Text>
-                    <Text style={styles.domainWeight}>
-                      {meta.weight} of exam
-                    </Text>
-                  </View>
-                  <View style={styles.domainScoreBox}>
-                    <Text
-                      style={[
-                        styles.domainScore,
-                        {
-                          color:
-                            attempted === 0
-                              ? colors.textMuted
-                              : acc >= 80
-                                ? colors.correct
-                                : acc >= 60
-                                  ? colors.warning
-                                  : colors.incorrect,
-                        },
-                      ]}
-                    >
-                      {attempted === 0 ? "–" : `${acc}%`}
-                    </Text>
-                    <Text style={styles.domainAttempted}>
-                      {attempted === 0
-                        ? "No quizzes yet"
-                        : `${correct}/${attempted} correct`}
-                    </Text>
-                  </View>
-                </View>
+                return (
+                  <View key={domain} style={styles.domainCard}>
+                    <View style={styles.domainHeader}>
+                      <View
+                        style={[
+                          styles.domainIcon,
+                          { backgroundColor: meta.color + "22" },
+                        ]}
+                      >
+                        <Ionicons
+                          name={meta.icon as any}
+                          size={18}
+                          color={meta.color}
+                        />
+                      </View>
+                      <View style={styles.domainInfo}>
+                        <Text style={styles.domainLabel}>{meta.label}</Text>
+                        <Text style={styles.domainWeight}>
+                          {meta.weight} of exam
+                        </Text>
+                      </View>
+                      <View style={styles.domainScoreBox}>
+                        <Text
+                          style={[
+                            styles.domainScore,
+                            {
+                              color:
+                                attempted === 0
+                                  ? colors.textMuted
+                                  : acc >= 80
+                                    ? colors.correct
+                                    : acc >= 60
+                                      ? colors.warning
+                                      : colors.incorrect,
+                            },
+                          ]}
+                        >
+                          {attempted === 0 ? "–" : `${acc}%`}
+                        </Text>
+                        <Text style={styles.domainAttempted}>
+                          {attempted === 0
+                            ? "No quizzes yet"
+                            : `${correct}/${attempted} correct`}
+                        </Text>
+                      </View>
+                    </View>
 
-                <View style={styles.barRow}>
-                  <Text style={styles.barLabel}>Quiz</Text>
-                  <View style={styles.barBg}>
-                    <View
-                      style={[
-                        styles.barFill,
-                        {
-                          width: `${acc}%`,
-                          backgroundColor:
-                            acc >= 80
-                              ? colors.correct
-                              : acc >= 60
-                                ? colors.warning
-                                : colors.incorrect,
-                        },
-                      ]}
-                    />
-                  </View>
-                </View>
+                    <View style={styles.barRow}>
+                      <Text style={styles.barLabel}>Quiz</Text>
+                      <View style={styles.barBg}>
+                        <View
+                          style={[
+                            styles.barFill,
+                            {
+                              width: `${acc}%`,
+                              backgroundColor:
+                                acc >= 80
+                                  ? colors.correct
+                                  : acc >= 60
+                                    ? colors.warning
+                                    : colors.incorrect,
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
 
-                <View style={styles.barRow}>
-                  <Text style={styles.barLabel}>Cards</Text>
-                  <View style={styles.barBg}>
-                    <View
-                      style={[
-                        styles.barFill,
-                        {
-                          width: `${Math.round((domainKnown / domainCards) * 100)}%`,
-                          backgroundColor: meta.color,
-                        },
-                      ]}
-                    />
+                    <View style={styles.barRow}>
+                      <Text style={styles.barLabel}>Cards</Text>
+                      <View style={styles.barBg}>
+                        <View
+                          style={[
+                            styles.barFill,
+                            {
+                              width: `${Math.round((domainKnown / domainCards) * 100)}%`,
+                              backgroundColor: meta.color,
+                            },
+                          ]}
+                        />
+                      </View>
+                      <Text style={styles.barCount}>
+                        {domainKnown}/{domainCards}
+                      </Text>
+                    </View>
                   </View>
-                  <Text style={styles.barCount}>
-                    {domainKnown}/{domainCards}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
+                );
+              })}
+            </>
+          )}
 
           {/* Weak Topics */}
           <Text style={styles.sectionTitle}>Weak Topics</Text>
