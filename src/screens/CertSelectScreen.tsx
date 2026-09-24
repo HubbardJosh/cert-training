@@ -94,6 +94,7 @@ const ANTHROPIC_GROUPS: CertGroup[] = [
 
 const AWS_COLOR = "#FF9900";
 const ANTHROPIC_COLOR = "#D97706";
+const TOPICS_COLOR = "#00BCD4";
 
 export default function CertSelectScreen() {
   const navigation = useNavigation<Nav>();
@@ -176,6 +177,30 @@ export default function CertSelectScreen() {
               size={22}
               color={ANTHROPIC_COLOR}
             />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.providerCard, { borderColor: TOPICS_COLOR }]}
+            onPress={() => navigation.navigate("TopicSelect")}
+            activeOpacity={0.8}
+          >
+            <View
+              style={[
+                styles.providerIcon,
+                { backgroundColor: TOPICS_COLOR + "22" },
+              ]}
+            >
+              <Ionicons name="telescope" size={36} color={TOPICS_COLOR} />
+            </View>
+            <View style={styles.providerText}>
+              <Text style={[styles.providerName, { color: TOPICS_COLOR }]}>
+                Deep-Dive Topics
+              </Text>
+              <Text style={styles.providerDesc}>
+                Focused study beyond the cert curriculum · Bedrock AgentCore
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={22} color={TOPICS_COLOR} />
           </TouchableOpacity>
         </View>
       </SafeAreaView>

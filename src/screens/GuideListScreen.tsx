@@ -22,7 +22,8 @@ import { RootStackParamList } from "../navigation";
 import { loadProgress, getMissedQuestions } from "../utils/storage";
 import { UserProgress } from "../types";
 import { useCert } from "../context/CertContext";
-import { useCertData } from "../context/useCertData";
+import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
+import { useTopic } from "../context/TopicContext";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
 import { useBreakpoint } from "../hooks/useBreakpoint";
@@ -32,7 +33,9 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 export default function GuideListScreen() {
   const navigation = useNavigation<Nav>();
   const { certMeta } = useCert();
-  const { guides: allGuides } = useCertData();
+  const { topicId, topicMeta } = useTopic();
+  const activeStorageKey = useActiveStorageKey();
+  const { guides: allGuides } = useActiveData();
   const { colors } = useTheme();
   const { isDesktop } = useBreakpoint();
   const styles = makeStyles(colors);
@@ -49,23 +52,25 @@ export default function GuideListScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      loadProgress(certMeta.storageKey).then(setProgress);
-    }, [certMeta.storageKey]),
+      loadProgress(activeStorageKey).then(setProgress);
+    }, [activeStorageKey]),
   );
 
   const missedCount = progress ? getMissedQuestions(progress).length : 0;
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return allGuides.filter((g) => {
-      const domainMatch = domain === "all" || g.domain === domain;
-      const searchMatch =
-        !q ||
-        g.service.toLowerCase().includes(q) ||
-        g.tagline.toLowerCase().includes(q) ||
-        g.relatedServices.some((s) => s.toLowerCase().includes(q));
-      return domainMatch && searchMatch;
-    });
+    return allGuides
+      .map((g, i) => ({ guide: g, order: i + 1 }))
+      .filter(({ guide: g }) => {
+        const domainMatch = domain === "all" || g.domain === domain;
+        const searchMatch =
+          !q ||
+          g.service.toLowerCase().includes(q) ||
+          g.tagline.toLowerCase().includes(q) ||
+          g.relatedServices.some((s) => s.toLowerCase().includes(q));
+        return domainMatch && searchMatch;
+      });
   }, [search, domain]);
 
   return (
@@ -78,7 +83,8 @@ export default function GuideListScreen() {
         >
           <Text style={styles.title}>Service Guides</Text>
           <Text style={styles.subtitle}>
-            {allGuides.length} in-depth guides for {certMeta.name}
+            {allGuides.length} in-depth guides for{" "}
+            {topicId && topicMeta ? topicMeta.name : certMeta.name}
           </Text>
 
           {/* Search */}
@@ -176,7 +182,7 @@ export default function GuideListScreen() {
 
           {/* Guide cards */}
           <View style={isDesktop ? styles.twoColGrid : undefined}>
-            {filtered.map((guide) => {
+            {filtered.map(({ guide, order }) => {
               const meta = DOMAIN_META[guide.domain] ?? {
                 label: guide.domain,
                 color: colors.primary,
@@ -196,7 +202,10 @@ export default function GuideListScreen() {
                     isDesktop && { flexBasis: "48%", flexGrow: 1 },
                   ]}
                   onPress={() =>
-                    navigation.navigate("GuideDetail", { id: guide.id })
+                    navigation.navigate(
+                      topicId ? "TopicGuideDetail" : "GuideDetail",
+                      { id: guide.id },
+                    )
                   }
                   activeOpacity={0.8}
                 >
@@ -218,6 +227,9 @@ export default function GuideListScreen() {
                       <Text style={styles.cardTagline} numberOfLines={1}>
                         {guide.tagline}
                       </Text>
+                    </View>
+                    <View style={styles.orderBadge}>
+                      <Text style={styles.orderText}>{order}</Text>
                     </View>
                     {isCompleted ? (
                       <Ionicons
@@ -413,6 +425,19 @@ function makeStyles(colors: ThemeColors) {
     },
     domainText: { fontSize: fontSize.xs, fontWeight: "600" },
     sectionCount: { fontSize: fontSize.xs, color: colors.textMuted },
+
+    orderBadge: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: radius.sm,
+      paddingHorizontal: 7,
+      paddingVertical: 3,
+      marginRight: spacing.xs,
+    },
+    orderText: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+      color: colors.textMuted,
+    },
 
     empty: {
       alignItems: "center",

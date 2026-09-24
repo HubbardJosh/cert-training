@@ -18,28 +18,27 @@ import { evaluationsAndTestingGuide } from "./evaluationsAndTesting";
 import { troubleshootingAndOptimizationGuide } from "./troubleshootingAndOptimization";
 
 export const allGuides: ServiceGuide[] = [
-  // Fundamentals
-  promptingAndTaskExecutionGuide,
-  outputEvaluationAndValidationGuide,
-  productAndModelSelectionGuide,
-  capabilitiesAndLimitationsGuide,
+  // What Claude is
   claudeModelsGuide,
-  // Development
+  capabilitiesAndLimitationsGuide,
+  anthropicProductsGuide,
+  // Using Claude
+  promptingAndTaskExecutionGuide,
   promptEngineeringGuide,
   messagesApiGuide,
+  // Extending Claude
   toolUseGuide,
-  // Security
+  configurationAndKnowledgeManagementGuide,
+  // Responsible use
   safetyResponsibleAiGuide,
   governanceRiskAndResponsibleUseGuide,
-  // Services
-  anthropicProductsGuide,
-  configurationAndKnowledgeManagementGuide,
+  // Choosing the right model
+  productAndModelSelectionGuide,
+  // Building systems
   workflowIntegrationAndSolutionDesignGuide,
-  // Applications
   agenticWorkflowsGuide,
-  // Deployment
+  // Shipping to production
   productionDeploymentGuide,
-  // Troubleshooting
   evaluationsAndTestingGuide,
   troubleshootingAndOptimizationGuide,
 ];

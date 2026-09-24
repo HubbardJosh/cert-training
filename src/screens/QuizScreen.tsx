@@ -35,7 +35,7 @@ import {
 } from "../utils/storage";
 import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
-import { useCertData } from "../context/useCertData";
+import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
 
@@ -56,7 +56,8 @@ export default function QuizScreen() {
   const route = useRoute<Route>();
   const { domain, difficulty, count, service } = route.params;
   const { certMeta } = useCert();
-  const { quizQuestions } = useCertData();
+  const activeStorageKey = useActiveStorageKey();
+  const { quizQuestions } = useActiveData();
   const { colors } = useTheme();
   const DOMAIN_META = getDomainMeta(colors);
 
@@ -127,7 +128,7 @@ export default function QuizScreen() {
         if (sorted === expected) correct++;
       });
 
-      const progress = await loadProgress(certMeta.storageKey);
+      const progress = await loadProgress(activeStorageKey);
       const attempt: QuizAttempt = {
         id: Date.now().toString(),
         date: new Date().toISOString(),
@@ -185,7 +186,7 @@ export default function QuizScreen() {
           progress.totalQuestionsAnswered + questions.length,
         totalCorrect: progress.totalCorrect + correct,
       });
-      await saveProgress(updated, certMeta.storageKey);
+      await saveProgress(updated, activeStorageKey);
     }
   }, [selectedOptions, answers, currentIndex, questions, domain, elapsed]);
 

@@ -21,30 +21,35 @@ import { globalInfrastructureGuide } from "./globalInfrastructure";
 import { route53Guide } from "./route53";
 
 export const allGuides: ServiceGuide[] = [
-  // Development
-  lambdaGuide,
-  s3Guide,
-  dynamodbGuide,
-  rdsGuide,
-  snsGuide,
-  sqsGuide,
-  cloudfrontGuide,
-  route53Guide,
-  // Security
-  iamGuide,
+  // Cloud fundamentals
+  globalInfrastructureGuide,
   sharedResponsibilityGuide,
-  // Deployment
+  // Identity & access
+  iamGuide,
+  // Core compute & storage
   ec2Guide,
   vpcGuide,
-  cloudwatchGuide,
-  cloudformationGuide,
+  s3Guide,
+  rdsGuide,
+  // Serverless & managed
+  lambdaGuide,
+  dynamodbGuide,
+  // Messaging
+  sqsGuide,
+  snsGuide,
+  // Networking & CDN
+  route53Guide,
+  cloudfrontGuide,
+  // Containers & deployment
   ecsGuide,
   elasticBeanstalkGuide,
-  // Troubleshooting / Foundational
+  cloudformationGuide,
+  // Observability
+  cloudwatchGuide,
+  // Business & governance
   pricingGuide,
   supportPlansGuide,
   wellArchitectedGuide,
-  globalInfrastructureGuide,
 ];
 
 export const guidesByDomain = {

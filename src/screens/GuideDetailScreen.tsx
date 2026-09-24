@@ -29,7 +29,7 @@ import {
 } from "../utils/theme";
 import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
-import { useCertData } from "../context/useCertData";
+import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
 import { useTheme } from "../context/ThemeContext";
 import {
   loadProgress,
@@ -42,7 +42,9 @@ import {
 import { UserProgress } from "../types";
 import { GuideQuizQuestion } from "../types/guide";
 
-type RouteT = RouteProp<RootStackParamList, "GuideDetail">;
+type RouteT =
+  | RouteProp<RootStackParamList, "GuideDetail">
+  | RouteProp<RootStackParamList, "TopicGuideDetail">;
 
 type Tab = "content" | "facts" | "exam";
 
@@ -584,7 +586,8 @@ export default function GuideDetailScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteT>();
   const { certMeta } = useCert();
-  const { guides: allGuides } = useCertData();
+  const activeStorageKey = useActiveStorageKey();
+  const { guides: allGuides } = useActiveData();
   const { colors, isDark } = useTheme();
   const DOMAIN_META = getDomainMeta(colors);
   const guide = allGuides.find((g) => g.id === route.params.id);
@@ -595,11 +598,11 @@ export default function GuideDetailScreen() {
 
   useEffect(() => {
     if (!guide) return;
-    loadProgress(certMeta.storageKey).then((p) => {
+    loadProgress(activeStorageKey).then((p) => {
       const updated = touchGuide(p, guide.id, guide.sections.length);
       progressRef.current = updated;
       setProgress(updated);
-      saveProgress(updated, certMeta.storageKey);
+      saveProgress(updated, activeStorageKey);
     });
   }, [guide?.id]);
 
@@ -621,7 +624,7 @@ export default function GuideDetailScreen() {
           );
           progressRef.current = updated;
           setProgress(updated);
-          saveProgress(updated, certMeta.storageKey);
+          saveProgress(updated, activeStorageKey);
         }
       }
     },
@@ -639,7 +642,7 @@ export default function GuideDetailScreen() {
       );
       progressRef.current = updated;
       setProgress(updated);
-      await saveProgress(updated, certMeta.storageKey);
+      await saveProgress(updated, activeStorageKey);
     },
     [guide],
   );
@@ -656,7 +659,7 @@ export default function GuideDetailScreen() {
       });
       progressRef.current = updated;
       setProgress(updated);
-      await saveProgress(updated, certMeta.storageKey);
+      await saveProgress(updated, activeStorageKey);
     },
     [guide],
   );

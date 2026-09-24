@@ -19,28 +19,32 @@ import { costGuide } from "./cost";
 import { kinesisGuide } from "./kinesis";
 
 export const allGuides: ServiceGuide[] = [
-  // Security
+  // Identity & networking foundation
   iamGuide,
   vpcGuide,
-  securityGuide,
-  // Fundamentals
+  // Core compute & storage
   ec2Guide,
   s3Guide,
   rdsGuide,
+  storageGuide,
+  // High availability & delivery
   elbGuide,
   cloudfrontGuide,
   route53Guide,
-  storageGuide,
+  // Databases
   dynamodbGuide,
-  // Deployment
-  cloudformationGuide,
-  monitoringGuide,
-  drGuide,
-  costGuide,
-  // Applications
+  // App decoupling & serverless
   sqsSnsGuide,
   lambdaGuide,
   kinesisGuide,
+  // Infrastructure as code
+  cloudformationGuide,
+  // Operations
+  monitoringGuide,
+  drGuide,
+  costGuide,
+  // Security deep-dive
+  securityGuide,
 ];
 
 export const guidesByDomain = allGuides.reduce<Record<string, ServiceGuide[]>>(

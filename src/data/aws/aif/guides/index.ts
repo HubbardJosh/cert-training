@@ -20,28 +20,33 @@ import { aiSecurityGuide } from "./aiSecurity";
 import { forecastGuide } from "./forecast";
 
 export const allGuides: ServiceGuide[] = [
-  // Development
+  // Concepts first
+  mlFundamentalsGuide,
+  generativeAIGuide,
+  // Governance foundation
+  responsibleAIGuide,
+  aiSecurityGuide,
+  // Main platforms
   bedrockGuide,
   sagemakerGuide,
+  // Vision AI
   rekognitionGuide,
+  panoramaGuide,
+  // Language & NLP
   comprehendGuide,
   lexGuide,
   pollyGuide,
   transcribeGuide,
   translateGuide,
   textractGuide,
+  // Data & recommendations
   personalizeGuide,
-  mlFundamentalsGuide,
-  generativeAIGuide,
-  amazonQGuide,
-  kendraGuide,
   forecastGuide,
-  // Security
-  responsibleAIGuide,
-  aiSecurityGuide,
-  // Deployment
+  kendraGuide,
+  // Enterprise assistant
+  amazonQGuide,
+  // Hardware
   trainiumInferentiaGuide,
-  panoramaGuide,
 ];
 
 export const guidesByDomain = {

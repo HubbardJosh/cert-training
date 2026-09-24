@@ -31,36 +31,45 @@ import { appsyncGuide } from "./appsync";
 import { systemsManagerGuide } from "./systemsManager";
 
 export const allGuides: ServiceGuide[] = [
-  // Development
+  // Identity & access
+  iamGuide,
+  // Serverless core
   lambdaGuide,
   apiGatewayGuide,
+  // Databases & caching
   dynamodbGuide,
+  rdsGuide,
+  elasticacheGuide,
+  // Storage
   s3Guide,
+  // Messaging & events
   sqsGuide,
   snsGuide,
-  kinesisGuide,
   eventbridgeGuide,
+  kinesisGuide,
   stepFunctionsGuide,
-  elasticacheGuide,
-  rdsGuide,
+  // Observability
   cloudwatchGuide,
   xrayGuide,
+  // Networking & delivery
   vpcGuide,
   cloudfrontGuide,
   appsyncGuide,
-  // Security
-  iamGuide,
+  // Auth & secrets
   cognitoGuide,
   kmsGuide,
   secretsManagerGuide,
-  // Deployment
+  // Containers
   ecsGuide,
+  // CI/CD pipeline
   codepipelineGuide,
   codebuildGuide,
   codedeployGuide,
+  // Infrastructure as code
   samGuide,
   cloudformationGuide,
   cdkGuide,
+  // Platform deployment
   elasticBeanstalkGuide,
   amplifyGuide,
   systemsManagerGuide,

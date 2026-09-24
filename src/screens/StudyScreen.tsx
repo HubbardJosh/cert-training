@@ -19,7 +19,7 @@ import {
 } from "../utils/theme";
 import { Domain } from "../types";
 import { RootStackParamList } from "../navigation";
-import { useCertData } from "../context/useCertData";
+import { useActiveData } from "../context/useActiveData";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
 
@@ -35,7 +35,7 @@ const DIFFICULTIES = ["all", "easy", "medium", "hard"] as const;
 
 export default function StudyScreen() {
   const navigation = useNavigation<Nav>();
-  const { flashcards } = useCertData();
+  const { flashcards } = useActiveData();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
   const DOMAIN_META = getDomainMeta(colors);

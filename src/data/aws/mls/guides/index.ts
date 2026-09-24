@@ -21,26 +21,28 @@ import { mlSecurityGuide } from "./ml-security";
 import { mlopsGuide } from "./mlops";
 
 export const allGuides: ServiceGuide[] = [
-  // Services — AWS ML Services
-  sagemakerGuide,
+  // ML lifecycle concepts
+  dataPreparationGuide,
+  modelTrainingGuide,
+  modelEvaluationGuide,
+  // Data infrastructure
   s3MlGuide,
   glueGuide,
+  lakeFormationGuide,
   kinesisGuide,
   emrGuide,
+  athenaGuide,
+  redshiftGuide,
+  // Main ML platform
+  sagemakerGuide,
+  // Pre-built AI services
   rekognitionGuide,
   comprehendGuide,
   translateGuide,
   pollyTranscribeGuide,
   forecastGuide,
   personalizeGuide,
-  lakeFormationGuide,
-  athenaGuide,
-  redshiftGuide,
-  // Fundamentals — ML Concepts
-  dataPreparationGuide,
-  modelTrainingGuide,
-  modelEvaluationGuide,
-  // Deployment — MLOps & Deployment
+  // Productionizing
   modelDeploymentGuide,
   mlopsGuide,
   // Security

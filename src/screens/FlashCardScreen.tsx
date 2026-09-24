@@ -23,7 +23,7 @@ import { FlashCard, Domain, Difficulty, UserProgress } from "../types";
 import { loadProgress, saveProgress } from "../utils/storage";
 import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
-import { useCertData } from "../context/useCertData";
+import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
 
@@ -45,7 +45,8 @@ export default function FlashCardScreen() {
   const route = useRoute<Route>();
   const { domain, difficulty, service } = route.params;
   const { certMeta } = useCert();
-  const { flashcards } = useCertData();
+  const activeStorageKey = useActiveStorageKey();
+  const { flashcards } = useActiveData();
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const DOMAIN_META = getDomainMeta(colors);
@@ -69,8 +70,8 @@ export default function FlashCardScreen() {
       return domainMatch && diffMatch && serviceMatch;
     });
     setCards(shuffle(filtered));
-    loadProgress(certMeta.storageKey).then(setProgress);
-  }, [domain, difficulty, certMeta.storageKey]);
+    loadProgress(activeStorageKey).then(setProgress);
+  }, [domain, difficulty, activeStorageKey]);
 
   const currentCard = cards[index];
 
@@ -133,7 +134,7 @@ export default function FlashCardScreen() {
         lastStudied: new Date().toISOString(),
       };
       setProgress(updated);
-      await saveProgress(updated, certMeta.storageKey);
+      await saveProgress(updated, activeStorageKey);
 
       if (status === "known") setSessionKnown((n) => n + 1);
       else setSessionLearning((n) => n + 1);

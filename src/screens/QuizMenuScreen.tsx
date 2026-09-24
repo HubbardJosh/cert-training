@@ -21,7 +21,8 @@ import { Domain, UserProgress } from "../types";
 import { RootStackParamList } from "../navigation";
 import { loadProgress, getMissedQuizQuestions } from "../utils/storage";
 import { useCert } from "../context/CertContext";
-import { useCertData } from "../context/useCertData";
+import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
+import { useTopic } from "../context/TopicContext";
 import { useTheme } from "../context/ThemeContext";
 import WebContainer from "../components/WebContainer";
 
@@ -38,7 +39,9 @@ const COUNTS = [5, 10, 20, 40];
 export default function QuizMenuScreen() {
   const navigation = useNavigation<Nav>();
   const { certMeta } = useCert();
-  const { quizQuestions } = useCertData();
+  const { topicId, topicMeta } = useTopic();
+  const activeStorageKey = useActiveStorageKey();
+  const { quizQuestions } = useActiveData();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
   const DOMAIN_META = getDomainMeta(colors);
@@ -51,8 +54,8 @@ export default function QuizMenuScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      loadProgress(certMeta.storageKey).then(setProgress);
-    }, [certMeta.storageKey]),
+      loadProgress(activeStorageKey).then(setProgress);
+    }, [activeStorageKey]),
   );
 
   const missedCount = progress ? getMissedQuizQuestions(progress).length : 0;
@@ -125,9 +128,12 @@ export default function QuizMenuScreen() {
             />
             <View style={styles.examCardText}>
               <Text style={styles.examCardTitle}>
-                {certMeta.name} Exam Format
+                {topicId && topicMeta ? topicMeta.name : certMeta.name}{" "}
+                {topicId ? "Topics" : "Exam Format"}
               </Text>
-              <Text style={styles.examCardSub}>{certMeta.examInfo}</Text>
+              <Text style={styles.examCardSub}>
+                {topicId && topicMeta ? topicMeta.tagline : certMeta.examInfo}
+              </Text>
             </View>
           </View>
 
