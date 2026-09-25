@@ -3160,10 +3160,10 @@ export const flashcards: FlashCard[] = [
     question:
       "What is the SQS message retention period and message size limit?",
     answer:
-      "Messages are retained from 1 minute to 14 days (default 4 days). Maximum message size is 256 KB. For larger payloads, use the SQS Extended Client Library which stores the payload in S3 and sends only a reference in the SQS message.",
+      "Messages are retained from 1 minute to 14 days (default 4 days). Maximum message size is 1 MiB (1,048,576 bytes). For larger payloads, use the SQS Extended Client Library which stores the payload in S3 and sends only a reference in the SQS message. Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html",
     keyPoints: [
       "Retention: 1 min to 14 days; default 4 days",
-      "Max message size: 256 KB",
+      "Max message size: 1 MiB (1,048,576 bytes)",
       "SQS Extended Client Library: stores body in S3, sends pointer in SQS",
       "Batch operations: SendMessageBatch/ReceiveMessage/DeleteMessageBatch (up to 10 messages)",
     ],

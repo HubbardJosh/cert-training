@@ -13,7 +13,7 @@ export const sources: Source[] = [
       "Long polling vs. short polling",
       "Delay queues and message timers",
       "Message retention (1 minute – 14 days, default 4 days)",
-      "Maximum message size: 256 KB",
+      "Maximum message size: 1 MiB (1,048,576 bytes)",
     ],
   },
   {
@@ -75,7 +75,7 @@ export const sources: Source[] = [
     title: "Amazon SQS Extended Client Library for Java",
     url: "https://github.com/awslabs/amazon-sqs-java-extended-client-lib",
     topics: [
-      "Storing message payloads >256 KB in Amazon S3",
+      "Storing message payloads exceeding 1 MiB (up to 2 GB) in Amazon S3",
       "S3 objects are NOT automatically deleted when message is deleted",
       "Must delete S3 objects separately or use S3 lifecycle policies",
       "Available for Java; community ports exist for Python and Go",

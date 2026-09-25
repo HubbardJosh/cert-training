@@ -1,5 +1,10 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://support.anthropic.com/en/articles/9517075-what-are-projects
+// - https://platform.claude.com/docs/en/build-with-claude/system-prompt
+// Content verified accurate — no factual corrections needed.
+
 export const configurationAndKnowledgeManagementGuide: ServiceGuide = {
   id: "ccao-configuration-knowledge-management",
   service: "Configuration and Knowledge Management",

@@ -1,5 +1,14 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/about-claude/models/overview
+// - https://platform.claude.com/docs/en/build-with-claude/context-windows
+// Corrections: "up to 200K tokens" understated — Fable 5.1, Opus 5.5, and Sonnet 5
+// all support 1M context windows; only Haiku 4.5 is 200K. Reliable knowledge cutoffs
+// added: Fable 5.1/Opus 5.5 Jun 2026, Sonnet 5 Jan 2026, Haiku 4.5 Feb 2025.
+// Also noted that Anthropic's web_search server tool now available, meaning Claude
+// *can* browse the web when operators provide this tool.
+
 export const capabilitiesAndLimitationsGuide: ServiceGuide = {
   id: "ccao-capabilities-limitations",
   service: "Capabilities and Limitations",
@@ -83,7 +92,7 @@ Claude's hallucinations often sound confident and authoritative — this is what
     },
     {
       heading: "Long-Context Degradation",
-      body: `While Claude supports very large context windows (up to 200K tokens on some models), **performance can degrade as context length grows**. The most well-documented pattern is the **"lost in the middle" effect**: information presented in the middle of a very long context receives less attention than information at the beginning or end of the context. For tasks that require precise recall of a specific fact from a long document, this can cause Claude to miss or misremember details that are buried in the middle of a large context.
+      body: `While Claude supports very large context windows (up to 1M tokens for Fable 5.1, Opus 5.5, and Sonnet 5; 200K for Haiku 4.5), **performance can degrade as context length grows**. The most well-documented pattern is the **"lost in the middle" effect**: information presented in the middle of a very long context receives less attention than information at the beginning or end of the context. For tasks that require precise recall of a specific fact from a long document, this can cause Claude to miss or misremember details that are buried in the middle of a large context.
 
 Long contexts also increase **latency and cost linearly** — a 100K-token prompt takes longer and costs more than a 10K-token prompt. Applications using very long contexts should be tested specifically at their maximum intended context length, not just at typical lengths.
 
@@ -131,8 +140,10 @@ Claude is particularly strong at tasks that benefit from broad context and commo
 
   keyFacts: [
     "Claude has a training knowledge cutoff — it has no awareness of events after that date",
+    "Reliable knowledge cutoffs (2026): Fable 5.1 and Opus 5.5 = Jun 2026; Sonnet 5 = Jan 2026; Haiku 4.5 = Feb 2025",
     "Time elapsed since cutoff can be months or years — assume all time-sensitive data is stale",
-    "Claude cannot browse the internet, execute code, or access external systems without operator-defined tools",
+    "Claude cannot browse the internet, execute code, or access external systems WITHOUT operator-provided tools",
+    "WITH Anthropic's web_search server tool, Claude can browse the web; with the code_execution tool it can run code — operators must explicitly enable these",
     "Claude has no persistent memory between API calls — history must be provided in each request",
     "Hallucination is an inherent LLM property, not a bug — never use Claude as the sole source for critical facts",
     "Hallucination is worst on specific facts, recent events, and proprietary data not in training",

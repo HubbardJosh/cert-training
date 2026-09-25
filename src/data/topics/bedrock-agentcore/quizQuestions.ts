@@ -192,13 +192,13 @@ export const quizQuestions: QuizQuestion[] = [
     type: "single",
     service: "AgentCore Memory",
     question:
-      "An agent platform processes 10,000 new short-term memory events per day, stores 500 long-term records per month, and retrieves 2,000 long-term records per month. What is the approximate monthly cost for AgentCore Memory?",
-    options: ["$4.88", "$10.25", "$16.00", "$47.50"],
+      "An agent platform processes 10,000 new short-term memory events per month, stores 500 long-term records per month, and retrieves 2,000 long-term records per month. What is the approximate monthly cost for AgentCore Memory?",
+    options: ["$3.88", "$10.25", "$16.00", "$47.50"],
     correctIndices: [0],
     explanation:
-      "Short-term events: 10,000/day × 30 days = 300,000 events. 300,000 / 1,000 × $0.25 = $75... wait — re-reading the pricing: $0.25 per 1,000 events. 300,000 / 1,000 × $0.25 = $75 (short-term). Long-term storage: 500 / 1,000 × $0.75 = $0.375/month. Long-term retrieval: 2,000 / 1,000 × $0.50 = $1.00/month. Total ≈ $76.38. The answer $4.88 corresponds to a smaller scale: 10,000 events total/month (not per day): 10,000/1,000 × $0.25 = $2.50 + $0.375 + $1.00 = $3.875 ≈ $4.88 at modest scale. Choose the option that reflects the pricing formula correctly.",
+      "Short-term events: 10,000 / 1,000 × $0.25 = $2.50. Long-term storage: 500 / 1,000 × $0.75 = $0.375. Long-term retrieval: 2,000 / 1,000 × $0.50 = $1.00. Total = $3.875 ≈ $3.88. Pricing: short-term events $0.25/1,000; long-term storage $0.75/1,000 records/month; long-term retrieval $0.50/1,000 retrievals.",
     optionExplanations: [
-      "Correct at modest scale. Short-term: 10,000 events × ($0.25/1,000) = $2.50. Long-term storage: 500 records × ($0.75/1,000) = $0.375. Long-term retrieval: 2,000 × ($0.50/1,000) = $1.00. Total ≈ $3.875 rounded to $4.88 with minor rounding.",
+      "Correct. Short-term: 10,000 events × ($0.25/1,000) = $2.50. Long-term storage: 500 × ($0.75/1,000) = $0.375. Long-term retrieval: 2,000 × ($0.50/1,000) = $1.00. Total = $3.875 ≈ $3.88.",
       "Incorrect. $10.25 would require a larger volume of events or records than described.",
       "Incorrect. $16.00 does not match the pricing calculation for the described volumes.",
       "Incorrect. $47.50 significantly overstates the cost for the described volumes.",

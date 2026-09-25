@@ -1,5 +1,12 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/about-claude/models/overview
+// - https://platform.claude.com/docs/en/about-claude/pricing
+// Corrections: Opus 5 → Opus 5.5 (current tier); knowledge cutoff for Opus 5.5
+// is Jun 2026 (was May 2026 for legacy Opus 5). Pricing ratio Haiku vs Opus
+// corrected to 4x (not 5x) based on Opus 5.5 pricing.
+
 export const troubleshootingAndOptimizationGuide: ServiceGuide = {
   id: "ccao-troubleshooting-optimization",
   service: "Troubleshooting and Optimization",
@@ -136,7 +143,7 @@ The recommended troubleshooting process follows four steps: **identify the failu
           options: [
             "Ask Claude to summarize the key decisions and constraints established so far, then start a new conversation using that summary as opening context",
             "Delete the oldest messages from the conversation to free up context space",
-            "Switch to Claude Opus 5, which has a larger context window",
+            "Switch to Claude Opus 5.5 or Sonnet 5, which also have 1M-token context windows",
             "Repeat the key constraints at the end of each new message to ensure Claude attends to them",
           ],
           correctIndex: 0,
@@ -149,7 +156,7 @@ The recommended troubleshooting process follows four steps: **identify the failu
       heading: "Optimization Levers: Cost, Speed, and Quality",
       body: `Once a workflow produces correct outputs, the next goal is efficiency. The key optimization levers are model selection, prompt length reduction, output format specification, task decomposition, and platform features.
 
-**Model selection — the cost/speed/quality tradeoff.** The Claude model family spans a range: Haiku 4.5 is the fastest and cheapest, with a reliable knowledge cutoff of February 2025; Sonnet 5 balances cost and capability, with a reliable knowledge cutoff of January 2026; Opus 5 is the most capable, with a reliable knowledge cutoff of May 2026; Fable 5.1, with a reliable knowledge cutoff of June 2026, is optimized for specific use cases. Match the model to the task — using Opus 5 for simple classification wastes cost; using Haiku 4.5 for complex multi-step reasoning may sacrifice quality. For many pipelines, a tiered approach works well: use a cheaper, faster model for triage or preprocessing and a more capable model only for the steps that require it.
+**Model selection — the cost/speed/quality tradeoff.** The Claude model family spans a range: Haiku 4.5 is the fastest and cheapest, with a reliable knowledge cutoff of February 2025; Sonnet 5 balances cost and capability, with a reliable knowledge cutoff of January 2026; Opus 5.5 (current Opus tier) has a reliable knowledge cutoff of Jun 2026; legacy Opus 5 has a cutoff of May 2026; Fable 5.1, with a reliable knowledge cutoff of June 2026, is optimized for specific use cases. Match the model to the task — using Opus 5 for simple classification wastes cost; using Haiku 4.5 for complex multi-step reasoning may sacrifice quality. For many pipelines, a tiered approach works well: use a cheaper, faster model for triage or preprocessing and a more capable model only for the steps that require it.
 
 **Prompt length reduction.** Shorter prompts cost fewer input tokens and process faster. Audit your system prompt for redundant instructions, restatements of Claude's defaults, and content that is never actually relevant to the queries you run. A focused 200-token system prompt often outperforms a bloated 2,000-token one — and costs ten times less in input tokens.
 
@@ -167,14 +174,14 @@ The recommended troubleshooting process follows four steps: **identify the failu
           question:
             "A team runs a high-volume pipeline that first categorizes support tickets (easy task) and then drafts detailed responses (complex task). They are currently using Claude Opus 5 for both steps. What optimization should they make?",
           options: [
-            "Use Claude Haiku 4.5 for the categorization step and reserve Opus 5 for the response drafting step",
+            "Use Claude Haiku 4.5 for the categorization step and reserve Opus 5.5 for the response drafting step",
             "Switch the entire pipeline to Haiku 4.5 to reduce cost across all steps",
             "Combine both steps into a single prompt to reduce the number of API calls",
             "Use Claude Sonnet 5 for both steps as a balanced compromise",
           ],
           correctIndex: 0,
           explanation:
-            "A tiered model strategy — cheaper, faster model for simple tasks; more capable model only for complex tasks — is the canonical cost/quality optimization. Categorization is a simple classification task well within Haiku 4.5's capability, so using Opus 5 there wastes money. Response drafting is complex and benefits from Opus 5's capability. Switching the entire pipeline to Haiku risks quality degradation on the complex step. Combining steps reduces API calls but often reduces output quality and makes failures harder to diagnose.",
+            "A tiered model strategy — cheaper model for simple tasks; more capable model only for complex tasks — is the canonical optimization. Categorization is within Haiku 4.5's capability, so using Opus 5.5 there wastes money. Response drafting is complex and benefits from Opus 5.5's capability. Switching the entire pipeline to Haiku risks quality degradation on the complex step. Combining steps reduces API calls but often reduces output quality and makes failures harder to diagnose.",
         },
         {
           question:
@@ -201,7 +208,7 @@ The recommended troubleshooting process follows four steps: **identify the failu
     "Keep a prompt changelog: record each change and its measured outcome to prevent re-running failed experiments",
     "Restart a conversation when context is filling up or the conversation has gone off-track; summarize when prior context is still relevant",
     "Claude.ai does not expose temperature controls to users — temperature adjustment requires API access",
-    "Model knowledge cutoffs: Haiku 4.5 (Feb 2025), Sonnet 5 (Jan 2026), Opus 5 (May 2026), Fable 5.1 (Jun 2026)",
+    "Model knowledge cutoffs (reliable): Haiku 4.5 (Feb 2025), Sonnet 5 (Jan 2026), Opus 5.5 (Jun 2026), Fable 5.1 (Jun 2026) — Opus 5 legacy cutoff May 2026",
     "Use web search when Claude needs information beyond its training cutoff — this is a capability gap, not a prompt problem",
     "API rate limits (HTTP 429) require exponential backoff and retry — not more requests or model switching",
   ],

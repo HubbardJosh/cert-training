@@ -1,5 +1,10 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/resources/responsible-use-guide
+// - https://www.anthropic.com/legal/usage-policy
+// Content verified accurate — no factual corrections needed.
+
 export const governanceRiskAndResponsibleUseGuide: ServiceGuide = {
   id: "ccao-governance-risk-responsible-use",
   service: "Governance, Risk, and Responsible Use",

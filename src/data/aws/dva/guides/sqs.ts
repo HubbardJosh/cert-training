@@ -57,7 +57,7 @@ export const sqsGuide: ServiceGuide = {
     },
     {
       heading: "Core Message Attributes",
-      body: `Every SQS message is built from a few key pieces. The **MessageBody** carries your payload and can be up to **256 KB**. When your data exceeds that limit, the standard approach is to store the content in S3 and send the S3 key as the message body, using the extended client library to manage this transparently.
+      body: `Every SQS message is built from a few key pieces. The **MessageBody** carries your payload and can be up to **1 MiB (1,048,576 bytes)**. When your data exceeds that limit, the standard approach is to store the content in S3 and send the S3 key as the message body, using the extended client library to manage this transparently.
 
 For FIFO queues, two additional attributes become critical. The **MessageGroupId** groups related messages that must be processed in order — all messages in the same group are processed sequentially and delivered to a single consumer at a time. The **MessageDeduplicationId** prevents duplicate processing: if you send two messages with the same ID within a 5-minute window, the second is silently discarded. You can generate this ID explicitly or let SQS compute it automatically as a SHA-256 hash of the message body.
 
@@ -65,7 +65,7 @@ For FIFO queues, two additional attributes become critical. The **MessageGroupId
       quiz: [
         {
           question:
-            "An SQS message payload is 500 KB, exceeding the 256 KB limit. What is the standard approach?",
+            "An SQS message payload is 1.5 MiB, exceeding the 1 MiB limit. What is the standard approach?",
           options: [
             "Split the message into two separate SQS messages",
             "Use SQS Extended Client Library: store content in S3, send the S3 reference as the message body",
@@ -74,7 +74,7 @@ For FIFO queues, two additional attributes become critical. The **MessageGroupId
           ],
           correctIndex: 1,
           explanation:
-            "When a message payload exceeds 256 KB, the standard pattern is to store the large content in S3 and include the S3 key as the SQS message body. The SQS Extended Client Library manages this transparently, handling the S3 upload and download automatically.",
+            "When a message payload exceeds 1 MiB (1,048,576 bytes), the standard pattern is to store the large content in S3 and include the S3 key as the SQS message body. The SQS Extended Client Library manages this transparently, handling the S3 upload and download automatically. Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html",
         },
         {
           question:
@@ -250,7 +250,7 @@ For throughput, always use batching. A single \`ReceiveMessage\` call can return
       heading: "Message Retention & Queue Settings",
       body: `SQS retains undelivered messages for a configurable period. The default is **4 days**, the minimum is 60 seconds, and the maximum is **14 days**. For critical queues where you want a wide inspection window in the DLQ, set retention to the maximum. Once the retention period expires, SQS permanently deletes the message.
 
-You can delay all new messages by default (0–900 seconds) using the queue's delivery delay setting, and individual messages can override this with their own \`DelaySeconds\` attribute. The maximum message size is 256 KB — beyond that, you must use the S3 Extended Client Library.
+You can delay all new messages by default (0–900 seconds) using the queue's delivery delay setting, and individual messages can override this with their own \`DelaySeconds\` attribute. The maximum message size is 1 MiB (1,048,576 bytes) — beyond that, you must use the S3 Extended Client Library. Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html
 
 For encryption, SQS offers two options. **SSE-SQS** uses SQS-managed keys and is free. **SSE-KMS** uses your own Customer Managed Key, adding an audit trail in CloudTrail and enabling cross-account key sharing at additional cost. Only the message body is encrypted at rest — metadata like message attributes are not. Access control is handled through SQS resource-based queue policies (for cross-account access) and standard IAM identity policies.`,
       quiz: [
@@ -415,7 +415,7 @@ SQS also integrates directly with API Gateway using an AWS Service integration. 
     "Visibility timeout default: 30s; max: 12 hours",
     "Set visibility timeout ≥ 6× Lambda timeout",
     "Long polling: wait up to 20s — eliminates empty responses",
-    "Max message size: 256 KB (use S3 Extended Client for larger)",
+    "Max message size: 1 MiB / 1,048,576 bytes (use S3 Extended Client for larger)",
     "Retention: default 4 days; max 14 days",
     "DLQ must match source queue type (Standard or FIFO)",
     "Lambda batch size: 1–10,000 messages per invocation",
@@ -439,7 +439,7 @@ SQS also integrates directly with API Gateway using an AWS Service integration. 
     "DLQ: same type as source, longer retention than source queue.",
     "ReportBatchItemFailures lets Lambda delete successful messages; failed ones retry.",
     "Fan-out pattern: SNS topic → multiple SQS queues (not one queue shared by consumers).",
-    "Messages > 256 KB: store in S3, send S3 reference in message (Extended Client Library).",
+    "Messages > 1 MiB: store in S3, send S3 reference in message (Extended Client Library).",
     "maxReceiveCount on source queue controls when messages go to DLQ.",
   ],
 
@@ -500,7 +500,7 @@ SQS also integrates directly with API Gateway using an AWS Service integration. 
     },
     {
       question:
-        "An SQS message exceeds the 256 KB size limit. What is the correct handling approach?",
+        "An SQS message exceeds the 1 MiB size limit. What is the correct handling approach?",
       options: [
         "Store the payload in S3 and send the S3 reference using the Extended Client Library",
         "Split the message across multiple SQS messages",
@@ -509,7 +509,7 @@ SQS also integrates directly with API Gateway using an AWS Service integration. 
       ],
       correctIndex: 0,
       explanation:
-        "The SQS Extended Client Library stores the large payload in S3 and includes the S3 object reference in the SQS message body. The consumer retrieves the S3 object using the reference. This is the standard pattern for messages exceeding 256 KB.",
+        "The SQS Extended Client Library stores the large payload in S3 and includes the S3 object reference in the SQS message body. The consumer retrieves the S3 object using the reference. This is the standard pattern for messages exceeding 1 MiB (1,048,576 bytes). Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html",
     },
     {
       question:

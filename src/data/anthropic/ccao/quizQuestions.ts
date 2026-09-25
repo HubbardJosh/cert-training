@@ -135,7 +135,7 @@ export const quizQuestions: QuizQuestion[] = [
       "A healthcare company uses Claude to draft patient discharge summaries. Under Anthropic's Usage Policy (effective September 15, 2025), what governance control is required before these summaries are given to patients?",
     options: [
       "Human review of each summary and disclosure to patients that AI assisted in drafting it",
-      "Routing all healthcare queries to Claude Opus 5 for maximum accuracy",
+      "Routing all healthcare queries to Claude Opus 5.5 for maximum accuracy",
       "A minimum 48-hour review period before any AI-drafted content is used",
       "Enabling web search so Claude can reference current medical literature",
     ],
@@ -213,14 +213,14 @@ export const quizQuestions: QuizQuestion[] = [
     question:
       "A team needs to process 500 customer emails per night, classifying each into one of four support queues. Cost is a primary concern. Which current Claude model is MOST appropriate?",
     options: [
-      "Claude Opus 5 — most capable model ensures best classification accuracy",
+      "Claude Opus 5.5 — most capable model ensures best classification accuracy",
       "Claude Fable 5.1 — best for high-volume batch workloads",
       "Claude Sonnet 5 — balanced default for all production workloads",
       "Claude Haiku 4.5 — fastest and lowest cost at $1/$5 per MTok, well-suited for straightforward classification",
     ],
     correctIndices: [3],
     explanation:
-      "Haiku 4.5 is the fastest and cheapest current model ($1 input / $5 output per million tokens) and is appropriate for straightforward classification tasks. Simple classification into four queues does not require the reasoning depth of Opus 5 ($5/$25 per MTok) or Fable 5.1 ($10/$50 per MTok). Sonnet 5 is a good default but Haiku should be evaluated first when cost is the primary concern. Always evaluate before assuming a higher tier is needed.",
+      "Haiku 4.5 is the fastest and cheapest current model ($1 input / $5 output per million tokens) and is appropriate for straightforward classification tasks. Simple classification into four queues does not require the reasoning depth of Opus 5.5 ($4/$20 per MTok) or Fable 5.1 ($10/$50 per MTok). Sonnet 5 is a good default but Haiku should be evaluated first when cost is the primary concern. Always evaluate before assuming a higher tier is needed.",
     tags: ["model-selection", "models", "cost", "domain-3"],
   },
   {
@@ -233,13 +233,13 @@ export const quizQuestions: QuizQuestion[] = [
       "A researcher needs to analyze an entire 400,000-word academic corpus in a single API call. Which Claude models support this context window size?",
     options: [
       "No current Claude model supports more than 200K tokens",
-      "Claude Fable 5.1, Opus 5, and Sonnet 5 — all have 1M token context windows (≈555K words)",
+      "Claude Fable 5.1, Opus 5.5, and Sonnet 5 — all have 1M token context windows (≈555K words)",
       "All current Claude models support up to 500K tokens",
       "Claude Haiku 4.5 — it has the largest context window at 1M tokens",
     ],
     correctIndices: [1],
     explanation:
-      "Fable 5.1, Opus 5, and Sonnet 5 each have 1M token context windows, which at approximately 555,000 words on the current tokenizer comfortably fits a 400,000-word corpus. Haiku 4.5 has a 200K token context window (≈150K words) — too small for this task. The context window is a hard limit; exceeding it returns an error.",
+      "Fable 5.1, Opus 5.5, and Sonnet 5 each have 1M token context windows, which at approximately 555,000 words on the current tokenizer comfortably fits a 400,000-word corpus. Haiku 4.5 has a 200K token context window (≈150K words) — too small for this task. The context window is a hard limit; exceeding it returns an error.",
     tags: ["model-selection", "context-window", "domain-3"],
   },
   {
@@ -475,7 +475,7 @@ export const quizQuestions: QuizQuestion[] = [
       "An HR software company wants to use the Anthropic API to generate automated hiring recommendations that determine which candidates advance. What does Anthropic's Usage Policy require?",
     options: [
       "Submission of the use case to Anthropic for pre-approval before deployment",
-      "Use of Claude Opus 5 exclusively for employment decisions to ensure accuracy",
+      "Use of Claude Opus 5.5 exclusively for employment decisions to ensure accuracy",
       "Human review of AI-generated hiring recommendations and disclosure to candidates that AI was used in the process",
       "A maximum of 100 AI-generated recommendations per day to limit risk",
     ],
@@ -541,7 +541,7 @@ export const quizQuestions: QuizQuestion[] = [
     ],
     correctIndices: [2],
     explanation:
-      "Claude's training data has a cutoff date. Claude Haiku 4.5's reliable knowledge cutoff is February 2025; Claude Sonnet 5's is January 2026; Claude Opus 5's is May 2026; Claude Fable 5.1's is June 2026. A library released in March 2026 would be after Haiku 4.5 and Sonnet 5's cutoffs. Claude does not refuse software topics for safety reasons. The context window limits per-call input, not the scope of training knowledge. Enabling web search would allow Claude to look up current information.",
+      "Claude's training data has a cutoff date. Claude Haiku 4.5's reliable knowledge cutoff is February 2025; Claude Sonnet 5's is January 2026; Claude Opus 5.5's is June 2026; Claude Fable 5.1's is June 2026. A library released in March 2026 would be after Haiku 4.5 and Sonnet 5's cutoffs. Claude does not refuse software topics for safety reasons. The context window limits per-call input, not the scope of training knowledge. Enabling web search would allow Claude to look up current information.",
     tags: ["troubleshooting", "knowledge-cutoff", "domain-7"],
   },
   {
@@ -589,16 +589,16 @@ export const quizQuestions: QuizQuestion[] = [
     difficulty: "hard",
     type: "single",
     question:
-      "A company's Claude integration costs $8,000 per month. The team uses Claude Opus 5 for all requests, including simple FAQ lookups. What is the HIGHEST-IMPACT optimization to reduce costs?",
+      "A company's Claude integration costs $8,000 per month. The team uses Claude Opus 5.5 for all requests, including simple FAQ lookups. What is the HIGHEST-IMPACT optimization to reduce costs?",
     options: [
       "Reduce max_tokens to limit output length and cut output token costs",
       "Switch to the Batch API to get a 50% discount on all requests",
-      "Evaluate whether Haiku 4.5 meets quality requirements for FAQ lookups — at $1/$5 vs. $5/$25 per MTok, routing simple queries to Haiku could reduce those costs by ~80%",
+      "Evaluate whether Haiku 4.5 meets quality requirements for FAQ lookups — at $1/$5 vs. $4/$20 per MTok, routing simple queries to Haiku could reduce those costs by ~75%",
       "Enable prompt caching for all requests to reduce input token costs by 90%",
     ],
     correctIndices: [2],
     explanation:
-      "Model selection is the largest single cost lever. Claude Haiku 4.5 costs $1 input / $5 output per million tokens vs. Claude Opus 5 at $5 input / $25 output per million tokens — a 5x difference on input and output. If FAQ lookups (which are typically simple) can be handled by Haiku with acceptable quality, routing them there reduces those costs by approximately 80%. Prompt caching helps for repeated large system prompts. The Batch API helps for offline async workloads, not real-time FAQ. Reducing max_tokens only helps if responses are consistently long.",
+      "Model selection is the largest single cost lever. Claude Haiku 4.5 costs $1 input / $5 output per million tokens vs. Claude Opus 5.5 at $4 input / $20 output per million tokens — a 4x difference on input and output. If FAQ lookups (which are typically simple) can be handled by Haiku with acceptable quality, routing them there reduces those costs by approximately 75%. Prompt caching helps for repeated large system prompts. The Batch API helps for offline async workloads, not real-time FAQ. Reducing max_tokens only helps if responses are consistently long.",
     tags: [
       "troubleshooting",
       "cost-optimization",

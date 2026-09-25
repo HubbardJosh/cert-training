@@ -1,5 +1,10 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering
+// - https://www.anthropic.com/claude/use-cases
+// Content verified accurate — no factual corrections needed.
+
 export const workflowIntegrationAndSolutionDesignGuide: ServiceGuide = {
   id: "ccao-workflow-integration-solution-design",
   service: "Workflow Integration and Solution Design",

@@ -1,5 +1,12 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering
+// - https://platform.claude.com/docs/en/about-claude/models/overview (effort/thinking per model)
+// Corrections: "Opus 5" in keyFacts/examTips updated to "Opus 5.5" (current tier).
+// Adaptive thinking: Fable 5.1 and Opus 5.5 are always-on; Sonnet 5 is adaptive
+// (not always on); Haiku 4.5 uses extended thinking (not adaptive).
+
 export const promptEngineeringGuide: ServiceGuide = {
   id: "ccao-prompt-engineering",
   service: "Prompt Engineering",
@@ -179,7 +186,7 @@ Always validate Claude's output before using it in downstream systems, especiall
     "XML tags are the recommended way to structure complex system prompts",
     "Few-shot examples are more effective than prose descriptions for subtle or custom tasks",
     "Chain-of-thought improves accuracy on complex reasoning tasks; adds cost/latency",
-    "Adaptive thinking: Fable 5.1, Opus 5, and Sonnet 5 support an 'effort' parameter (high/medium/low) that controls thinking depth — Haiku 4.5 does not support the effort parameter",
+    "Adaptive thinking: Fable 5.1 (always on) and Opus 5.5 (always on) and Sonnet 5 (optional) support the 'effort' parameter (high/medium/low) — Haiku 4.5 uses extended (manual) thinking, not adaptive; the effort parameter is not supported on Haiku 4.5",
     "Prefilling the assistant turn: start Claude's response with a specific string (e.g., '{' for JSON) to reliably guide output format",
     "Temperature 0 = deterministic/consistent; temperature 1 = varied/creative — not a quality dial",
     "Prompt injection attacks embed instructions in user-supplied content — mitigate with delimiters",
@@ -202,7 +209,7 @@ Always validate Claude's output before using it in downstream systems, especiall
     "XML tags = the right tool for structuring complex system prompts",
     "Few-shot examples beat prose descriptions for nuanced classification tasks",
     "Chain-of-thought = better accuracy for complex reasoning, at higher token cost",
-    "For hard reasoning tasks, use the 'effort' parameter (adaptive thinking) on Fable 5.1, Opus 5, or Sonnet 5 — Haiku 4.5 does not support adaptive thinking; fall back to chain-of-thought prompting for Haiku",
+    "For hard reasoning tasks, use the 'effort' parameter on Fable 5.1, Opus 5.5, or Sonnet 5 — Haiku 4.5 uses extended (manual) thinking only; fall back to chain-of-thought prompting for Haiku 4.5",
     "Temperature 0 = extraction/classification; temperature ~1 = creative tasks",
     "Temperature ≠ quality — it controls randomness only; don't raise it to fix bad answers",
     "Prompt injection = untrusted content attempts to override system prompt instructions",

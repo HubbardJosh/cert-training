@@ -1,5 +1,13 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/about-claude/models/overview
+// - https://platform.claude.com/docs/en/about-claude/pricing
+// Corrections: Opus 5 → Opus 5.5 (current tier, released 2026-09-22); pricing
+// corrected to $4/$20 per MTok input/output for Opus 5.5 (was $5/$25 for
+// legacy Opus 5). Anthropic now recommends starting with Opus 5.5 for most
+// workloads, not Sonnet 5.
+
 export const productAndModelSelectionGuide: ServiceGuide = {
   id: "ccao-product-model-selection",
   service: "Product and Model Selection",
@@ -81,7 +89,7 @@ export const productAndModelSelectionGuide: ServiceGuide = {
 
 **Claude Fable 5.1** is Anthropic's most capable model, designed for demanding reasoning, complex multi-step analysis, and long-horizon agentic work. It has a 1M-token context window and is priced at $10 per million input tokens and $50 per million output tokens. Fable 5.1 is the slowest model and is reserved for tasks where quality is paramount regardless of cost or latency.
 
-**Claude Opus 5** targets complex agentic coding and enterprise workflows. It offers a 1M-token context window at $5 per million input tokens and $25 per million output tokens, with moderate speed. Opus 5 sits between Fable and Sonnet: more capable than Sonnet for multi-step code generation and reasoning chains, but faster and cheaper than Fable.
+**Claude Opus 5.5** (released 2026-09-22) is the current Opus tier for long-running agentic coding and knowledge work. It offers a 1M-token context window at $4 per million input tokens and $20 per million output tokens, with moderate speed. Opus 5.5 sits between Fable and Sonnet: more capable than Sonnet for multi-step code generation and reasoning chains, but faster and cheaper than Fable. (Opus 5 is a legacy model.)
 
 **Claude Sonnet 5** delivers the best balance of speed and intelligence. It has a 1M-token context window, priced at $2 per million input tokens and $10 per million output tokens, and runs fast. Sonnet 5 is the recommended default for most production applications — capable enough for complex tasks, fast enough for interactive use, and cost-efficient at scale.
 
@@ -92,13 +100,13 @@ export const productAndModelSelectionGuide: ServiceGuide = {
             "Which Claude model offers the largest context window and is designed for the most demanding reasoning tasks?",
           options: [
             "Claude Fable 5.1 — 1M-token context, highest capability, $10/$50 per MTok",
-            "Claude Opus 5 — 1M-token context, complex agentic coding focus",
+            "Claude Opus 5.5 — 1M-token context, current Opus tier for agentic coding, $4/$20 per MTok",
             "Claude Sonnet 5 — balanced speed and intelligence with 1M-token context",
             "Claude Haiku 4.5 — fastest model with 200K-token context",
           ],
           correctIndex: 0,
           explanation:
-            "Claude Fable 5.1 is Anthropic's most capable model with a 1M-token context window and the highest per-token pricing ($10 input / $50 output per MTok), reflecting its positioning for the most demanding reasoning and long-horizon agentic work. Opus 5 also has a 1M-token context but is positioned for agentic coding rather than maximum reasoning depth. Haiku 4.5 has only a 200K-token context window.",
+            "Claude Fable 5.1 is Anthropic's most capable model with a 1M-token context window and the highest per-token pricing ($10 input / $50 output per MTok), reflecting its positioning for the most demanding reasoning and long-horizon agentic work. Opus 5.5 also has a 1M-token context but is positioned for agentic coding rather than maximum reasoning depth. Haiku 4.5 has only a 200K-token context window.",
         },
         {
           question:
@@ -107,11 +115,11 @@ export const productAndModelSelectionGuide: ServiceGuide = {
             "Claude Haiku 4.5 — fastest model, lowest cost, ideal for simple high-throughput tasks",
             "Claude Fable 5.1 — most capable, ensures the highest quality answers",
             "Claude Sonnet 5 — best balance of speed and intelligence",
-            "Claude Opus 5 — appropriate for enterprise-facing customer support",
+            "Claude Opus 5.5 — appropriate for complex agentic or enterprise-facing work",
           ],
           correctIndex: 0,
           explanation:
-            "Claude Haiku 4.5 is purpose-built for high-throughput, latency-sensitive tasks with near-frontier intelligence. Simple FAQ lookups do not require deep reasoning — the speed and cost advantages of Haiku 4.5 ($1/$5 per MTok, fastest) make it the obvious fit. Fable 5.1 and Opus 5 add cost and latency with no quality benefit for FAQ queries. Sonnet 5 is the sensible default but Haiku 4.5 is more appropriate when latency and cost dominate.",
+            "Claude Haiku 4.5 is purpose-built for high-throughput, latency-sensitive tasks with near-frontier intelligence. Simple FAQ lookups do not require deep reasoning — the speed and cost advantages of Haiku 4.5 ($1/$5 per MTok, fastest) make it the obvious fit. Fable 5.1 and Opus 5.5 add cost and latency with no quality benefit for FAQ queries. Sonnet 5 is the sensible default but Haiku 4.5 is more appropriate when latency and cost dominate.",
         },
       ],
     },
@@ -119,32 +127,32 @@ export const productAndModelSelectionGuide: ServiceGuide = {
       heading: "Aligning Model Selection with Task Requirements",
       body: `Model selection should be driven by three variables evaluated against the specific task: **quality requirements** (how much reasoning depth does the task demand?), **latency requirements** (how fast must the response arrive?), and **cost at scale** (how many calls will this feature make, and at what volume does pricing matter?).
 
-The recommended decision process is: start with **Sonnet 5** as the default for any new feature. Run evaluations on a representative sample of real inputs to measure output quality. If quality is measurably insufficient for the task, upgrade to Opus 5 or Fable 5.1. If quality is more than adequate and speed or cost is a concern, evaluate Haiku 4.5. Never assume a model tier — let evaluation data drive the decision.
+The recommended decision process is: start with **Sonnet 5** as the default for any new feature. Run evaluations on a representative sample of real inputs to measure output quality. If quality is measurably insufficient for the task, upgrade to Opus 5.5 or Fable 5.1. If quality is more than adequate and speed or cost is a concern, evaluate Haiku 4.5. Never assume a model tier — let evaluation data drive the decision.
 
 **Cost compounds with volume.** A feature called one million times per day costs $1,000/day with Haiku 4.5 input tokens versus $10,000/day with Fable 5.1 input tokens for identical prompts. This 10x difference means model selection is a significant architectural and financial decision at scale, not a minor configuration detail.
 
-**Latency profiles matter for user experience.** Interactive features (chat, search, autocomplete) require fast responses to avoid user frustration. Background batch jobs (nightly reports, data enrichment, document processing pipelines) have no real-time latency requirement, making them the natural home for Fable 5.1 or Opus 5 when task complexity warrants it.
+**Latency profiles matter for user experience.** Interactive features (chat, search, autocomplete) require fast responses to avoid user frustration. Background batch jobs (nightly reports, data enrichment, document processing pipelines) have no real-time latency requirement, making them the natural home for Fable 5.1 or Opus 5.5 when task complexity warrants it.
 
-Use **context window size** as an additional constraint. Tasks requiring processing of very long documents benefit from the 1M-token windows of Fable 5.1, Opus 5, and Sonnet 5. If your task reliably fits within 200K tokens, Haiku 4.5's smaller window is not a limitation and its speed and cost advantages apply.`,
+Use **context window size** as an additional constraint. Tasks requiring processing of very long documents benefit from the 1M-token windows of Fable 5.1, Opus 5.5, and Sonnet 5. If your task reliably fits within 200K tokens, Haiku 4.5's smaller window is not a limitation and its speed and cost advantages apply.`,
       quiz: [
         {
           question:
             "A data team runs a nightly pipeline that generates 50,000 high-stakes financial analysis reports. Accuracy is critical and latency is not a concern. What is the correct model selection approach?",
           options: [
-            "Evaluate Fable 5.1, Opus 5, and Sonnet 5 on a sample set; choose the cheapest model that meets the quality bar",
+            "Evaluate Fable 5.1, Opus 5.5, and Sonnet 5 on a sample set; choose the cheapest model that meets the quality bar",
             "Always use Fable 5.1 for financial analysis to guarantee maximum accuracy",
             "Use Haiku 4.5 because batch jobs should optimize for cost",
             "Use Sonnet 5 as the default without evaluation since it is the balanced choice",
           ],
           correctIndex: 0,
           explanation:
-            "The correct approach is evaluation-driven: test multiple models on representative samples and select the cheapest model that meets the accuracy requirement. High-stakes financial analysis may warrant Fable 5.1 or Opus 5 — but only if evaluation confirms that Sonnet 5 is insufficient. Assuming Fable 5.1 is always required ignores cost without evidence. Defaulting to Haiku 4.5 for cost reasons may sacrifice required accuracy. Evaluation data, not assumptions, drives the decision.",
+            "The correct approach is evaluation-driven: test multiple models on representative samples and select the cheapest model that meets the accuracy requirement. High-stakes financial analysis may warrant Fable 5.1 or Opus 5.5 — but only if evaluation confirms that Sonnet 5 is insufficient. Assuming Fable 5.1 is always required ignores cost without evidence. Defaulting to Haiku 4.5 for cost reasons may sacrifice required accuracy. Evaluation data, not assumptions, drives the decision.",
         },
       ],
     },
     {
       heading: "Context Limitations and Memory Management",
-      body: `Every Claude model has a **context window** — the maximum number of tokens that can be processed in a single conversation or API call, including the system prompt, all conversation turns, tool results, and the model's response. Claude Fable 5.1, Opus 5, and Sonnet 5 all support 1M-token contexts (approximately 555,000 words). Claude Haiku 4.5 supports 200K tokens (approximately 150,000 words). The context window is a hard ceiling: exceeding it returns an error, not a silent truncation.
+      body: `Every Claude model has a **context window** — the maximum number of tokens that can be processed in a single conversation or API call, including the system prompt, all conversation turns, tool results, and the model's response. Claude Fable 5.1, Opus 5.5, and Sonnet 5 all support 1M-token contexts (approximately 555,000 words). Claude Haiku 4.5 supports 200K tokens (approximately 150,000 words). The context window is a hard ceiling: exceeding it returns an error, not a silent truncation.
 
 As a conversation grows, it consumes more of the available context window. Users and operators must understand **when to act** to avoid hitting the ceiling unexpectedly. There are three management strategies:
 
@@ -191,9 +199,9 @@ For Claude.ai users, memory features can store facts about the user across sessi
     "Projects maintain custom instructions and uploaded files across all conversations in the workspace",
     "Claude.ai plans: Free, Pro ($17-20/mo), Max ($100+/mo), Team ($20-100/seat), Enterprise ($20/seat + API)",
     "Enterprise adds SCIM, audit logs, custom data retention, and HIPAA-ready configuration",
-    "Current model lineup: Fable 5.1 (most capable), Opus 5 (agentic coding), Sonnet 5 (balanced default), Haiku 4.5 (fastest)",
+    "Current model lineup: Fable 5.1 (most capable), Opus 5.5 (current Opus, agentic coding), Sonnet 5 (balanced default), Haiku 4.5 (fastest) — Opus 5 is now legacy",
     "Fable 5.1 pricing: $10/$50 per MTok input/output; Haiku 4.5 pricing: $1/$5 per MTok input/output",
-    "Fable 5.1, Opus 5, and Sonnet 5 support 1M-token contexts (~555K words); Haiku 4.5 supports 200K tokens (~150K words)",
+    "Fable 5.1, Opus 5.5, and Sonnet 5 support 1M-token contexts (~555K words); Haiku 4.5 supports 200K tokens (~150K words)",
     "Context window is a hard ceiling — exceeding it returns an error, not silent truncation",
     "Memory management strategies: restart conversation, summarize and compress, persist to external storage",
     "Claude's context is ephemeral between API calls — applications must implement their own persistence",
@@ -210,7 +218,7 @@ For Claude.ai users, memory features can store facts about the user across sessi
   examTips: [
     "Know which Claude.ai feature matches each scenario: Projects for persistent instructions, Research mode for live web search, Artifacts for standalone deliverables",
     "Enterprise is the only plan with SCIM, audit logs, and HIPAA-ready features — required for regulated industries",
-    "Model selection rule: start with Sonnet 5, evaluate, then upgrade or downgrade based on evidence — never assume",
+    "Model selection rule: start with Opus 5.5 for most workloads (per Anthropic guidance) or Sonnet 5 when cost is a constraint; evaluate before upgrading to Fable 5.1 or downgrading to Haiku 4.5",
     "Haiku 4.5 has a 200K-token context ceiling; all other current models support 1M tokens",
     "Context window overflow is a hard API error — implement chunking, summarization, or RAG before hitting the limit",
     "Claude has no built-in memory across API calls — persistence requires external storage and re-injection per call",

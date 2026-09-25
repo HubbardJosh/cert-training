@@ -1,5 +1,15 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/about-claude/pricing
+// - https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+// - https://platform.claude.com/docs/en/api/messages-batches
+// Corrections: cache read rate for Opus 5.5 is 5% (0.05x), not 10%.
+// Fable 5.1/Mythos 5.1 cache read is 2.5% (0.025x).
+// Opus 5 is now a legacy model; Opus 5.5 is the current Opus tier.
+// Batch API: up to 100K requests per batch confirmed; Fast mode (research preview)
+// available for Opus 5.5 at premium pricing added.
+
 export const anthropicProductsGuide: ServiceGuide = {
   id: "ccao-anthropic-products",
   service: "Anthropic Products and Ecosystem",
@@ -135,7 +145,7 @@ The Batch API should not be used for interactive features where users are waitin
     "Official SDKs: anthropic (Python), @anthropic-ai/sdk (npm/TypeScript)",
     "SDK provides automatic retry, type safety, streaming helpers out of the box",
     "Prompt cache has two TTL tiers: 5-minute (write cost 1.25x base input price) and 1-hour (write cost 2x base input price)",
-    "Cache reads cost ~10% of base input token price for Opus 5, Sonnet 5, and Haiku 4.5; ~2.5% for Fable 5.1 (~97.5% discount)",
+    "Cache read multipliers: 2.5% (0.025x) for Fable 5.1 and Mythos 5.1; 5% (0.05x) for Opus 5.5; 10% (0.1x) for Sonnet 5, Haiku 4.5, and other models",
     "Batch API: 50% discount, async processing (most <1 hour; max 24 hours), up to 100K requests",
     "Batch API is for offline workloads only — not suitable for real-time features",
   ],
@@ -150,7 +160,7 @@ The Batch API should not be used for interactive features where users are waitin
   examTips: [
     "Claude.ai ≠ API access — separate products, separate credentials",
     "Workbench = where to test prompts before writing code",
-    "Prompt cache TTL tiers: 5-minute (1.25x write cost) and 1-hour (2x write cost) — match the TTL to your call frequency; cache reads cost ~10% (2.5% for Fable 5.1)",
+    "Prompt cache TTL tiers: 5-minute (1.25x write) and 1-hour (2x write); cache reads: 10% for most models, 5% for Opus 5.5, 2.5% for Fable 5.1/Mythos 5.1",
     "Batch API = 50% cost reduction but async (most <1 hour; max 24 hours) — offline workloads only",
     "SDK vs raw HTTP: SDK provides retry logic, streaming helpers, type safety",
     "Console = key management, usage metrics, billing — not per-request logs",

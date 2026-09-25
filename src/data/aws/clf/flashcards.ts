@@ -1043,9 +1043,9 @@ export const flashcards: FlashCard[] = [
     question:
       "What is the maximum SQS message size and how do you handle larger payloads?",
     answer:
-      "SQS maximum message size is 256 KB. For larger payloads, store the data in S3 and put the S3 object reference in the SQS message (the Extended Client Library pattern). The consumer reads the reference from SQS, then fetches the actual data from S3.",
+      "SQS maximum message size is 1 MiB (1,048,576 bytes). For larger payloads, store the data in S3 and put the S3 object reference in the SQS message (the Extended Client Library pattern). The consumer reads the reference from SQS, then fetches the actual data from S3. Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html",
     keyPoints: [
-      "Max message size: 256 KB",
+      "Max message size: 1 MiB (1,048,576 bytes)",
       "For larger data: store in S3, reference in SQS message",
       "Extended Client Library handles this pattern automatically",
     ],

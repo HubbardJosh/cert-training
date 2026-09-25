@@ -1,5 +1,11 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+// - https://platform.claude.com/docs/en/build-with-claude/tool-use/agentic-loop
+// Core agentic concepts (ReAct, plan-and-execute, multi-agent, minimal footprint,
+// HITL, RAG, compounding errors) verified accurate.
+
 export const agenticWorkflowsGuide: ServiceGuide = {
   id: "ccao-agentic-workflows",
   service: "Agentic Workflows",

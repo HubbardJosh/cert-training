@@ -1111,7 +1111,7 @@ export const quizQuestions: QuizQuestion[] = [
     optionExplanations: [
       "Incorrect. Lambda memory allocation and /tmp storage are completely independent — increasing memory does not increase the /tmp ephemeral storage size (which has its own separate limit).",
       "Correct. Amazon EFS can be mounted to Lambda functions within a VPC, providing virtually unlimited shared persistent storage accessible simultaneously by multiple function instances — persisting data across invocations.",
-      "Incorrect. SQS is a message queue for decoupled communication between systems, not a storage layer for large data; it has a 256 KB message size limit and does not persist arbitrary binary data.",
+      "Incorrect. SQS is a message queue for decoupled communication between systems, not a storage layer for large data; it has a 1 MiB (1,048,576 bytes) message size limit and does not persist arbitrary binary data. Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html",
       "Incorrect. Provisioned Concurrency keeps execution environments warm to reduce cold starts, but /tmp storage is still isolated per environment and is not shared or persisted across invocations.",
       "Correct. Amazon S3 provides effectively unlimited object storage that Lambda can read from and write to via the AWS SDK during execution — it is the standard solution for large files that exceed /tmp limits.",
     ],
@@ -3082,9 +3082,9 @@ export const quizQuestions: QuizQuestion[] = [
     options: ["1 MB", "10 MB", "256 KB", "64 KB"],
     correctIndices: [2],
     explanation:
-      "Amazon SNS supports messages up to 256 KB in size. For larger payloads, use the SNS Extended Client Library which stores the actual message in S3 and sends a reference in the SNS message. This is the same pattern used with SQS Extended Client Library. SQS also has a 256 KB message size limit.",
+      "Amazon SNS supports messages up to 256 KB (262,144 bytes) in size. For larger payloads, use the SNS Extended Client Library which stores the actual message in S3 and sends a reference in the SNS message. Note that SQS's limit is 1 MiB — SNS is the constraining factor in fan-out patterns. Source: https://docs.aws.amazon.com/sns/latest/dg/SNSMessageAttributes.html",
     optionExplanations: [
-      "Incorrect. Amazon SNS enforces a maximum message payload size of 256 KB. For larger payloads, the SNS Extended Client Library stores the actual content in S3 and sends a reference pointer in the SNS message, keeping the message itself within the 256 KB limit.",
+      "Incorrect. Amazon SNS enforces a maximum message payload size of 256 KB (262,144 bytes). For larger payloads, the SNS Extended Client Library stores the actual content in S3 and sends a reference pointer in the SNS message, keeping the message itself within the 256 KB limit.",
       "Incorrect. 1 MB exceeds the SNS maximum message size of 256 KB. SNS will reject messages larger than 256 KB with an error.",
       "Correct. 10 MB far exceeds the SNS message size limit. This is closer to the maximum payload size for API Gateway (10 MB) or Lambda synchronous invocations, not SNS.",
       "Incorrect. 64 KB is below the actual limit; SNS supports messages up to 256 KB, so a 64 KB message is well within limits but this value is not the maximum.",

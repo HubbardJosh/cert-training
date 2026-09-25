@@ -65,7 +65,7 @@ await sns.send(new PublishCommand({
           options: ["64 KB", "128 KB", "1 MB", "256 KB"],
           correctIndex: 3,
           explanation:
-            "SNS supports a maximum message body size of 256 KB. This is consistent with SQS's message size limit, making the two services compatible in fan-out patterns.",
+            "SNS supports a maximum message body size of 256 KB (262,144 bytes). Note that SQS's message size limit is 1 MiB, so SNS is the constraining factor in SNS→SQS fan-out patterns. Source: https://docs.aws.amazon.com/sns/latest/dg/SNSMessageAttributes.html",
         },
       ],
     },
@@ -424,7 +424,7 @@ For VPC-private architectures where you want to publish to SNS without internet 
       options: ["64 KB", "128 KB", "256 KB", "1 MB"],
       correctIndex: 2,
       explanation:
-        "SNS supports a maximum message size of 256 KB, consistent with SQS. For larger payloads, store the data in S3 and include an S3 reference in the SNS message.",
+        "SNS supports a maximum message size of 256 KB (262,144 bytes). Note that SQS's limit is 1 MiB, so SNS is the constraining factor in SNS→SQS fan-out patterns. For larger payloads, store the data in S3 and include an S3 reference in the SNS message. Source: https://docs.aws.amazon.com/sns/latest/dg/SNSMessageAttributes.html",
     },
     {
       question:

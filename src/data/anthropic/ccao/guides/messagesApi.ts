@@ -1,5 +1,16 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/api/messages
+// - https://platform.claude.com/docs/en/api/handling-stop-reasons
+// - https://platform.claude.com/docs/en/build-with-claude/prompt-caching
+// - https://platform.claude.com/docs/en/api/errors
+// Correction applied: prior version listed only end_turn/max_tokens/stop_sequence/
+// tool_use as stop_reasons. Added pause_turn, refusal, and
+// model_context_window_exceeded (all shipped in 2026). Optional-params list
+// expanded to include thinking, output_config, service_tier, inference_geo,
+// tools, tool_choice which were omitted.
+
 export const messagesApiGuide: ServiceGuide = {
   id: "ccao-messages-api",
   service: "Messages API",
@@ -16,7 +27,7 @@ export const messagesApiGuide: ServiceGuide = {
 
 Each message object has a \`role\` (\`"user"\` or \`"assistant"\`) and \`content\`. The \`content\` can be a plain string for simple text or an array of content blocks for multimodal requests containing images and text. Messages must alternate between user and assistant roles — two consecutive user messages or two consecutive assistant messages will return a validation error. The conversation must always start with a user message.
 
-Optional top-level parameters include \`system\` (a system prompt applied before the conversation — accepts either a plain string or an array of content blocks, enabling granular \`cache_control\` placement on individual system prompt segments), \`temperature\` (controls output randomness, 0–1), \`top_p\`, \`top_k\`, and \`stop_sequences\` (strings that cause Claude to stop generating when encountered). These parameters tune Claude's behavior for specific use cases.`,
+Optional top-level parameters include \`system\` (a system prompt applied before the conversation — accepts either a plain string or an array of content blocks, enabling granular \`cache_control\` placement on individual system prompt segments), \`tools\` and \`tool_choice\` (for tool use / function calling), \`stream\` (enable server-sent events), \`temperature\` (controls output randomness, 0–1), \`top_p\`, \`top_k\`, \`stop_sequences\` (strings that cause Claude to stop generating), \`thinking\` (extended-thinking configuration on Opus 4.6/Sonnet 4.6; deprecated on 4.6, not accepted on 4.7+), \`output_config\` (structured JSON output with a schema), \`service_tier\` (\`"auto"\` or \`"standard_only"\`), \`inference_geo\` (data residency — e.g., \`"us"\` on 4.6+ models, with a 1.1x pricing multiplier), and \`metadata\` (user ID and other request metadata).`,
       quiz: [
         {
           question:
@@ -45,14 +56,14 @@ Well-structured system prompts use clear sections, explicit instructions, and ex
           question:
             "A high-volume application sends the same 2,000-token system prompt with every request. What Anthropic feature reduces the cost of this pattern?",
           options: [
-            "Prompt caching — marks the system prompt as cacheable, reducing repeated input token costs by ~90%",
+            "Prompt caching — marks the system prompt as cacheable; cache reads are 10% of base input price on most models (2.5% on Fable 5.1, 5% on Opus 5.5)",
             "Batch API — groups requests to reduce per-request overhead",
             "Streaming — delivers tokens incrementally to reduce perceived latency",
             "Temperature 0 — deterministic outputs reduce the need for retry calls",
           ],
           correctIndex: 0,
           explanation:
-            "Prompt caching is specifically designed for this pattern. By marking the system prompt with a cache_control block, subsequent requests that send the same system prompt pay only a cache read price (~10% of normal input cost for most models) instead of the full input token price. The Batch API reduces per-request overhead for offline jobs but doesn't reduce token costs. Streaming and temperature affect output behavior, not input token billing.",
+            "Prompt caching is specifically designed for this pattern. By marking the system prompt with a cache_control block, subsequent requests that send the same system prompt pay a cache read price (10% of base input for most models — 2.5% on Fable 5.1 / Mythos 5.1, 5% on Opus 5.5) instead of the full input token price. Cache writes cost 1.25x base input for the 5-minute cache or 2x for the 1-hour cache. The Batch API reduces cost by 50% for asynchronous jobs but doesn't help with per-request latency. Streaming and temperature affect output behavior, not input token billing.",
         },
       ],
     },
@@ -60,7 +71,7 @@ Well-structured system prompts use clear sections, explicit instructions, and ex
       heading: "Response Structure",
       body: `The Messages API returns a structured JSON response object. The key fields are: \`id\` (unique message ID), \`type\` (always \`"message"\`), \`role\` (always \`"assistant"\`), \`content\` (array of content blocks), \`model\` (the exact model used), \`stop_reason\`, and \`usage\`.
 
-The \`stop_reason\` field indicates why Claude stopped generating. \`"end_turn"\` means Claude naturally completed its response. \`"max_tokens"\` means the response was cut off because it hit the \`max_tokens\` limit — this is a signal to increase \`max_tokens\` or restructure the prompt if complete responses are required. \`"stop_sequence"\` means a stop sequence from \`stop_sequences\` was encountered. \`"tool_use"\` means Claude is invoking a tool and waiting for a result.
+The \`stop_reason\` field indicates why Claude stopped generating. The full set of values (as of 2026) is: \`"end_turn"\` (Claude naturally completed its response), \`"max_tokens"\` (response cut off at the \`max_tokens\` limit — a signal to increase \`max_tokens\` or restructure the prompt), \`"stop_sequence"\` (a sequence from \`stop_sequences\` was encountered; the matched sequence is in the \`stop_sequence\` field), \`"tool_use"\` (Claude is invoking a tool and waiting for a result), \`"pause_turn"\` (a server-tool loop reached its iteration limit — default 10; send the assistant content back to continue), \`"refusal"\` (Claude declined to respond because a safety policy triggered; the \`stop_details\` object identifies the policy category), and \`"model_context_window_exceeded"\` (the response filled the model's entire context window — treat as truncated).
 
 The \`usage\` object contains \`input_tokens\` and \`output_tokens\`, which are the billable token counts for that request. Logging and monitoring these per-request counts is essential for cost tracking and detecting prompt inflation or runaway output generation.`,
       quiz: [
@@ -154,12 +165,13 @@ Production applications should never make Claude API calls from the browser or c
     "Required fields: model, max_tokens, messages — all three must be present",
     "Messages must alternate user/assistant roles; conversation must start with 'user'",
     "system prompt occupies a privileged position outside the turn structure",
-    "stop_reason 'max_tokens' means response was truncated — not a refusal",
+    "stop_reason values: end_turn, max_tokens, stop_sequence, tool_use, pause_turn, refusal, model_context_window_exceeded",
+    "stop_reason 'max_tokens' means response was truncated — not a refusal (refusal has its own stop_reason with stop_details)",
     "API is stateless — full conversation history must be sent with every request",
     "Streaming uses server-sent events (SSE) and does not change token billing",
     "Rate limit exceeded returns HTTP 429; use exponential backoff with jitter",
     "Never expose the API key client-side — always proxy through a server",
-    "Prompt caching reduces repeated system prompt cost by ~90% for most models",
+    "Prompt caching cache-hit is 10% of base input price on most models (2.5% on Fable 5.1 / Mythos 5.1, 5% on Opus 5.5); 5-min cache write is 1.25x, 1-hour is 2x",
     "The system field can accept an array of content blocks (not just a string) — enables granular cache_control placement on individual system prompt segments",
     "usage field in response contains input_tokens and output_tokens for billing",
   ],

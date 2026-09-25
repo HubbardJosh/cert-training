@@ -1,5 +1,13 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/about-claude/pricing
+// - https://platform.claude.com/docs/en/api/errors
+// Corrections: Haiku vs Opus pricing ratio updated — Haiku 4.5 ($1/$5) is ~4x
+// cheaper than Opus 5.5 ($4/$20), not ~5x as stated for legacy Opus 5 ($5/$25).
+// Prompt caching cache-read is ~10% for most models (not 90% savings vs all models).
+// Fable 5.1/Mythos 5.1 cache-read is 2.5% (97.5% savings); Opus 5.5 is 5%.
+
 export const productionDeploymentGuide: ServiceGuide = {
   id: "ccao-production-deployment",
   service: "Production Deployment",
@@ -60,7 +68,7 @@ For latency-critical paths, pre-compute wherever possible. If Claude is used to 
       heading: "Cost Management",
       body: `Claude API costs are driven by **input tokens** and **output tokens**. Input includes the system prompt, conversation history, and user message. Output is the generated response. Output tokens are priced higher than input tokens per unit. Total cost = (input tokens × input price) + (output tokens × output price).
 
-The levers for cost control are: **model selection** (Haiku 4.5 is significantly cheaper than Opus 5 — approximately 5x cheaper, and approximately 10x cheaper than Fable 5.1 at list pricing), **prompt caching** (reduces the cost of repeated large system prompts by ~90%), **max_tokens** (setting a lower cap reduces runaway output costs — a max_tokens of 256 prevents Claude from writing a 2,000-token essay when 100 words would do), **context management** (trimming conversation history reduces input tokens per turn), and **caching at application layer** (cache identical or near-identical queries to avoid redundant API calls entirely).
+The levers for cost control are: **model selection** (Haiku 4.5 is significantly cheaper than Opus 5.5 — approximately 4x cheaper on input tokens ($1 vs $4 per MTok), and approximately 10x cheaper than Fable 5.1 at list pricing), **prompt caching** (reduces the cost of repeated large system prompts by ~90%), **max_tokens** (setting a lower cap reduces runaway output costs — a max_tokens of 256 prevents Claude from writing a 2,000-token essay when 100 words would do), **context management** (trimming conversation history reduces input tokens per turn), and **caching at application layer** (cache identical or near-identical queries to avoid redundant API calls entirely).
 
 Track cost per feature, per user, and per request type using the \`usage\` field in every API response. Establish cost budgets and alerts. Token costs compound at scale: a feature used 1 million times per day that costs $0.001 per call costs $1,000/day or $365,000/year — model selection and prompt optimization at that scale have enormous financial impact.`,
       quiz: [
@@ -75,7 +83,7 @@ Track cost per feature, per user, and per request type using the \`usage\` field
           ],
           correctIndex: 0,
           explanation:
-            "Routing to Haiku 4.5 where quality allows is the most impactful change — Haiku 4.5 is approximately 5x cheaper than Opus 5 at list pricing. 70% of requests moving to Haiku 4.5 would dramatically cut the bill. Streaming does not affect token usage or cost. Reducing max_tokens by half saves output tokens on long responses but has no impact when responses are short. Prompt caching is valuable but produces at most ~10-20% savings on input tokens for a large system prompt — not comparable to a model switch for 70% of volume.",
+            "Routing to Haiku 4.5 where quality allows is the most impactful change — Haiku 4.5 is approximately 4x cheaper than Opus 5.5 at list pricing. 70% of requests moving to Haiku 4.5 would dramatically cut the bill. Streaming does not affect token usage or cost. Reducing max_tokens by half saves output tokens on long responses but has no impact when responses are short. Prompt caching is valuable but produces at most ~10-20% savings on input tokens for a large system prompt — not comparable to a model switch for 70% of volume.",
         },
       ],
     },
@@ -131,7 +139,7 @@ Tools in the LLM observability ecosystem include Anthropic's own usage dashboard
     "Always proxy API calls through a server — never expose the API key client-side",
     "Streaming dramatically improves perceived latency by delivering tokens incrementally",
     "Cost drivers: input tokens, output tokens (priced higher), model tier, and request volume",
-    "Haiku 4.5 is ~5x cheaper than Opus 5 and ~10x cheaper than Fable 5.1 at list pricing — model selection is the biggest cost lever",
+    "Haiku 4.5 is ~4x cheaper than Opus 5.5 and ~10x cheaper than Fable 5.1 at list pricing — model selection is the biggest cost lever",
     "400 errors = fix the request, do not retry; 429/529 = exponential backoff and retry",
     "Always set request timeouts — long reasoning tasks can take 30-60 seconds",
     "Track usage field in every response for per-request cost attribution",
@@ -152,7 +160,7 @@ Tools in the LLM observability ecosystem include Anthropic's own usage dashboard
     "Never client-side API calls — always server-side proxy",
     "Streaming = the fix for high perceived latency in interactive features",
     "400 = don't retry; 429/529 = exponential backoff with jitter",
-    "Model selection is the biggest cost lever — Haiku 4.5 vs Opus 5 is ~5x price difference; Haiku 4.5 vs Fable 5.1 is ~10x",
+    "Model selection is the biggest cost lever — Haiku 4.5 vs Opus 5.5 is ~4x price difference; Haiku 4.5 vs Fable 5.1 is ~10x",
     "LLM monitoring adds output quality metrics beyond standard infra metrics",
     "Always implement timeouts on API calls — long requests can block indefinitely without them",
   ],

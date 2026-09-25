@@ -1,5 +1,14 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+// - https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+// - https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls
+// - https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use
+// Corrections: added strict:true tool option, disable_parallel_tool_use flag,
+// Tool Runner SDK helper, new server tools (Advisor, Tool Search, MCP connector,
+// Browser use). Core mechanics verified accurate.
+
 export const toolUseGuide: ServiceGuide = {
   id: "ccao-tool-use",
   service: "Tool Use",
@@ -132,13 +141,17 @@ Agentic systems require careful **loop and error handling**. Infinite loops can 
     "stop_reason 'tool_use' means Claude is waiting for a tool result — not a completed response",
     "Tool description quality is the primary driver of correct tool selection",
     "Multiple tool_use blocks in one response = parallel tool calls; send all results back together",
-    "tool_choice parameter: 'auto' (default), 'any' (force a tool), or specific tool name",
+    "tool_choice parameter: 'auto' (default), 'any' (force at least one tool), or { type: 'tool', name: '...' } (force specific tool); 'none' disables all tools",
+    "disable_parallel_tool_use: true inside tool_choice forces sequential (one-at-a-time) tool calls",
+    "strict: true on a tool definition guarantees Claude's arguments always match the JSON Schema exactly",
+    "Tool Runner: SDK helper that automatically executes your tools and sends results back — removes round-trip boilerplate",
     "Agentic loops must have maximum iteration limits to prevent infinite loops",
     "Tool input_schema uses JSON Schema — include property descriptions for complex params",
     "The full multi-turn cycle continues until stop_reason is 'end_turn'",
-    "Server-side tools (web search, web fetch, computer use): Anthropic-managed tools billed separately — distinct from developer-defined client-side tools",
+    "Server tools (Anthropic-managed, run on Anthropic infra): web_search_20260209, web_fetch, code_execution, advisor, tool_search, MCP connector, browser_use — no tool_result needed",
+    "Client tools (developer-defined): you write the schema, your app executes, returns tool_result",
+    "Anthropic-schema client tools (Anthropic defines schema, you execute): bash, text_editor, computer_use, browser_use, memory",
     "Tool results can include images (base64 or URL), not just text — relevant for computer use and screenshot-based agentic tasks",
-    "Computer use tool: allows Claude to interact with graphical user interfaces — screenshots, mouse clicks, keyboard input",
   ],
 
   relatedServices: [
@@ -153,8 +166,10 @@ Agentic systems require careful **loop and error handling**. Infinite loops can 
     "stop_reason 'tool_use' = application must run the tool and continue the conversation",
     "Two tool_use blocks in one response = run both tools in parallel, send both results together",
     "tool_choice: type 'tool' is how you guarantee structured output via tool invocation",
+    "strict: true on tool definition = guaranteed schema conformance on every call",
+    "disable_parallel_tool_use: true = force sequential execution",
     "Agentic loops require max iteration guards — Claude can loop indefinitely without them",
     "Tool description is what Claude reads to decide when to use a tool — make it precise",
-    "Client-side tools: developer-defined, executed by the developer's code. Server-side tools: Anthropic-managed (web search, computer use) — know the distinction",
+    "Client tools: developer-defined (you execute) or Anthropic-schema (you execute Anthropic's schema). Server tools: Anthropic-managed (web_search, code_execution, advisor, tool_search, MCP connector, browser_use — Anthropic executes) — know all three categories",
   ],
 };

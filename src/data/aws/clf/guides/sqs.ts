@@ -91,7 +91,7 @@ For the exam: use Standard when throughput matters most and your application can
 
 **Message Retention Period** determines how long SQS retains unprocessed messages before discarding them. The default is 4 days; the maximum is 14 days.
 
-**Maximum Message Size** is 256 KB. For larger payloads, store the data in S3 and put the S3 object reference in the SQS message (the **Extended Client Library** pattern).
+**Maximum Message Size** is 1 MiB (1,048,576 bytes). For larger payloads, store the data in S3 and put the S3 object reference in the SQS message (the **Extended Client Library** pattern). Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html
 
 **Long Polling** reduces the number of empty responses when the queue is empty. With long polling, SQS waits up to 20 seconds for a message to arrive before returning an empty response. This is more efficient than **short polling**, which returns immediately (even if empty) and can cost more due to excessive API calls.
 
@@ -199,7 +199,7 @@ DLQs should be monitored with CloudWatch alarms — messages arriving in the DLQ
     "Message Retention: default 4 days, maximum 14 days",
     "Dead Letter Queue (DLQ) receives messages that fail processing after maxReceiveCount attempts",
     "Long Polling waits up to 20 seconds for messages — more efficient than short polling",
-    "Maximum message size is 256 KB; use S3 for larger payloads",
+    "Maximum message size is 1 MiB (1,048,576 bytes); use S3 for larger payloads",
     "Queue depth is an ideal metric for Auto Scaling EC2 worker fleets",
   ],
 
@@ -273,10 +273,10 @@ DLQs should be monitored with CloudWatch alarms — messages arriving in the DLQ
     {
       question:
         "What is the maximum size of a single message that can be sent to an SQS queue?",
-      options: ["128 KB", "64 KB", "1 MB", "256 KB"],
-      correctIndex: 3,
+      options: ["128 KB", "64 KB", "1 MiB (1,048,576 bytes)", "256 KB"],
+      correctIndex: 2,
       explanation:
-        "The maximum SQS message size is 256 KB. For larger payloads, the recommended pattern is to store the data in S3 and put a reference to the S3 object in the SQS message (using the Extended Client Library).",
+        "The maximum SQS message size is 1 MiB (1,048,576 bytes). For larger payloads, the recommended pattern is to store the data in S3 and put a reference to the S3 object in the SQS message (using the Extended Client Library). Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html",
     },
     {
       question:

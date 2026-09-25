@@ -186,10 +186,10 @@ export const flashcards: FlashCard[] = [
     question:
       "What are the four current Claude models and how do they differ in speed and cost?",
     answer:
-      "Claude Fable 5.1 (slowest, $10/$50 per MTok), Claude Opus 5 (moderate, $5/$25 per MTok), Claude Sonnet 5 (fast, $2/$10 per MTok), and Claude Haiku 4.5 (fastest, $1/$5 per MTok). All support vision and tool use.",
+      "Claude Fable 5.1 (slowest, $10/$50 per MTok), Claude Opus 5.5 (moderate, $4/$20 per MTok), Claude Sonnet 5 (fast, $2/$10 per MTok), and Claude Haiku 4.5 (fastest, $1/$5 per MTok). All support vision and tool use.",
     keyPoints: [
       "Fable 5.1: demanding reasoning and long-horizon agentic work",
-      "Opus 5: complex agentic coding and enterprise work",
+      "Opus 5.5: current Opus tier (released 2026-09-22), complex agentic and enterprise work",
       "Sonnet 5: best balance of speed and intelligence",
       "Haiku 4.5: fastest, near-frontier intelligence, lowest cost",
     ],
@@ -203,7 +203,7 @@ export const flashcards: FlashCard[] = [
     question:
       "What are the context window sizes for current Claude models and what do they mean in practice?",
     answer:
-      "Fable 5.1, Opus 5, and Sonnet 5 each have 1M token context windows (≈555K words). Haiku 4.5 has a 200K token context window (≈150K words). The context window is the total limit for system prompt + conversation + response combined.",
+      "Fable 5.1, Opus 5.5, and Sonnet 5 each have 1M token context windows (≈555K words). Haiku 4.5 has a 200K token context window (≈150K words). The context window is the total limit for system prompt + conversation + response combined.",
     keyPoints: [
       "1M tokens ≈ 555,000 words on the current tokenizer",
       "200K tokens ≈ 150,000 words",
@@ -491,7 +491,7 @@ export const flashcards: FlashCard[] = [
     question:
       "What are the current reliable knowledge cutoff dates for Claude models?",
     answer:
-      "Claude Haiku 4.5: February 2025. Claude Sonnet 5: January 2026. Claude Opus 5: May 2026. Claude Fable 5.1: June 2026. Use web search or RAG for information beyond these dates.",
+      "Claude Haiku 4.5: February 2025. Claude Sonnet 5: January 2026. Claude Opus 5.5: June 2026. Claude Fable 5.1: June 2026. Use web search or RAG for information beyond these dates.",
     keyPoints: [
       "Knowledge cutoff ≠ release date — there is always a gap",
       "Claude may confidently state outdated facts past its cutoff",
@@ -542,7 +542,7 @@ export const flashcards: FlashCard[] = [
     question:
       "What optimization levers are available when Claude responses are too slow or too expensive?",
     answer:
-      "Model selection is the largest lever — Haiku 4.5 ($1/$5 per MTok) costs significantly less than Opus 5 ($5/$25 per MTok). Also: reduce prompt length, limit max output tokens, use Projects to avoid repeating large system prompts across conversations, and use the Batch API (50% discount) for non-real-time workloads.",
+      "Model selection is the largest lever — Haiku 4.5 ($1/$5 per MTok) costs significantly less than Opus 5.5 ($4/$20 per MTok). Also: reduce prompt length, limit max output tokens, use Projects to avoid repeating large system prompts across conversations, and use the Batch API (50% discount) for non-real-time workloads.",
     keyPoints: [
       "Model downgrade is the single biggest cost/speed improvement",
       "Evaluate quality before downgrading — don't assume Haiku is insufficient",

@@ -1,5 +1,10 @@
 import { ServiceGuide } from "../../../../types/guide";
 
+// Sources (verified 2026-09-25):
+// - https://platform.claude.com/docs/en/build-with-claude/define-success
+// - https://platform.claude.com/docs/en/build-with-claude/develop-tests
+// Content verified accurate — no factual corrections needed.
+
 export const outputEvaluationAndValidationGuide: ServiceGuide = {
   id: "ccao-output-evaluation-validation",
   service: "Output Evaluation and Validation",

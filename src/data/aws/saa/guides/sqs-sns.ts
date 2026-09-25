@@ -13,7 +13,7 @@ export const sqsSnsGuide: ServiceGuide = {
       heading: "SQS Fundamentals",
       body: `SQS is a fully managed message queue that decouples producers from consumers. Messages are stored in the queue until a consumer retrieves and deletes them. The default **visibility timeout** is 30 seconds — when a consumer receives a message, it becomes invisible to other consumers for that duration. If the consumer doesn't delete the message within the visibility timeout, it reappears in the queue and can be processed again (at-least-once delivery). Set the visibility timeout to at least 6× the consumer's processing time to avoid unintended reprocessing.
 
-**Polling**: **short polling** returns immediately even if the queue is empty (wastes API calls). **Long polling** (up to 20 seconds) waits for messages to arrive before returning — reduces empty responses and lowers cost. Long polling is enabled by setting the ReceiveMessageWaitTimeSeconds to 1-20. **Message retention** is 4 days by default, configurable to 1 minute to 14 days. Maximum message size is 256 KB (use S3 + SQS Extended Client Library for larger payloads).`,
+**Polling**: **short polling** returns immediately even if the queue is empty (wastes API calls). **Long polling** (up to 20 seconds) waits for messages to arrive before returning — reduces empty responses and lowers cost. Long polling is enabled by setting the ReceiveMessageWaitTimeSeconds to 1-20. **Message retention** is 4 days by default, configurable to 1 minute to 14 days. Maximum message size is 1 MiB (1,048,576 bytes) — use S3 + SQS Extended Client Library for larger payloads. Source: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html`,
       quiz: [
         {
           question:
@@ -140,7 +140,7 @@ EventBridge is the most flexible event routing service in AWS. It supports **sch
   keyFacts: [
     "SQS visibility timeout default: 30 seconds. Set to at least 6× processing time",
     "SQS message retention: 4 days default, 1 min to 14 days configurable",
-    "SQS max message size: 256 KB (use Extended Client Library + S3 for larger)",
+    "SQS max message size: 1 MiB / 1,048,576 bytes (use Extended Client Library + S3 for larger)",
     "Standard SQS: at-least-once delivery, best-effort ordering, unlimited TPS",
     "FIFO SQS: exactly-once, strict ordering, 300 TPS (3,000 with batching); High-Throughput mode: up to 70,000 TPS (700,000/sec with batching) in major regions",
     "DLQ: receives messages after maxReceiveCount failures — use for poison message isolation",
@@ -171,7 +171,7 @@ EventBridge is the most flexible event routing service in AWS. It supports **sch
     "SNS filter policies eliminate the need for consumer-side filtering — reduces wasted compute",
     "EventBridge is the right answer for routing AWS service events (EC2, S3, RDS state changes) to multiple targets",
     "Amazon MQ is for migrating existing RabbitMQ/ActiveMQ applications — not a new greenfield choice",
-    "SQS Extended Client Library stores message body in S3, puts reference in SQS — for messages > 256 KB",
+    "SQS Extended Client Library stores message body in S3, puts reference in SQS — for messages > 1 MiB",
     "For ordered fan-out: SNS FIFO topic → SQS FIFO queues",
     "FIFO queue with a single MessageGroupID processes messages serially — use multiple MessageGroupIDs to enable parallel processing while maintaining per-group ordering",
   ],
