@@ -116,10 +116,8 @@ export default function CertSelectScreen() {
         <View style={styles.pickerContent}>
           {/* System map header */}
           <View style={styles.mapHeader}>
-            <Text style={styles.mapTitle}>SYSTEM MAP</Text>
-            <Text style={styles.mapSubtitle}>
-              Select a certification network
-            </Text>
+            <Text style={styles.mapTitle}>CERTIFICATIONS</Text>
+            <Text style={styles.mapSubtitle}>Select a provider group</Text>
           </View>
 
           <ProviderCard
@@ -146,27 +144,6 @@ export default function CertSelectScreen() {
             colors={colors}
             onPress={() => navigation.navigate("TopicSelect")}
           />
-
-          <View style={styles.mapLegend}>
-            <View style={styles.legendRow}>
-              <View
-                style={[styles.legendDot, { backgroundColor: AWS_COLOR }]}
-              />
-              <Text style={styles.legendText}>AWS Network</Text>
-            </View>
-            <View style={styles.legendRow}>
-              <View
-                style={[styles.legendDot, { backgroundColor: ANTHROPIC_COLOR }]}
-              />
-              <Text style={styles.legendText}>Anthropic Network</Text>
-            </View>
-            <View style={styles.legendRow}>
-              <View
-                style={[styles.legendDot, { backgroundColor: TOPICS_COLOR }]}
-              />
-              <Text style={styles.legendText}>Topic Lines</Text>
-            </View>
-          </View>
         </View>
       </SafeAreaView>
     );
@@ -187,7 +164,7 @@ export default function CertSelectScreen() {
         >
           <Ionicons name="chevron-back" size={16} color={providerColor} />
           <Text style={[styles.backLabel, { color: providerColor }]}>
-            System Map
+            Certifications
           </Text>
         </TouchableOpacity>
 
@@ -403,25 +380,6 @@ function makeStyles(colors: ThemeColors) {
       fontSize: fontSize.sm,
       color: colors.textSecondary,
       lineHeight: 18,
-    },
-
-    mapLegend: {
-      marginTop: spacing.xl,
-      gap: spacing.xs,
-    },
-    legendRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacing.sm,
-    },
-    legendDot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-    },
-    legendText: {
-      fontSize: fontSize.xs,
-      color: colors.textMuted,
     },
 
     backRow: {

@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -201,21 +202,22 @@ export default function QuizScreen() {
   };
 
   const handleQuit = () => {
-    Alert.alert(
-      "Quit Quiz",
-      "Are you sure you want to quit? Progress will be lost.",
-      [
-        { text: "Continue", style: "cancel" },
-        {
-          text: "Quit",
-          style: "destructive",
-          onPress: () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-            navigation.goBack();
-          },
-        },
-      ],
-    );
+    const doQuit = () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      navigation.goBack();
+    };
+    if (Platform.OS === "web") {
+      if (window.confirm("Quit quiz? Progress will be lost.")) doQuit();
+    } else {
+      Alert.alert(
+        "Quit Quiz",
+        "Are you sure you want to quit? Progress will be lost.",
+        [
+          { text: "Continue", style: "cancel" },
+          { text: "Quit", style: "destructive", onPress: doQuit },
+        ],
+      );
+    }
   };
 
   const formatTime = (s: number) =>
@@ -289,7 +291,7 @@ export default function QuizScreen() {
           />
         </View>
         <View style={styles.scoreTracker}>
-          <Text style={styles.scoreTrackerLabel}>ROUTE PROGRESS</Text>
+          <Text style={styles.scoreTrackerLabel}>QUESTION PROGRESS</Text>
           <View style={[styles.typeBadge, { borderColor: meta.color }]}>
             <Text style={[styles.typeBadgeText, { color: meta.color }]}>
               {currentQ.type === "multi"

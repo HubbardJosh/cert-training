@@ -144,7 +144,7 @@ export default function HomeScreen() {
           {/* Departure board stats */}
           <View style={styles.departureBoard}>
             <View style={styles.departureBoardHeader}>
-              <Text style={styles.departureBoardLabel}>SERVICE STATUS</Text>
+              <Text style={styles.departureBoardLabel}>YOUR PROGRESS</Text>
             </View>
             <View style={styles.departureBoardRows}>
               {isTopicMode ? (
@@ -202,7 +202,7 @@ export default function HomeScreen() {
           {/* Route lines / domain breakdown — cert mode only */}
           {!isTopicMode && (
             <>
-              <Text style={styles.sectionLabel}>ROUTE MAP</Text>
+              <Text style={styles.sectionLabel}>DOMAINS</Text>
               <View style={isDesktop ? styles.twoColGrid : undefined}>
                 {DOMAINS.map((domain) => {
                   const meta = DOMAIN_META[domain];
@@ -262,7 +262,7 @@ export default function HomeScreen() {
           )}
 
           {/* Quick start */}
-          <Text style={styles.sectionLabel}>NEXT DEPARTURE</Text>
+          <Text style={styles.sectionLabel}>QUICK START</Text>
           <View style={styles.quickRow}>
             <TouchableOpacity
               style={[styles.quickCard, { borderTopColor: accentColor }]}
@@ -388,7 +388,7 @@ export default function HomeScreen() {
           {/* Exam tips — cert mode only */}
           {!isTopicMode && (
             <>
-              <Text style={styles.sectionLabel}>PLATFORM NOTICES</Text>
+              <Text style={styles.sectionLabel}>EXAM TIPS</Text>
               {EXAM_TIPS.map((tip, i) => (
                 <View key={i} style={styles.noticeRow}>
                   <View style={styles.noticeBullet} />
