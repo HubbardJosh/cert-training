@@ -83,13 +83,11 @@ function InlineQuiz({
       <View style={{ gap: spacing.md }}>
         <MarkdownBody text={sectionBody} colors={colors} isDark={isDark} />
         <TouchableOpacity
-          style={[qStyles.startPrompt, { borderColor: accentColor + "44" }]}
+          style={[qStyles.startPrompt, { borderLeftColor: accentColor }]}
           onPress={() => setStarted(true)}
           activeOpacity={0.8}
         >
-          <View
-            style={[qStyles.badge, { backgroundColor: accentColor + "22" }]}
-          >
+          <View style={[qStyles.badge, { borderColor: accentColor }]}>
             <Text style={[qStyles.badgeText, { color: accentColor }]}>
               Section Quiz
             </Text>
@@ -150,7 +148,7 @@ function InlineQuiz({
     const passed = pct >= 70;
     return (
       <View style={{ gap: spacing.md }}>
-        <View style={[qStyles.resultCard, { borderColor: accentColor + "44" }]}>
+        <View style={[qStyles.resultCard, { borderLeftColor: accentColor }]}>
           <Ionicons
             name={passed ? "checkmark-circle" : "refresh-circle"}
             size={32}
@@ -194,9 +192,9 @@ function InlineQuiz({
   }
 
   return (
-    <View style={[qStyles.card, { borderColor: accentColor + "44" }]}>
+    <View style={[qStyles.card, { borderLeftColor: accentColor }]}>
       <View style={qStyles.header}>
-        <View style={[qStyles.badge, { backgroundColor: accentColor + "22" }]}>
+        <View style={[qStyles.badge, { borderColor: accentColor }]}>
           <Text style={[qStyles.badgeText, { color: accentColor }]}>
             Section Quiz
           </Text>
@@ -209,22 +207,19 @@ function InlineQuiz({
       <Text style={qStyles.question}>{q.question}</Text>
 
       {q.options.map((opt, i) => {
-        let bg = colors.surfaceElevated;
+        let bg = colors.surface;
         let border = colors.border;
         let textColor = colors.textSecondary;
 
         if (revealed) {
           if (i === q.correctIndex) {
-            bg = colors.correct + "22";
             border = colors.correct;
             textColor = colors.correct;
           } else if (i === selected) {
-            bg = colors.incorrect + "22";
             border = colors.incorrect;
             textColor = colors.incorrect;
           }
         } else if (i === selected) {
-          bg = accentColor + "22";
           border = accentColor;
           textColor = colors.textPrimary;
         }
@@ -370,7 +365,7 @@ function TopicQuiz({
 
   if (!started) {
     return (
-      <View style={[tStyles.startCard, { borderColor: accentColor + "44" }]}>
+      <View style={[tStyles.startCard, { borderLeftColor: accentColor }]}>
         <Ionicons name="trophy-outline" size={28} color={accentColor} />
         <Text style={tStyles.startTitle}>{serviceName} Topic Quiz</Text>
         <Text style={tStyles.startSub}>
@@ -391,7 +386,7 @@ function TopicQuiz({
     const pct = Math.round((score / questions.length) * 100);
     const passed = pct >= 70;
     return (
-      <View style={[tStyles.resultCard, { borderColor: accentColor + "44" }]}>
+      <View style={[tStyles.resultCard, { borderLeftColor: accentColor }]}>
         <Ionicons
           name={passed ? "trophy" : "refresh-circle"}
           size={40}
@@ -435,7 +430,7 @@ function TopicQuiz({
   }
 
   return (
-    <View style={[tStyles.card, { borderColor: accentColor + "44" }]}>
+    <View style={[tStyles.card, { borderLeftColor: accentColor }]}>
       <View style={tStyles.header}>
         <Text style={[tStyles.headerTitle, { color: accentColor }]}>
           Topic Quiz
@@ -460,22 +455,19 @@ function TopicQuiz({
       <Text style={tStyles.question}>{q.question}</Text>
 
       {q.options.map((opt, i) => {
-        let bg = colors.surfaceElevated;
+        let bg = colors.surface;
         let border = colors.border;
         let textColor = colors.textSecondary;
 
         if (revealed) {
           if (i === q.correctIndex) {
-            bg = colors.correct + "22";
             border = colors.correct;
             textColor = colors.correct;
           } else if (i === selected) {
-            bg = colors.incorrect + "22";
             border = colors.incorrect;
             textColor = colors.incorrect;
           }
         } else if (i === selected) {
-          bg = accentColor + "22";
           border = accentColor;
           textColor = colors.textPrimary;
         }
@@ -723,12 +715,7 @@ export default function GuideDetailScreen() {
             )}
           </View>
           <View style={styles.headerBadges}>
-            <View
-              style={[
-                styles.domainBadge,
-                { backgroundColor: meta.color + "22" },
-              ]}
-            >
+            <View style={[styles.domainBadge, { borderColor: meta.color }]}>
               <Text style={[styles.domainText, { color: meta.color }]}>
                 {meta.label}
               </Text>
@@ -799,9 +786,9 @@ export default function GuideDetailScreen() {
                         style={[
                           styles.sectionNum,
                           {
-                            backgroundColor: sectionRead
-                              ? colors.correct + "22"
-                              : meta.color + "22",
+                            borderColor: sectionRead
+                              ? colors.correct
+                              : meta.color,
                           },
                         ]}
                       >
@@ -1179,7 +1166,8 @@ function makeQuizStyles(colors: ThemeColors) {
       marginBottom: spacing.xs,
     },
     badge: {
-      borderRadius: radius.full,
+      borderWidth: 1,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.sm,
       paddingVertical: 3,
     },
@@ -1240,8 +1228,8 @@ function makeQuizStyles(colors: ThemeColors) {
     actionText: { fontSize: fontSize.sm, fontWeight: "700" },
     resultCard: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      borderWidth: 1,
+      borderRadius: radius.md,
+      borderLeftWidth: 3,
       padding: spacing.lg,
       alignItems: "center",
       gap: spacing.sm,
@@ -1280,8 +1268,8 @@ function makeQuizStyles(colors: ThemeColors) {
       fontWeight: "700",
     },
     startPrompt: {
-      borderWidth: 1,
-      borderRadius: radius.lg,
+      borderLeftWidth: 3,
+      borderRadius: radius.md,
       padding: spacing.md,
       alignItems: "center",
       gap: spacing.sm,
@@ -1313,8 +1301,8 @@ function makeTopicStyles(colors: ThemeColors) {
   return StyleSheet.create({
     startCard: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      borderWidth: 1,
+      borderRadius: radius.md,
+      borderLeftWidth: 3,
       padding: spacing.lg,
       alignItems: "center",
       gap: spacing.sm,
@@ -1334,8 +1322,8 @@ function makeTopicStyles(colors: ThemeColors) {
     startBtnText: { fontSize: fontSize.md, fontWeight: "700", color: "#fff" },
     card: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      borderWidth: 1,
+      borderRadius: radius.md,
+      borderLeftWidth: 3,
       padding: spacing.md,
       gap: spacing.sm,
     },
@@ -1363,8 +1351,8 @@ function makeTopicStyles(colors: ThemeColors) {
     },
     resultCard: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      borderWidth: 1,
+      borderRadius: radius.md,
+      borderLeftWidth: 3,
       padding: spacing.lg,
       alignItems: "center",
       gap: spacing.sm,
@@ -1504,6 +1492,7 @@ function makeStyles(colors: ThemeColors) {
     },
     domainBadge: {
       alignSelf: "flex-start",
+      borderWidth: 1,
       borderRadius: radius.sm,
       paddingHorizontal: 8,
       paddingVertical: 3,
@@ -1578,7 +1567,8 @@ function makeStyles(colors: ThemeColors) {
     sectionNum: {
       width: 28,
       height: 28,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
+      borderWidth: 1,
       justifyContent: "center",
       alignItems: "center",
     },
@@ -1708,8 +1698,9 @@ function makeStyles(colors: ThemeColors) {
     tipNumber: {
       width: 24,
       height: 24,
-      borderRadius: radius.full,
-      backgroundColor: colors.primary + "22",
+      borderRadius: radius.sm,
+      borderWidth: 1,
+      borderColor: colors.primary,
       justifyContent: "center",
       alignItems: "center",
       flexShrink: 0,

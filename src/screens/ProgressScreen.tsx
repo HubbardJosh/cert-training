@@ -17,6 +17,7 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
 } from "../utils/theme";
 import {
   loadProgress,
@@ -219,6 +220,13 @@ export default function ProgressScreen() {
   const guidesViewed = getGuidesViewed(progress);
   const totalGuides = allGuides.length;
 
+  const readinessColor =
+    overallAccuracy >= 80
+      ? colors.correct
+      : overallAccuracy >= 60
+        ? colors.warning
+        : colors.incorrect;
+
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <ScreenHeader />
@@ -228,43 +236,25 @@ export default function ProgressScreen() {
           contentContainerStyle={styles.content}
         >
           <Text style={styles.title}>Your Progress</Text>
-          <Text style={styles.subtitle}>
-            {isTopicMode
-              ? (topicMeta?.name ?? "Topic") + " Study Progress"
-              : certMeta.name + " Exam Readiness"}
-          </Text>
 
-          {/* Readiness score — cert mode only */}
+          {/* Readiness card — cert mode only */}
           {!isTopicMode && (
-            <View style={styles.readinessCard}>
-              <View style={styles.readinessLeft}>
-                <Text style={styles.readinessLabel}>Exam Readiness</Text>
-                <Text
-                  style={[
-                    styles.readinessScore,
-                    {
-                      color:
-                        overallAccuracy >= 80
-                          ? colors.correct
-                          : overallAccuracy >= 60
-                            ? colors.warning
-                            : colors.incorrect,
-                    },
-                  ]}
-                >
-                  {overallAccuracy}%
-                </Text>
-                <Text style={styles.readinessSub}>
-                  {overallAccuracy >= 80
-                    ? "Ready to sit the exam!"
-                    : overallAccuracy >= 60
-                      ? "Getting close — keep going"
-                      : "Keep studying — you'll get there"}
-                </Text>
-              </View>
-              <View style={styles.readinessRight}>
-                <ReadinessGauge pct={overallAccuracy} colors={colors} />
-              </View>
+            <View
+              style={[
+                styles.readinessCard,
+                { borderLeftColor: readinessColor },
+              ]}
+            >
+              <Text style={[styles.readinessPct, { color: readinessColor }]}>
+                {overallAccuracy}%
+              </Text>
+              <Text style={styles.readinessSub}>
+                {overallAccuracy >= 80
+                  ? "Ready to sit the exam!"
+                  : overallAccuracy >= 60
+                    ? "Getting close — keep going"
+                    : "Keep studying — you'll get there"}
+              </Text>
             </View>
           )}
 
@@ -389,20 +379,16 @@ export default function ProgressScreen() {
                 ).length;
 
                 return (
-                  <View key={domain} style={styles.domainCard}>
+                  <View
+                    key={domain}
+                    style={[styles.domainCard, { borderLeftColor: meta.color }]}
+                  >
                     <View style={styles.domainHeader}>
-                      <View
-                        style={[
-                          styles.domainIcon,
-                          { backgroundColor: meta.color + "22" },
-                        ]}
-                      >
-                        <Ionicons
-                          name={meta.icon as any}
-                          size={18}
-                          color={meta.color}
-                        />
-                      </View>
+                      <Ionicons
+                        name={meta.icon as any}
+                        size={18}
+                        color={meta.color}
+                      />
                       <View style={styles.domainInfo}>
                         <Text style={styles.domainLabel}>{meta.label}</Text>
                         <Text style={styles.domainWeight}>
@@ -626,18 +612,11 @@ export default function ProgressScreen() {
                               styles.groupRowDivider,
                           ]}
                         >
-                          <View
-                            style={[
-                              styles.resetDomainIcon,
-                              { backgroundColor: meta.color + "22" },
-                            ]}
-                          >
-                            <Ionicons
-                              name={meta.icon as any}
-                              size={14}
-                              color={meta.color}
-                            />
-                          </View>
+                          <Ionicons
+                            name={meta.icon as any}
+                            size={14}
+                            color={meta.color}
+                          />
                           <View style={styles.topicResetInfo}>
                             <Text style={styles.topicResetName}>
                               {meta.label}
@@ -740,24 +719,6 @@ export default function ProgressScreen() {
   );
 }
 
-function ReadinessGauge({ pct, colors }: { pct: number; colors: ThemeColors }) {
-  const styles = makeStyles(colors);
-  const color =
-    pct >= 80 ? colors.correct : pct >= 60 ? colors.warning : colors.incorrect;
-  return (
-    <View style={styles.gaugeContainer}>
-      <View style={[styles.gaugeOuter, { borderColor: color + "44" }]}>
-        <View style={[styles.gaugeInner, { borderColor: color }]}>
-          <Text style={[styles.gaugeText, { color }]}>{pct}%</Text>
-        </View>
-      </View>
-      <Text style={[styles.gaugeLabel, { color }]}>
-        {pct >= 80 ? "READY" : pct >= 60 ? "CLOSE" : "STUDY"}
-      </Text>
-    </View>
-  );
-}
-
 function LegendDot({
   color,
   label,
@@ -851,23 +812,14 @@ function HistoryRow({
   const formatTime = (s: number) => `${Math.floor(s / 60)}m ${s % 60}s`;
 
   return (
-    <View style={styles.historyRow}>
-      <View
-        style={[
-          styles.historyIcon,
-          {
-            backgroundColor: passed
-              ? colors.correct + "22"
-              : colors.incorrect + "22",
-          },
-        ]}
-      >
-        <Ionicons
-          name={passed ? "checkmark-circle" : "close-circle"}
-          size={20}
-          color={passed ? colors.correct : colors.incorrect}
-        />
-      </View>
+    <View
+      style={[
+        styles.historyRow,
+        {
+          borderLeftColor: passed ? colors.correct : colors.incorrect,
+        },
+      ]}
+    >
       <View style={styles.historyInfo}>
         <Text style={styles.historyTitle}>
           {meta ? meta.label : "All Domains"} · {attempt.total} questions
@@ -903,9 +855,10 @@ function MiniStat({
 }) {
   const styles = makeStyles(colors);
   return (
-    <View style={[styles.miniStat, { borderColor: color + "33" }]}>
-      <Ionicons name={icon as any} size={18} color={color} />
-      <Text style={styles.miniStatValue}>{value}</Text>
+    <View style={[styles.miniStat, { borderBottomColor: color }]}>
+      <Text style={[styles.miniStatValue, { fontVariant: ["tabular-nums"] }]}>
+        {value}
+      </Text>
       <Text style={styles.miniStatLabel}>{label}</Text>
     </View>
   );
@@ -950,61 +903,35 @@ function makeStyles(colors: ThemeColors) {
       fontSize: fontSize.xxl,
       fontWeight: "800",
       color: colors.textPrimary,
-    },
-    subtitle: {
-      fontSize: fontSize.sm,
-      color: colors.textSecondary,
+      letterSpacing: -0.5,
       marginBottom: spacing.md,
     },
 
     readinessCard: {
-      flexDirection: "row",
       backgroundColor: colors.surface,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       padding: spacing.lg,
       marginBottom: spacing.lg,
-      borderWidth: 1,
-      borderColor: colors.border,
-      alignItems: "center",
+      borderLeftWidth: ROUTE_LINE_WIDTH,
     },
-    readinessLeft: { flex: 1 },
-    readinessLabel: {
-      fontSize: fontSize.sm,
-      color: colors.textSecondary,
-      fontWeight: "600",
+    readinessPct: {
+      fontSize: fontSize.xxxl,
+      fontWeight: "900",
+      fontVariant: ["tabular-nums"],
+      lineHeight: fontSize.xxxl * 1.2,
     },
-    readinessScore: { fontSize: 48, fontWeight: "900", lineHeight: 56 },
     readinessSub: {
       fontSize: fontSize.sm,
       color: colors.textSecondary,
       marginTop: 4,
     },
-    readinessRight: { alignItems: "center" },
-
-    gaugeContainer: { alignItems: "center", gap: 4 },
-    gaugeOuter: {
-      width: 80,
-      height: 80,
-      borderRadius: radius.full,
-      borderWidth: 3,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    gaugeInner: {
-      width: 64,
-      height: 64,
-      borderRadius: radius.full,
-      borderWidth: 3,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    gaugeText: { fontSize: fontSize.md, fontWeight: "900" },
-    gaugeLabel: { fontSize: fontSize.xs, fontWeight: "800", letterSpacing: 1 },
 
     sectionTitle: {
-      fontSize: fontSize.md,
+      fontSize: fontSize.xs,
       fontWeight: "700",
-      color: colors.textPrimary,
+      color: colors.textMuted,
+      letterSpacing: 1.5,
+      textTransform: "uppercase",
       marginBottom: spacing.sm,
       marginTop: spacing.xs,
     },
@@ -1014,13 +941,11 @@ function makeStyles(colors: ThemeColors) {
       borderRadius: radius.lg,
       padding: spacing.md,
       marginBottom: spacing.md,
-      borderWidth: 1,
-      borderColor: colors.border,
       gap: spacing.sm,
     },
     masteryBar: {
       flexDirection: "row",
-      height: 12,
+      height: 6,
       borderRadius: radius.full,
       overflow: "hidden",
       gap: 2,
@@ -1041,21 +966,13 @@ function makeStyles(colors: ThemeColors) {
       borderRadius: radius.lg,
       padding: spacing.md,
       marginBottom: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
       gap: spacing.sm,
     },
     domainHeader: {
       flexDirection: "row",
       alignItems: "center",
       gap: spacing.sm,
-    },
-    domainIcon: {
-      width: 38,
-      height: 38,
-      borderRadius: radius.sm,
-      justifyContent: "center",
-      alignItems: "center",
     },
     domainInfo: { flex: 1 },
     domainLabel: {
@@ -1065,7 +982,11 @@ function makeStyles(colors: ThemeColors) {
     },
     domainWeight: { fontSize: fontSize.xs, color: colors.textSecondary },
     domainScoreBox: { alignItems: "flex-end" },
-    domainScore: { fontSize: fontSize.xl, fontWeight: "800" },
+    domainScore: {
+      fontSize: fontSize.xl,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+    },
     domainAttempted: { fontSize: fontSize.xs, color: colors.textMuted },
 
     barRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
@@ -1077,7 +998,7 @@ function makeStyles(colors: ThemeColors) {
     },
     barBg: {
       flex: 1,
-      height: 6,
+      height: 4,
       backgroundColor: colors.border,
       borderRadius: radius.full,
       overflow: "hidden",
@@ -1088,6 +1009,7 @@ function makeStyles(colors: ThemeColors) {
       color: colors.textMuted,
       minWidth: 36,
       textAlign: "right",
+      fontVariant: ["tabular-nums"],
     },
 
     weakTopicRow: {
@@ -1095,16 +1017,12 @@ function makeStyles(colors: ThemeColors) {
       alignItems: "center",
       backgroundColor: colors.surface,
       borderRadius: radius.md,
-      padding: spacing.md,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
       marginBottom: spacing.xs,
-      borderWidth: 1,
-      borderColor: colors.border,
       gap: spacing.sm,
     },
-    weakTopicRowFlagged: {
-      borderColor: colors.warning + "55",
-      backgroundColor: colors.warning + "08",
-    },
+    weakTopicRowFlagged: {},
     weakTopicLeft: { flex: 1, gap: 3 },
     weakTopicHeader: {
       flexDirection: "row",
@@ -1121,7 +1039,8 @@ function makeStyles(colors: ThemeColors) {
       flexDirection: "row",
       alignItems: "center",
       gap: 3,
-      backgroundColor: colors.warning + "22",
+      borderWidth: 1,
+      borderColor: colors.warning,
       borderRadius: radius.sm,
       paddingHorizontal: 6,
       paddingVertical: 2,
@@ -1146,8 +1065,7 @@ function makeStyles(colors: ThemeColors) {
       borderWidth: 1,
     },
     weakTopicBtnActive: {
-      borderColor: colors.warning + "55",
-      backgroundColor: colors.warning + "15",
+      borderColor: colors.warning,
     },
     weakTopicBtnInactive: {
       borderColor: colors.border,
@@ -1167,12 +1085,8 @@ function makeStyles(colors: ThemeColors) {
 
     emptyHistory: {
       alignItems: "center",
-      paddingVertical: spacing.xl,
+      paddingVertical: spacing.lg,
       gap: spacing.sm,
-      backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: colors.border,
       marginBottom: spacing.md,
     },
     emptyHistoryText: { fontSize: fontSize.sm, color: colors.textMuted },
@@ -1185,15 +1099,7 @@ function makeStyles(colors: ThemeColors) {
       padding: spacing.md,
       marginBottom: spacing.xs,
       gap: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    historyIcon: {
-      width: 36,
-      height: 36,
-      borderRadius: radius.full,
-      justifyContent: "center",
-      alignItems: "center",
+      borderLeftWidth: 3,
     },
     historyInfo: { flex: 1 },
     historyTitle: {
@@ -1206,7 +1112,11 @@ function makeStyles(colors: ThemeColors) {
       color: colors.textSecondary,
       marginTop: 2,
     },
-    historyScore: { fontSize: fontSize.lg, fontWeight: "800" },
+    historyScore: {
+      fontSize: fontSize.lg,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+    },
 
     statsGrid: {
       flexDirection: "row",
@@ -1221,7 +1131,7 @@ function makeStyles(colors: ThemeColors) {
       padding: spacing.md,
       alignItems: "center",
       gap: 4,
-      borderWidth: 1,
+      borderBottomWidth: 3,
     },
     miniStatValue: {
       fontSize: fontSize.xl,
@@ -1233,8 +1143,6 @@ function makeStyles(colors: ThemeColors) {
     resetGroup: {
       backgroundColor: colors.surface,
       borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: colors.border,
       overflow: "hidden",
       marginBottom: spacing.sm,
     },
@@ -1244,8 +1152,8 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "space-between",
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.rule,
     },
     resetGroupLabel: {
       fontSize: fontSize.sm,
@@ -1266,13 +1174,6 @@ function makeStyles(colors: ThemeColors) {
       fontWeight: "700",
       color: colors.incorrect,
     },
-    resetDomainIcon: {
-      width: 28,
-      height: 28,
-      borderRadius: radius.sm,
-      justifyContent: "center",
-      alignItems: "center",
-    },
     groupRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -1281,8 +1182,8 @@ function makeStyles(colors: ThemeColors) {
       gap: spacing.sm,
     },
     groupRowDivider: {
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.rule,
     },
     topicResetRow: {
       flexDirection: "row",
@@ -1290,9 +1191,8 @@ function makeStyles(colors: ThemeColors) {
       backgroundColor: colors.surface,
       borderRadius: radius.md,
       padding: spacing.md,
-      borderWidth: 1,
-      borderColor: colors.border,
       gap: spacing.sm,
+      marginBottom: spacing.xs,
     },
     topicResetInfo: { flex: 1 },
     topicResetName: {
@@ -1325,12 +1225,10 @@ function makeStyles(colors: ThemeColors) {
       alignItems: "center",
       justifyContent: "center",
       gap: spacing.sm,
-      backgroundColor: colors.incorrect + "15",
-      borderRadius: radius.md,
       paddingVertical: spacing.md,
-      borderWidth: 1,
-      borderColor: colors.incorrect + "44",
       marginTop: spacing.sm,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: colors.rule,
     },
     resetBtnText: {
       fontSize: fontSize.md,

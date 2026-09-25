@@ -17,6 +17,8 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
+  STATION_DOT_SIZE,
 } from "../utils/theme";
 import { AbbreviatedText } from "../components/AbbreviatedText";
 import {
@@ -254,69 +256,49 @@ export default function QuizScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleQuit} style={styles.headerBtn}>
-          <Ionicons name="close" size={22} color={colors.textSecondary} />
+          <Ionicons name="close" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerCount}>
-            {currentIndex + 1} / {questions.length}
+            {currentIndex + 1}
+            <Text style={styles.headerCountOf}> / {questions.length}</Text>
           </Text>
-          <View
-            style={[styles.domainTag, { backgroundColor: meta.color + "22" }]}
-          >
-            <Text style={[styles.domainTagText, { color: meta.color }]}>
-              {meta.label}
+          {/* Station indicator badge */}
+          <View style={[styles.domainBadge, { borderColor: meta.color }]}>
+            <View style={[styles.domainDot, { backgroundColor: meta.color }]} />
+            <Text style={[styles.domainBadgeText, { color: meta.color }]}>
+              {meta.label.toUpperCase()}
             </Text>
           </View>
         </View>
-        <View style={styles.timerBox}>
-          <Ionicons
-            name="time-outline"
-            size={14}
-            color={colors.textSecondary}
-          />
-          <Text style={styles.timerText}>{formatTime(elapsed)}</Text>
-        </View>
+        <Text style={styles.timerText}>{formatTime(elapsed)}</Text>
       </View>
 
-      {/* Progress bar */}
-      <View style={styles.progressBg}>
-        <View
-          style={[
-            styles.progressFill,
-            {
-              width: `${((currentIndex + 1) / questions.length) * 100}%`,
-              backgroundColor: meta.color,
-            },
-          ]}
-        />
-      </View>
-
-      {/* Score tracker */}
-      <View style={styles.scoreTracker}>
-        <Text style={styles.scoreTrackerText}>
-          Score: {scoredSoFar}/{currentIndex} correct
-        </Text>
-        <View
-          style={[
-            styles.typeBadge,
-            {
-              backgroundColor:
-                currentQ.type === "multi"
-                  ? colors.accent + "22"
-                  : colors.primary + "22",
-            },
-          ]}
-        >
-          <Text
+      {/* Route progress */}
+      <View style={styles.routeProgressWrap}>
+        <View style={styles.routeProgressBg}>
+          <View
             style={[
-              styles.typeBadgeText,
+              styles.routeProgressFill,
               {
-                color:
-                  currentQ.type === "multi" ? colors.accent : colors.primary,
+                width:
+                  `${((currentIndex + 1) / questions.length) * 100}%` as any,
+                backgroundColor: meta.color,
               },
             ]}
-          >
-            {currentQ.type === "multi" ? "Select all that apply" : "Select one"}
+          />
+        </View>
+        <View style={styles.scoreTracker}>
+          <Text style={styles.scoreTrackerLabel}>ROUTE PROGRESS</Text>
+          <View style={[styles.typeBadge, { borderColor: meta.color }]}>
+            <Text style={[styles.typeBadgeText, { color: meta.color }]}>
+              {currentQ.type === "multi"
+                ? "Select all that apply"
+                : "Select one"}
+            </Text>
+          </View>
+          <Text style={styles.scoreTrackerText}>
+            {scoredSoFar}/{currentIndex}
           </Text>
         </View>
       </View>
@@ -327,47 +309,31 @@ export default function QuizScreen() {
           contentContainerStyle={styles.scrollContent}
         >
           {/* Question */}
-          <View style={styles.questionCard}>
+          <View style={[styles.questionCard, { borderLeftColor: meta.color }]}>
             <View style={styles.questionMeta}>
-              <View
-                style={[
-                  styles.serviceBadge,
-                  { backgroundColor: meta.color + "22" },
-                ]}
-              >
+              <View style={[styles.serviceBadge, { borderColor: meta.color }]}>
+                <View
+                  style={[styles.serviceDot, { backgroundColor: meta.color }]}
+                />
                 <Text style={[styles.serviceBadgeText, { color: meta.color }]}>
                   {currentQ.service}
                 </Text>
               </View>
-              <View
+              <Text
                 style={[
-                  styles.diffBadge,
+                  styles.diffText,
                   {
-                    backgroundColor:
+                    color:
                       currentQ.difficulty === "easy"
-                        ? colors.easy + "22"
+                        ? colors.easy
                         : currentQ.difficulty === "medium"
-                          ? colors.medium + "22"
-                          : colors.hard + "22",
+                          ? colors.medium
+                          : colors.hard,
                   },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.diffBadgeText,
-                    {
-                      color:
-                        currentQ.difficulty === "easy"
-                          ? colors.easy
-                          : currentQ.difficulty === "medium"
-                            ? colors.medium
-                            : colors.hard,
-                    },
-                  ]}
-                >
-                  {currentQ.difficulty}
-                </Text>
-              </View>
+                {currentQ.difficulty.toUpperCase()}
+              </Text>
             </View>
             <Text style={styles.questionText}>{currentQ.question}</Text>
           </View>
@@ -376,7 +342,6 @@ export default function QuizScreen() {
           {currentQ.options.map((option, idx) => {
             const isSelected = selectedOptions.includes(idx);
             const isCorrectOption = currentQ.correctIndices.includes(idx);
-            // missed = correct option the user didn't select (only meaningful for multi)
             const isMissed =
               submitted &&
               currentQ.type === "multi" &&
@@ -390,30 +355,29 @@ export default function QuizScreen() {
 
             if (submitted) {
               if (isMissed) {
-                bgColor = colors.correct + "22";
+                bgColor = colors.correct + "12";
                 borderColor = colors.correct;
                 textColor = colors.correct;
                 icon = "checkmark-circle";
               } else if (isCorrectOption && isSelected) {
-                bgColor = colors.correct + "22";
+                bgColor = colors.correct + "12";
                 borderColor = colors.correct;
                 textColor = colors.correct;
                 icon = "checkmark-circle";
               } else if (!isCorrectOption && isSelected) {
-                bgColor = colors.incorrect + "22";
+                bgColor = colors.incorrect + "12";
                 borderColor = colors.incorrect;
                 textColor = colors.incorrect;
                 icon = "close-circle";
               } else if (isCorrectOption && currentQ.type === "single") {
-                // single-answer: always highlight the correct option green
-                bgColor = colors.correct + "22";
+                bgColor = colors.correct + "12";
                 borderColor = colors.correct;
                 textColor = colors.correct;
                 icon = "checkmark-circle";
               }
             } else if (isSelected) {
-              bgColor = colors.primary + "22";
-              borderColor = colors.primary;
+              bgColor = meta.color + "15";
+              borderColor = meta.color;
             }
 
             const checkboxColor = isMissed
@@ -442,7 +406,10 @@ export default function QuizScreen() {
               >
                 {showInnerRing && (
                   <View
-                    style={[styles.innerRing, { borderColor: "#F5A623CC" }]}
+                    style={[
+                      styles.innerRing,
+                      { borderColor: meta.color + "88" },
+                    ]}
                     pointerEvents="none"
                   />
                 )}
@@ -452,8 +419,7 @@ export default function QuizScreen() {
                       currentQ.type === "single"
                         ? styles.radio
                         : styles.checkbox,
-                      isSelected &&
-                        !submitted && { borderColor: colors.primary },
+                      isSelected && !submitted && { borderColor: meta.color },
                       checkboxColor && submitted
                         ? {
                             borderColor: checkboxColor,
@@ -474,20 +440,20 @@ export default function QuizScreen() {
                             ? styles.radioDot
                             : styles.checkMark,
                           submitted
-                            ? { backgroundColor: colors.textPrimary }
-                            : { backgroundColor: colors.primary },
+                            ? { backgroundColor: colors.surface }
+                            : { backgroundColor: meta.color },
                         ]}
                       />
                     )}
                   </View>
                 </View>
-                <Text style={{ ...styles.optionText, color: textColor }}>
+                <Text style={[styles.optionText, { color: textColor }]}>
                   {option}
                 </Text>
                 {submitted && icon && (
                   <Ionicons
                     name={icon as any}
-                    size={20}
+                    size={18}
                     color={
                       isMissed
                         ? colors.correct
@@ -509,16 +475,16 @@ export default function QuizScreen() {
               style={[
                 styles.explanationCard,
                 {
-                  borderColor: isCorrect
-                    ? colors.correct + "55"
-                    : colors.incorrect + "55",
+                  borderLeftColor: isCorrect
+                    ? colors.correct
+                    : colors.incorrect,
                 },
               ]}
             >
               <View style={styles.explanationHeader}>
                 <Ionicons
                   name={isCorrect ? "checkmark-circle" : "close-circle"}
-                  size={22}
+                  size={20}
                   color={isCorrect ? colors.correct : colors.incorrect}
                 />
                 <Text
@@ -527,7 +493,7 @@ export default function QuizScreen() {
                     { color: isCorrect ? colors.correct : colors.incorrect },
                   ]}
                 >
-                  {isCorrect ? "Correct!" : "Incorrect"}
+                  {isCorrect ? "Correct" : "Incorrect"}
                 </Text>
               </View>
 
@@ -540,7 +506,7 @@ export default function QuizScreen() {
                       <View style={styles.wrongReasonHeader}>
                         <Ionicons
                           name="close-circle"
-                          size={14}
+                          size={13}
                           color={colors.incorrect}
                         />
                         <AbbreviatedText
@@ -559,7 +525,7 @@ export default function QuizScreen() {
                 <View style={styles.explanationSubHeader}>
                   <Ionicons
                     name="bulb-outline"
-                    size={15}
+                    size={13}
                     color={colors.correct}
                   />
                   <Text style={styles.explanationSubTitle}>
@@ -594,36 +560,47 @@ export default function QuizScreen() {
           <TouchableOpacity
             style={[
               styles.submitBtn,
-              selectedOptions.length === 0 && styles.submitBtnDisabled,
+              {
+                backgroundColor:
+                  selectedOptions.length === 0 ? colors.border : meta.color,
+              },
             ]}
             onPress={handleSubmit}
             disabled={selectedOptions.length === 0}
           >
             <Text
               style={[
-                styles.submitBtnText,
-                selectedOptions.length === 0 && { color: colors.textMuted },
+                styles.actionBtnText,
+                {
+                  color:
+                    selectedOptions.length === 0 ? colors.textMuted : "#FFFFFF",
+                },
               ]}
             >
               Submit Answer
             </Text>
           </TouchableOpacity>
         ) : currentIndex < questions.length - 1 ? (
-          <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
-            <Text style={styles.nextBtnText}>Next Question</Text>
-            <Ionicons name="arrow-forward" size={20} color={colors.secondary} />
+          <TouchableOpacity
+            style={[styles.submitBtn, { backgroundColor: colors.primary }]}
+            onPress={handleNext}
+          >
+            <Text style={[styles.actionBtnText, { color: "#FFFFFF" }]}>
+              Next Question
+            </Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            style={styles.finishBtn}
+            style={[styles.submitBtn, { backgroundColor: colors.correct }]}
             onPress={() =>
               navigation.navigate("QuizResult", {
                 sessionId: Date.now().toString(),
               })
             }
           >
-            <Ionicons name="flag" size={20} color={colors.secondary} />
-            <Text style={styles.finishBtnText}>View Results</Text>
+            <Text style={[styles.actionBtnText, { color: "#FFFFFF" }]}>
+              View Results
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -640,86 +617,139 @@ function makeStyles(colors: ThemeColors) {
     header: {
       flexDirection: "row",
       alignItems: "center",
-      padding: spacing.md,
-      paddingBottom: spacing.sm,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.rule,
     },
     headerBtn: { padding: spacing.xs },
-    headerCenter: { flex: 1, alignItems: "center", gap: 4 },
+    headerCenter: {
+      flex: 1,
+      alignItems: "center",
+      gap: 4,
+    },
     headerCount: {
       fontSize: fontSize.md,
       fontWeight: "800",
       color: colors.textPrimary,
+      fontVariant: ["tabular-nums"],
     },
-    domainTag: {
+    headerCountOf: {
+      fontSize: fontSize.sm,
+      fontWeight: "400",
+      color: colors.textMuted,
+    },
+    domainBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
       paddingHorizontal: spacing.sm,
       paddingVertical: 2,
-      borderRadius: radius.full,
+      borderWidth: 1,
+      borderRadius: radius.sm,
     },
-    domainTagText: { fontSize: fontSize.xs, fontWeight: "700" },
-    timerBox: { flexDirection: "row", alignItems: "center", gap: 4 },
+    domainDot: {
+      width: STATION_DOT_SIZE - 4,
+      height: STATION_DOT_SIZE - 4,
+      borderRadius: (STATION_DOT_SIZE - 4) / 2,
+    },
+    domainBadgeText: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+      letterSpacing: 0.5,
+    },
     timerText: {
       fontSize: fontSize.sm,
       fontWeight: "700",
       color: colors.textSecondary,
+      fontVariant: ["tabular-nums"],
       minWidth: 42,
+      textAlign: "right",
     },
 
-    progressBg: {
-      height: 3,
-      backgroundColor: colors.border,
-      marginHorizontal: spacing.md,
-      borderRadius: radius.full,
+    routeProgressWrap: {
+      paddingHorizontal: spacing.md,
+      paddingTop: spacing.sm,
+      gap: 6,
+    },
+    routeProgressBg: {
+      height: ROUTE_LINE_WIDTH,
+      backgroundColor: colors.rule,
+      borderRadius: 2,
       overflow: "hidden",
-      marginBottom: spacing.xs,
     },
-    progressFill: { height: "100%", borderRadius: radius.full },
-
+    routeProgressFill: {
+      height: "100%" as any,
+      borderRadius: 2,
+    },
     scoreTracker: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: spacing.md,
-      paddingBottom: spacing.sm,
+      justifyContent: "space-between",
+      paddingBottom: spacing.xs,
     },
-    scoreTrackerText: { fontSize: fontSize.xs, color: colors.textSecondary },
+    scoreTrackerLabel: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+      color: colors.textMuted,
+      letterSpacing: 1.5,
+    },
     typeBadge: {
       paddingHorizontal: spacing.sm,
-      paddingVertical: 3,
-      borderRadius: radius.full,
+      paddingVertical: 2,
+      borderWidth: 1,
+      borderRadius: radius.sm,
     },
-    typeBadgeText: { fontSize: fontSize.xs, fontWeight: "700" },
+    typeBadgeText: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+    },
+    scoreTrackerText: {
+      fontSize: fontSize.xs,
+      color: colors.textSecondary,
+      fontVariant: ["tabular-nums"],
+    },
 
     scroll: { flex: 1 },
     scrollContent: { padding: spacing.md, gap: spacing.sm },
 
     questionCard: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       padding: spacing.md,
       borderWidth: 1,
       borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
       marginBottom: spacing.xs,
     },
     questionMeta: {
       flexDirection: "row",
-      gap: spacing.xs,
+      alignItems: "center",
+      gap: spacing.sm,
       marginBottom: spacing.sm,
     },
     serviceBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
       paddingHorizontal: spacing.sm,
-      paddingVertical: 3,
-      borderRadius: radius.full,
+      paddingVertical: 2,
+      borderWidth: 1,
+      borderRadius: radius.sm,
     },
-    serviceBadgeText: { fontSize: fontSize.xs, fontWeight: "700" },
-    diffBadge: {
-      paddingHorizontal: spacing.sm,
-      paddingVertical: 3,
-      borderRadius: radius.full,
+    serviceDot: {
+      width: STATION_DOT_SIZE - 4,
+      height: STATION_DOT_SIZE - 4,
+      borderRadius: (STATION_DOT_SIZE - 4) / 2,
     },
-    diffBadgeText: {
+    serviceBadgeText: {
       fontSize: fontSize.xs,
       fontWeight: "700",
-      textTransform: "capitalize",
+    },
+    diffText: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+      letterSpacing: 0.5,
     },
     questionText: {
       fontSize: fontSize.md,
@@ -733,14 +763,14 @@ function makeStyles(colors: ThemeColors) {
       alignItems: "center",
       padding: spacing.md,
       borderRadius: radius.md,
-      borderWidth: 1.5,
+      borderWidth: 1,
       gap: spacing.sm,
     },
     innerRing: {
       position: "absolute",
       inset: 3,
       borderRadius: radius.md - 2,
-      borderWidth: 1.5,
+      borderWidth: 1,
       pointerEvents: "none",
     },
     optionLeft: { width: 24, alignItems: "center" },
@@ -757,7 +787,7 @@ function makeStyles(colors: ThemeColors) {
     checkbox: {
       width: 20,
       height: 20,
-      borderRadius: 5,
+      borderRadius: radius.sm,
       borderWidth: 2,
       borderColor: colors.border,
       justifyContent: "center",
@@ -767,10 +797,12 @@ function makeStyles(colors: ThemeColors) {
     optionText: { flex: 1, fontSize: fontSize.sm, lineHeight: 20 },
 
     explanationCard: {
-      backgroundColor: colors.surfaceElevated,
-      borderRadius: radius.lg,
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
       padding: spacing.md,
       borderWidth: 1,
+      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
       gap: spacing.sm,
       marginTop: spacing.xs,
     },
@@ -779,14 +811,15 @@ function makeStyles(colors: ThemeColors) {
       alignItems: "center",
       gap: spacing.sm,
     },
-    explanationTitle: { fontSize: fontSize.md, fontWeight: "800" },
+    explanationTitle: {
+      fontSize: fontSize.md,
+      fontWeight: "800",
+    },
 
     wrongReasonBox: {
-      backgroundColor: colors.incorrect + "11",
-      borderRadius: radius.md,
-      borderWidth: 1,
-      borderColor: colors.incorrect + "33",
-      padding: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.rule,
+      paddingTop: spacing.sm,
       gap: 4,
     },
     wrongReasonHeader: {
@@ -807,11 +840,9 @@ function makeStyles(colors: ThemeColors) {
     },
 
     correctReasonBox: {
-      backgroundColor: colors.correct + "0D",
-      borderRadius: radius.md,
-      borderWidth: 1,
-      borderColor: colors.correct + "33",
-      padding: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.rule,
+      paddingTop: spacing.sm,
       gap: 6,
     },
     explanationSubHeader: {
@@ -824,72 +855,43 @@ function makeStyles(colors: ThemeColors) {
       fontWeight: "700",
       color: colors.correct,
     },
-
     explanationText: {
       fontSize: fontSize.sm,
       color: colors.textSecondary,
       lineHeight: 22,
     },
-    tagRow: { flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 4 },
+    tagRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 4,
+      marginTop: 4,
+    },
     tag: {
-      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
       borderRadius: radius.sm,
       paddingHorizontal: 8,
       paddingVertical: 3,
     },
-    tagText: { fontSize: fontSize.xs, color: colors.textMuted },
+    tagText: {
+      fontSize: fontSize.xs,
+      color: colors.textMuted,
+    },
 
     bottomBar: {
       padding: spacing.md,
       paddingTop: spacing.sm,
       borderTopWidth: 1,
-      borderTopColor: colors.border,
+      borderTopColor: colors.rule,
     },
     submitBtn: {
-      backgroundColor: colors.primary,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
       paddingVertical: spacing.md,
       alignItems: "center",
     },
-    submitBtnDisabled: {
-      backgroundColor: colors.surface,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    submitBtnText: {
+    actionBtnText: {
       fontSize: fontSize.lg,
       fontWeight: "800",
-      color: colors.secondary,
-    },
-
-    nextBtn: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: spacing.sm,
-      backgroundColor: colors.accent,
-      borderRadius: radius.md,
-      paddingVertical: spacing.md,
-    },
-    nextBtnText: {
-      fontSize: fontSize.lg,
-      fontWeight: "800",
-      color: colors.secondary,
-    },
-
-    finishBtn: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: spacing.sm,
-      backgroundColor: colors.correct,
-      borderRadius: radius.md,
-      paddingVertical: spacing.md,
-    },
-    finishBtnText: {
-      fontSize: fontSize.lg,
-      fontWeight: "800",
-      color: colors.secondary,
     },
   });
 }

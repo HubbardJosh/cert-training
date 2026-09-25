@@ -323,8 +323,9 @@ function makeStyles(colors: ThemeColors) {
       flex: 1,
       alignItems: "center",
       paddingVertical: spacing.sm,
-      borderRadius: radius.md,
-      backgroundColor: colors.surfaceElevated,
+      borderRadius: radius.sm,
+      borderWidth: 1,
+      borderColor: colors.border,
     },
     speedBtnText: {
       fontSize: fontSize.sm,
@@ -346,7 +347,7 @@ function makeStyles(colors: ThemeColors) {
     },
     card: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       borderWidth: 1,
       borderColor: colors.border,
       overflow: "hidden",
@@ -399,7 +400,8 @@ function makeStyles(colors: ThemeColors) {
       padding: spacing.md,
     },
     voiceRowSelected: {
-      backgroundColor: colors.primary + "0f",
+      borderLeftWidth: 3,
+      borderLeftColor: colors.primary,
     },
     voiceRowLeft: {
       flexDirection: "row",
@@ -439,8 +441,9 @@ function makeStyles(colors: ThemeColors) {
       marginTop: 1,
     },
     enhancedBadge: {
-      backgroundColor: colors.primary + "22",
-      borderRadius: radius.full,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      borderRadius: radius.sm,
       paddingHorizontal: 6,
       paddingVertical: 1,
     },

@@ -18,6 +18,7 @@ export type ThemeColors = {
   surface: string;
   surfaceElevated: string;
   border: string;
+  rule: string;
 
   textPrimary: string;
   textSecondary: string;
@@ -29,70 +30,80 @@ export type ThemeColors = {
   info: string;
 };
 
+// Transit map world — cream ground, authentic metro line palette
+export const lightColors: ThemeColors = {
+  // Primary action: Tokyo Tozai blue (route line used for CTAs)
+  primary: "#0066CC",
+  primaryDark: "#004EA8",
+  // Surface whites
+  secondary: "#FFFFFF",
+  secondaryLight: "#F5F2EC",
+  // Tokyo Ginza orange as accent (separate from domain lines)
+  accent: "#E96B18",
+
+  // Domain route lines — authentic metro palettes
+  development: "#0066CC", // Tokyo Tozai
+  security: "#E60012", // Tokyo Marunouchi
+  deployment: "#00A550", // Tokyo Chiyoda
+  troubleshooting: "#9C27B0", // London Jubilee-violet
+
+  // Difficulty — traffic-signal spectrum
+  easy: "#00A550",
+  medium: "#E96B18",
+  hard: "#E60012",
+
+  // Paper ground and surfaces
+  background: "#F5F2EC",
+  surface: "#FFFFFF",
+  surfaceElevated: "#EDE9E1",
+  border: "#C8C2B6",
+  rule: "#DDD8D0",
+
+  textPrimary: "#1A1410",
+  textSecondary: "#5C5248",
+  textMuted: "#9B9288",
+
+  correct: "#00A550",
+  incorrect: "#E60012",
+  warning: "#E96B18",
+  info: "#0066CC",
+};
+
+// Dark mode: night station — dark map board, route lines fully saturated
 export const darkColors: ThemeColors = {
-  primary: "#FF9900",
-  primaryDark: "#E68900",
-  secondary: "#232F3E",
-  secondaryLight: "#37475A",
-  accent: "#00A8E8",
+  primary: "#3D8EE8",
+  primaryDark: "#1C6FCA",
+  secondary: "#141820",
+  secondaryLight: "#1E2535",
+  accent: "#F07B2A",
 
-  development: "#00A8E8",
-  security: "#E91E8C",
-  deployment: "#2ECC71",
-  troubleshooting: "#9B59B6",
+  development: "#3D8EE8",
+  security: "#FF3B3B",
+  deployment: "#2DBD6E",
+  troubleshooting: "#B565D6",
 
-  easy: "#2ECC71",
-  medium: "#F39C12",
-  hard: "#E74C3C",
+  easy: "#2DBD6E",
+  medium: "#F07B2A",
+  hard: "#FF3B3B",
 
-  background: "#0F1923",
-  surface: "#1A2535",
-  surfaceElevated: "#243044",
-  border: "#2D3F56",
+  background: "#0E1118",
+  surface: "#141820",
+  surfaceElevated: "#1E2535",
+  border: "#2A3347",
+  rule: "#212838",
 
-  textPrimary: "#FFFFFF",
+  textPrimary: "#EDE9E1",
   textSecondary: "#8FA3BF",
   textMuted: "#4A6080",
 
-  correct: "#2ECC71",
-  incorrect: "#E74C3C",
-  warning: "#F39C12",
-  info: "#3498DB",
+  correct: "#2DBD6E",
+  incorrect: "#FF3B3B",
+  warning: "#F07B2A",
+  info: "#3D8EE8",
 };
 
-export const lightColors: ThemeColors = {
-  primary: "#E68900",
-  primaryDark: "#CC7A00",
-  secondary: "#FFFFFF",
-  secondaryLight: "#F5F5F5",
-  accent: "#0077AA",
-
-  development: "#0077AA",
-  security: "#C2185B",
-  deployment: "#27AE60",
-  troubleshooting: "#7D3C98",
-
-  easy: "#27AE60",
-  medium: "#D68910",
-  hard: "#C0392B",
-
-  background: "#F0F4F8",
-  surface: "#FFFFFF",
-  surfaceElevated: "#E8EFF5",
-  border: "#CBD5E0",
-
-  textPrimary: "#1A202C",
-  textSecondary: "#4A5568",
-  textMuted: "#718096",
-
-  correct: "#27AE60",
-  incorrect: "#C0392B",
-  warning: "#D68910",
-  info: "#2980B9",
-};
-
-// Legacy export so existing imports still compile until screens are migrated
-export const colors = darkColors;
+// Legacy export
+export const colors = lightColors;
 
 export const DOMAIN_META: Record<
   string,
@@ -100,50 +111,50 @@ export const DOMAIN_META: Record<
 > = {
   development: {
     label: "Development",
-    color: darkColors.development,
+    color: lightColors.development,
     weight: "32%",
     icon: "code-slash",
   },
   security: {
     label: "Security",
-    color: darkColors.security,
+    color: lightColors.security,
     weight: "26%",
     icon: "shield-checkmark",
   },
   deployment: {
     label: "Deployment",
-    color: darkColors.deployment,
+    color: lightColors.deployment,
     weight: "24%",
     icon: "rocket",
   },
   troubleshooting: {
     label: "Troubleshooting",
-    color: darkColors.troubleshooting,
+    color: lightColors.troubleshooting,
     weight: "18%",
     icon: "build",
   },
   services: {
     label: "Services",
-    color: darkColors.accent,
+    color: lightColors.accent,
     weight: "",
     icon: "cloud",
   },
   fundamentals: {
     label: "Fundamentals",
-    color: darkColors.primary,
+    color: lightColors.primary,
     weight: "",
     icon: "school",
   },
   applications: {
     label: "Applications",
-    color: darkColors.accent,
+    color: lightColors.accent,
     weight: "",
     icon: "layers",
   },
 };
 
 export function getDomainMeta(
-  colors: ThemeColors,
+  c: ThemeColors,
 ): Record<
   string,
   { label: string; color: string; weight: string; icon: string }
@@ -151,43 +162,43 @@ export function getDomainMeta(
   return {
     development: {
       label: "Development",
-      color: colors.development,
+      color: c.development,
       weight: "32%",
       icon: "code-slash",
     },
     security: {
       label: "Security",
-      color: colors.security,
+      color: c.security,
       weight: "26%",
       icon: "shield-checkmark",
     },
     deployment: {
       label: "Deployment",
-      color: colors.deployment,
+      color: c.deployment,
       weight: "24%",
       icon: "rocket",
     },
     troubleshooting: {
       label: "Troubleshooting",
-      color: colors.troubleshooting,
+      color: c.troubleshooting,
       weight: "18%",
       icon: "build",
     },
     services: {
       label: "Services",
-      color: colors.accent,
+      color: c.accent,
       weight: "",
       icon: "cloud",
     },
     fundamentals: {
       label: "Fundamentals",
-      color: colors.primary,
+      color: c.primary,
       weight: "",
       icon: "school",
     },
     applications: {
       label: "Applications",
-      color: colors.accent,
+      color: c.accent,
       weight: "",
       icon: "layers",
     },
@@ -204,10 +215,10 @@ export const spacing = {
 };
 
 export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  sm: 4,
+  md: 8,
+  lg: 12,
+  xl: 16,
   full: 9999,
 };
 
@@ -220,6 +231,11 @@ export const fontSize = {
   xxl: 24,
   xxxl: 30,
 };
+
+// Transit map system constants
+export const STATION_DOT_SIZE = 10;
+export const ROUTE_LINE_WIDTH = 4;
+export const TRANSFER_DOT_SIZE = 14;
 
 export const WEB_MAX_WIDTH = 1100;
 export const WEB_SIDEBAR_WIDTH = 220;

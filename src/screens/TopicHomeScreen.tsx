@@ -10,7 +10,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { spacing, radius, fontSize, ThemeColors } from "../utils/theme";
+import {
+  spacing,
+  radius,
+  fontSize,
+  ThemeColors,
+  ROUTE_LINE_WIDTH,
+} from "../utils/theme";
 import { loadProgress } from "../utils/storage";
 import { UserProgress } from "../types";
 import { RootStackParamList } from "../navigation";
@@ -97,11 +103,8 @@ export default function TopicHomeScreen() {
           </View>
 
           {/* Tagline banner */}
-          <View
-            style={[styles.banner, { backgroundColor: accentColor + "18" }]}
-          >
-            <Ionicons name="telescope" size={18} color={accentColor} />
-            <Text style={[styles.bannerText, { color: accentColor }]}>
+          <View style={[styles.banner, { borderLeftColor: accentColor }]}>
+            <Text style={[styles.bannerText, { color: colors.textSecondary }]}>
               {topicMeta.tagline}
             </Text>
           </View>
@@ -135,10 +138,7 @@ export default function TopicHomeScreen() {
           <Text style={styles.sectionTitle}>Quick Start</Text>
           <View style={styles.quickRow}>
             <TouchableOpacity
-              style={[
-                styles.quickCard,
-                { backgroundColor: accentColor + "18" },
-              ]}
+              style={[styles.quickCard, { borderTopColor: accentColor }]}
               onPress={() =>
                 navigation.navigate("FlashCard", {
                   domain: "all",
@@ -146,17 +146,14 @@ export default function TopicHomeScreen() {
                 })
               }
             >
-              <Ionicons name="book" size={28} color={accentColor} />
+              <Ionicons name="book" size={22} color={accentColor} />
               <Text style={styles.quickLabel}>Study Flashcards</Text>
               <Text style={styles.quickSub}>
                 {flashcards.length} cards · all topics
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
-                styles.quickCard,
-                { backgroundColor: colors.primary + "18" },
-              ]}
+              style={[styles.quickCard, { borderTopColor: colors.primary }]}
               onPress={() =>
                 navigation.navigate("Quiz", {
                   domain: "all",
@@ -165,7 +162,7 @@ export default function TopicHomeScreen() {
                 })
               }
             >
-              <Ionicons name="timer" size={28} color={colors.primary} />
+              <Ionicons name="timer" size={22} color={colors.primary} />
               <Text style={styles.quickLabel}>Practice Quiz</Text>
               <Text style={styles.quickSub}>
                 {Math.min(20, quizQuestions.length)} questions · timed
@@ -184,24 +181,17 @@ export default function TopicHomeScreen() {
             return (
               <TouchableOpacity
                 key={guide.id}
-                style={styles.guideCard}
+                style={[
+                  styles.guideCard,
+                  {
+                    borderLeftColor: completed ? colors.correct : accentColor,
+                  },
+                ]}
                 onPress={() =>
                   navigation.navigate("GuideDetail", { id: guide.id })
                 }
                 activeOpacity={0.8}
               >
-                <View
-                  style={[
-                    styles.guideIcon,
-                    { backgroundColor: accentColor + "22" },
-                  ]}
-                >
-                  <Ionicons
-                    name={completed ? "checkmark-circle" : "book-outline"}
-                    size={22}
-                    color={completed ? colors.correct : accentColor}
-                  />
-                </View>
                 <View style={styles.guideText}>
                   <Text style={styles.guideName}>{guide.service}</Text>
                   <Text style={styles.guideTagline} numberOfLines={1}>
@@ -297,8 +287,7 @@ function StatCard({
 }) {
   const styles = makeStyles(colors);
   return (
-    <View style={[styles.statCard, { borderColor: color + "44" }]}>
-      <Ionicons name={icon as any} size={22} color={color} />
+    <View style={[styles.statCard, { borderBottomColor: color }]}>
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
@@ -327,25 +316,24 @@ function makeStyles(colors: ThemeColors) {
       marginTop: 2,
     },
     badge: {
-      width: 44,
-      height: 44,
-      borderRadius: radius.full,
-      backgroundColor: colors.primary + "22",
+      width: 36,
+      height: 36,
+      borderRadius: radius.sm,
+      borderWidth: 1,
+      borderColor: colors.border,
       justifyContent: "center",
       alignItems: "center",
     },
 
     banner: {
-      flexDirection: "row",
-      alignItems: "center",
-      borderRadius: radius.md,
+      backgroundColor: colors.surface,
+      borderRadius: radius.sm,
       padding: spacing.sm + 4,
       marginBottom: spacing.md,
-      gap: spacing.xs,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
     },
     bannerText: {
       fontSize: fontSize.sm,
-      fontWeight: "600",
       flex: 1,
       lineHeight: 18,
     },
@@ -361,13 +349,14 @@ function makeStyles(colors: ThemeColors) {
       borderRadius: radius.md,
       padding: spacing.sm + 2,
       alignItems: "center",
-      borderWidth: 1,
+      borderBottomWidth: 3,
       gap: 4,
     },
     statValue: {
       fontSize: fontSize.lg,
       fontWeight: "800",
       color: colors.textPrimary,
+      fontVariant: ["tabular-nums"] as any,
     },
     statLabel: {
       fontSize: fontSize.xs,
@@ -376,9 +365,11 @@ function makeStyles(colors: ThemeColors) {
     },
 
     sectionTitle: {
-      fontSize: fontSize.md,
+      fontSize: fontSize.xs,
       fontWeight: "700",
-      color: colors.textPrimary,
+      color: colors.textMuted,
+      letterSpacing: 1.5,
+      textTransform: "uppercase",
       marginBottom: spacing.sm,
       marginTop: spacing.xs,
     },
@@ -390,10 +381,12 @@ function makeStyles(colors: ThemeColors) {
     },
     quickCard: {
       flex: 1,
-      borderRadius: radius.lg,
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
       padding: spacing.md,
       alignItems: "center",
       gap: spacing.xs,
+      borderTopWidth: 3,
     },
     quickLabel: {
       fontSize: fontSize.sm,
@@ -407,20 +400,13 @@ function makeStyles(colors: ThemeColors) {
       flexDirection: "row",
       alignItems: "center",
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       padding: spacing.md,
       marginBottom: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
       gap: spacing.sm,
     },
-    guideIcon: {
-      width: 44,
-      height: 44,
-      borderRadius: radius.md,
-      justifyContent: "center",
-      alignItems: "center",
-    },
+    guideIcon: {},
     guideText: { flex: 1, gap: 2 },
     guideName: {
       fontSize: fontSize.sm,

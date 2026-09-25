@@ -10,6 +10,7 @@ import {
   fontSize,
   WEB_SIDEBAR_WIDTH,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
 } from "../utils/theme";
 import { useTheme } from "../context/ThemeContext";
 import { useCert } from "../context/CertContext";
@@ -80,9 +81,7 @@ export default function WebSidebar({ tabProps }: Props) {
         onPress={() => navigation.navigate("CertSelect")}
         activeOpacity={0.8}
       >
-        <View
-          style={[styles.logoIcon, { backgroundColor: accentColor + "22" }]}
-        >
+        <View style={[styles.logoIcon, { borderColor: accentColor }]}>
           <Ionicons name={displayIcon as any} size={22} color={accentColor} />
         </View>
         <View style={styles.logoText}>
@@ -106,7 +105,10 @@ export default function WebSidebar({ tabProps }: Props) {
               key={name}
               style={[
                 styles.navItem,
-                active && { backgroundColor: colors.primary + "18" },
+                active && {
+                  borderLeftWidth: ROUTE_LINE_WIDTH,
+                  borderLeftColor: colors.primary,
+                },
               ]}
               onPress={() => tabProps.navigation.navigate(name)}
               activeOpacity={0.7}
@@ -188,7 +190,8 @@ function makeStyles(colors: ThemeColors) {
     logoIcon: {
       width: 40,
       height: 40,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
+      borderWidth: 1,
       justifyContent: "center",
       alignItems: "center",
       flexShrink: 0,

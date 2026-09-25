@@ -20,6 +20,7 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
 } from "../utils/theme";
 import {
   loadProgress,
@@ -102,28 +103,10 @@ export default function QuizResultScreen() {
             style={[
               styles.hero,
               {
-                borderColor: passed
-                  ? colors.correct + "55"
-                  : colors.incorrect + "55",
+                borderLeftColor: passed ? colors.correct : colors.incorrect,
               },
             ]}
           >
-            <View
-              style={[
-                styles.heroIcon,
-                {
-                  backgroundColor: passed
-                    ? colors.correct + "22"
-                    : colors.incorrect + "22",
-                },
-              ]}
-            >
-              <Ionicons
-                name={passed ? "trophy" : "reload"}
-                size={48}
-                color={passed ? colors.correct : colors.incorrect}
-              />
-            </View>
             <Text
               style={[
                 styles.heroTitle,
@@ -132,94 +115,49 @@ export default function QuizResultScreen() {
             >
               {passed ? "Great Work!" : "Keep Studying!"}
             </Text>
+            <Text
+              style={[
+                styles.pctText,
+                { color: passed ? colors.correct : colors.incorrect },
+              ]}
+            >
+              {pct}%
+            </Text>
             <Text style={styles.heroScore}>
               {score} / {total} correct
             </Text>
-            <View style={styles.pctCircle}>
+            <View style={styles.heroStats}>
+              <Text style={styles.heroStatText}>{formatTime(timeSeconds)}</Text>
+              <Text style={styles.heroStatDivider}>·</Text>
+              <Text style={styles.heroStatText}>
+                ~{Math.round(timeSeconds / total)}s per question
+              </Text>
+            </View>
+            <View style={styles.passBanner}>
               <Text
                 style={[
-                  styles.pctText,
+                  styles.passBannerText,
                   { color: passed ? colors.correct : colors.incorrect },
                 ]}
               >
-                {pct}%
+                {passed
+                  ? "Above passing threshold (72%+ ≈ 720/1000)"
+                  : `Need ${72 - pct}% more to reach passing threshold`}
               </Text>
-              <Text style={styles.pctSub}>accuracy</Text>
             </View>
-            <View style={styles.heroStats}>
-              <View style={styles.heroStat}>
-                <Ionicons
-                  name="time-outline"
-                  size={16}
-                  color={colors.textSecondary}
-                />
-                <Text style={styles.heroStatText}>
-                  {formatTime(timeSeconds)}
-                </Text>
-              </View>
-              <View style={styles.heroStat}>
-                <Ionicons
-                  name="calculator-outline"
-                  size={16}
-                  color={colors.textSecondary}
-                />
-                <Text style={styles.heroStatText}>
-                  ~{Math.round(timeSeconds / total)}s per question
-                </Text>
-              </View>
-            </View>
-            {passed ? (
-              <View style={styles.passBanner}>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={16}
-                  color={colors.correct}
-                />
-                <Text style={styles.passBannerText}>
-                  Above passing threshold (72%+ ≈ 720/1000)
-                </Text>
-              </View>
-            ) : (
-              <View
-                style={[
-                  styles.passBanner,
-                  { backgroundColor: colors.incorrect + "15" },
-                ]}
-              >
-                <Ionicons
-                  name="alert-circle"
-                  size={16}
-                  color={colors.incorrect}
-                />
-                <Text
-                  style={[styles.passBannerText, { color: colors.incorrect }]}
-                >
-                  Need {72 - pct}% more to reach passing threshold
-                </Text>
-              </View>
-            )}
           </View>
 
           {/* Domain breakdown */}
-          <Text style={styles.sectionTitle}>Domain Performance</Text>
+          <Text style={styles.sectionTitle}>DOMAIN PERFORMANCE</Text>
           {DOMAINS.map((domain) => {
             const meta = DOMAIN_META[domain];
             const acc = getDomainAccuracy(progress, domain);
             const { attempted, correct } = progress.domainScores[domain];
             return (
-              <View key={domain} style={styles.domainRow}>
-                <View
-                  style={[
-                    styles.domainIcon,
-                    { backgroundColor: meta.color + "22" },
-                  ]}
-                >
-                  <Ionicons
-                    name={meta.icon as any}
-                    size={16}
-                    color={meta.color}
-                  />
-                </View>
+              <View
+                key={domain}
+                style={[styles.domainRow, { borderLeftColor: meta.color }]}
+              >
                 <View style={styles.domainInfo}>
                   <View style={styles.domainTopRow}>
                     <Text style={styles.domainLabel}>{meta.label}</Text>
@@ -265,7 +203,7 @@ export default function QuizResultScreen() {
           })}
 
           {/* Recommendations */}
-          <Text style={styles.sectionTitle}>Study Recommendations</Text>
+          <Text style={styles.sectionTitle}>STUDY RECOMMENDATIONS</Text>
           {DOMAINS.filter((d) => {
             const acc = getDomainAccuracy(progress, d);
             return progress.domainScores[d].attempted > 0 && acc < 80;
@@ -278,19 +216,10 @@ export default function QuizResultScreen() {
               const meta = DOMAIN_META[domain];
               const acc = getDomainAccuracy(progress, domain);
               return (
-                <View key={domain} style={styles.recCard}>
-                  <View
-                    style={[
-                      styles.recIcon,
-                      { backgroundColor: meta.color + "22" },
-                    ]}
-                  >
-                    <Ionicons
-                      name="warning-outline"
-                      size={18}
-                      color={meta.color}
-                    />
-                  </View>
+                <View
+                  key={domain}
+                  style={[styles.recCard, { borderLeftColor: meta.color }]}
+                >
                   <View style={styles.recText}>
                     <Text style={styles.recTitle}>
                       Focus on {meta.label} ({acc}%)
@@ -316,7 +245,7 @@ export default function QuizResultScreen() {
             })}
 
           {/* Overall lifetime stats */}
-          <Text style={styles.sectionTitle}>Lifetime Stats</Text>
+          <Text style={styles.sectionTitle}>LIFETIME STATS</Text>
           <View style={styles.statsGrid}>
             <StatBox
               label="Questions Answered"
@@ -415,7 +344,6 @@ export default function QuizResultScreen() {
 function StatBox({
   label,
   value,
-  icon,
   color,
   colors,
 }: {
@@ -427,9 +355,15 @@ function StatBox({
 }) {
   const styles = makeStyles(colors);
   return (
-    <View style={[styles.statBox, { borderColor: color + "33" }]}>
-      <Ionicons name={icon as any} size={20} color={color} />
-      <Text style={styles.statValue}>{value}</Text>
+    <View style={[styles.statBox, { borderBottomColor: color }]}>
+      <Text
+        style={[
+          styles.statValue,
+          { fontVariant: ["tabular-nums"] as any, color: colors.textPrimary },
+        ]}
+      >
+        {value}
+      </Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
   );
@@ -466,69 +400,61 @@ function makeStyles(colors: ThemeColors) {
 
     hero: {
       backgroundColor: colors.surface,
-      borderRadius: radius.xl,
+      borderRadius: radius.md,
       padding: spacing.lg,
-      alignItems: "center",
-      borderWidth: 1.5,
-      gap: spacing.sm,
+      gap: spacing.xs,
       marginBottom: spacing.lg,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
     },
-    heroIcon: {
-      width: 88,
-      height: 88,
-      borderRadius: radius.full,
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: spacing.xs,
+    heroTitle: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
+      color: colors.textMuted,
+      textTransform: "uppercase",
+      letterSpacing: 1.2,
     },
-    heroTitle: { fontSize: fontSize.xxl, fontWeight: "800" },
-    heroScore: { fontSize: fontSize.lg, color: colors.textSecondary },
-    pctCircle: { alignItems: "center", marginVertical: spacing.xs },
-    pctText: { fontSize: fontSize.xxxl, fontWeight: "900" },
-    pctSub: { fontSize: fontSize.sm, color: colors.textSecondary },
-    heroStats: { flexDirection: "row", gap: spacing.lg },
-    heroStat: { flexDirection: "row", alignItems: "center", gap: 4 },
-    heroStatText: { fontSize: fontSize.sm, color: colors.textSecondary },
-    passBanner: {
+    heroScore: { fontSize: fontSize.md, color: colors.textSecondary },
+    pctText: {
+      fontSize: fontSize.xxxl,
+      fontWeight: "900",
+      fontVariant: ["tabular-nums"] as any,
+      lineHeight: fontSize.xxxl * 1.1,
+    },
+    heroStats: {
       flexDirection: "row",
       alignItems: "center",
       gap: spacing.xs,
-      backgroundColor: colors.correct + "15",
-      borderRadius: radius.md,
-      paddingHorizontal: spacing.md,
-      paddingVertical: spacing.sm,
+      marginTop: 2,
+    },
+    heroStatDivider: { color: colors.textMuted, fontSize: fontSize.sm },
+    heroStatText: { fontSize: fontSize.sm, color: colors.textSecondary },
+    passBanner: {
+      marginTop: spacing.xs,
+      paddingTop: spacing.xs,
+      borderTopWidth: 1,
+      borderTopColor: colors.rule,
     },
     passBannerText: {
-      fontSize: fontSize.sm,
+      fontSize: fontSize.xs,
       fontWeight: "600",
-      color: colors.correct,
     },
 
     sectionTitle: {
-      fontSize: fontSize.md,
+      fontSize: fontSize.xs,
       fontWeight: "700",
-      color: colors.textPrimary,
+      color: colors.textMuted,
+      letterSpacing: 1.5,
+      textTransform: "uppercase",
       marginBottom: spacing.sm,
-      marginTop: spacing.xs,
+      marginTop: spacing.sm,
     },
 
     domainRow: {
-      flexDirection: "row",
-      alignItems: "center",
       backgroundColor: colors.surface,
       borderRadius: radius.md,
       padding: spacing.md,
       marginBottom: spacing.xs,
-      gap: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    domainIcon: {
-      width: 36,
-      height: 36,
-      borderRadius: radius.sm,
-      justifyContent: "center",
-      alignItems: "center",
+      borderLeftWidth: ROUTE_LINE_WIDTH,
     },
     domainInfo: { flex: 1 },
     domainTopRow: {
@@ -541,7 +467,11 @@ function makeStyles(colors: ThemeColors) {
       fontWeight: "600",
       color: colors.textPrimary,
     },
-    domainAcc: { fontSize: fontSize.sm, fontWeight: "700" },
+    domainAcc: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
+      fontVariant: ["tabular-nums"] as any,
+    },
     miniBarBg: {
       height: 4,
       backgroundColor: colors.border,
@@ -558,15 +488,7 @@ function makeStyles(colors: ThemeColors) {
       padding: spacing.md,
       marginBottom: spacing.xs,
       gap: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    recIcon: {
-      width: 40,
-      height: 40,
-      borderRadius: radius.md,
-      justifyContent: "center",
-      alignItems: "center",
+      borderLeftWidth: ROUTE_LINE_WIDTH,
     },
     recText: { flex: 1 },
     recTitle: {
@@ -594,12 +516,11 @@ function makeStyles(colors: ThemeColors) {
       padding: spacing.md,
       alignItems: "center",
       gap: 4,
-      borderWidth: 1,
+      borderBottomWidth: 3,
     },
     statValue: {
       fontSize: fontSize.xl,
       fontWeight: "800",
-      color: colors.textPrimary,
     },
     statLabel: {
       fontSize: fontSize.xs,
@@ -615,13 +536,13 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "center",
       gap: spacing.sm,
       backgroundColor: colors.primary,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
       paddingVertical: spacing.md,
     },
     retryBtnText: {
       fontSize: fontSize.md,
       fontWeight: "700",
-      color: colors.secondary,
+      color: "#FFFFFF",
     },
     homeBtn2: {
       flex: 1,
@@ -630,10 +551,10 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "center",
       gap: spacing.sm,
       backgroundColor: colors.surface,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
       paddingVertical: spacing.md,
       borderWidth: 1,
-      borderColor: colors.primary + "55",
+      borderColor: colors.border,
     },
     homeBtnText2: {
       fontSize: fontSize.md,
@@ -645,10 +566,9 @@ function makeStyles(colors: ThemeColors) {
       flexDirection: "row",
       alignItems: "center",
       gap: spacing.xs,
-      backgroundColor: colors.incorrect + "12",
       borderWidth: 1,
-      borderColor: colors.incorrect + "44",
-      borderRadius: radius.md,
+      borderColor: colors.incorrect,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
       marginTop: spacing.sm,
@@ -664,12 +584,12 @@ function makeStyles(colors: ThemeColors) {
       backgroundColor: colors.primary,
       paddingHorizontal: spacing.lg,
       paddingVertical: spacing.sm,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
     },
     homeBtnText: {
       fontSize: fontSize.md,
       fontWeight: "700",
-      color: colors.secondary,
+      color: "#FFFFFF",
     },
   });
 }

@@ -17,6 +17,8 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
+  STATION_DOT_SIZE,
 } from "../utils/theme";
 import { AbbreviatedText } from "../components/AbbreviatedText";
 import { FlashCard, Domain, Difficulty, UserProgress } from "../types";
@@ -152,7 +154,7 @@ export default function FlashCardScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.empty}>
-          <Ionicons name="search" size={48} color={colors.textMuted} />
+          <Ionicons name="search" size={36} color={colors.textMuted} />
           <Text style={styles.emptyText}>No cards match these filters</Text>
           <TouchableOpacity
             style={styles.backBtn}
@@ -170,43 +172,43 @@ export default function FlashCardScreen() {
   const meta = DOMAIN_META[currentCard.domain];
   const cardStatus = progress?.studiedCards[currentCard.id];
   const isLast = index === cards.length - 1;
+  const progressPct = ((index + 1) / cards.length) * 100;
 
   return (
     <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
-      {/* Header */}
+      {/* Header — departure board style */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.headerBtn}
         >
-          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerCount}>
-            {index + 1} / {cards.length}
+            {index + 1}
+            <Text style={styles.headerCountOf}> / {cards.length}</Text>
           </Text>
           <Text style={styles.headerDomain}>{service ?? meta.label}</Text>
         </View>
         <View style={styles.sessionStats}>
-          <Ionicons name="checkmark-circle" size={16} color={colors.correct} />
           <Text style={[styles.sessionStat, { color: colors.correct }]}>
-            {sessionKnown}
+            {sessionKnown}✓
           </Text>
-          <Ionicons name="refresh-circle" size={16} color={colors.warning} />
           <Text style={[styles.sessionStat, { color: colors.warning }]}>
-            {sessionLearning}
+            {sessionLearning}↺
           </Text>
         </View>
       </View>
 
       <WebContainer style={{ flex: 1 }}>
-        {/* Progress bar */}
-        <View style={styles.progressBarBg}>
+        {/* Route progress strip */}
+        <View style={styles.routeProgressBg}>
           <View
             style={[
-              styles.progressBarFill,
+              styles.routeProgressFill,
               {
-                width: `${((index + 1) / cards.length) * 100}%`,
+                width: `${progressPct}%` as any,
                 backgroundColor: meta.color,
               },
             ]}
@@ -223,57 +225,38 @@ export default function FlashCardScreen() {
           >
             <Animated.View style={[styles.cardInner, { opacity: fadeAnim }]}>
               <TouchableOpacity
-                style={[
-                  styles.card,
-                  {
-                    borderColor: meta.color + "44",
-                    backgroundColor: flipped
-                      ? colors.surfaceElevated
-                      : colors.surface,
-                  },
-                ]}
+                style={[styles.card, { borderLeftColor: meta.color }]}
                 onPress={handleFlip}
                 activeOpacity={0.97}
               >
                 {!flipped ? (
                   <>
                     <View style={styles.cardTopRow}>
-                      <View
-                        style={[
-                          styles.serviceBadge,
-                          { backgroundColor: meta.color + "22" },
-                        ]}
-                      >
-                        <Ionicons
-                          name={meta.icon as any}
-                          size={14}
-                          color={meta.color}
-                        />
-                        <Text
+                      <View style={styles.cardBadgeRow}>
+                        <View
                           style={[
-                            styles.serviceBadgeText,
-                            { color: meta.color },
+                            styles.domainBadge,
+                            { borderColor: meta.color },
                           ]}
                         >
-                          {currentCard.service}
-                        </Text>
-                      </View>
-                      <View
-                        style={[
-                          styles.diffBadge,
-                          {
-                            backgroundColor:
-                              currentCard.difficulty === "easy"
-                                ? colors.easy + "22"
-                                : currentCard.difficulty === "medium"
-                                  ? colors.medium + "22"
-                                  : colors.hard + "22",
-                          },
-                        ]}
-                      >
+                          <View
+                            style={[
+                              styles.domainDot,
+                              { backgroundColor: meta.color },
+                            ]}
+                          />
+                          <Text
+                            style={[
+                              styles.domainBadgeText,
+                              { color: meta.color },
+                            ]}
+                          >
+                            {currentCard.service}
+                          </Text>
+                        </View>
                         <Text
                           style={[
-                            styles.diffBadgeText,
+                            styles.diffText,
                             {
                               color:
                                 currentCard.difficulty === "easy"
@@ -287,15 +270,24 @@ export default function FlashCardScreen() {
                           {currentCard.difficulty}
                         </Text>
                       </View>
+                      {cardStatus && (
+                        <Text
+                          style={[
+                            styles.statusChip,
+                            {
+                              color:
+                                cardStatus === "known"
+                                  ? colors.correct
+                                  : colors.warning,
+                            },
+                          ]}
+                        >
+                          {cardStatus === "known" ? "Known" : "Learning"}
+                        </Text>
+                      )}
                     </View>
 
                     <View style={styles.cardBody}>
-                      <Ionicons
-                        name="help-circle-outline"
-                        size={32}
-                        color={meta.color}
-                        style={styles.cardIcon}
-                      />
                       <AbbreviatedText
                         text={currentCard.question}
                         style={styles.questionText}
@@ -304,56 +296,7 @@ export default function FlashCardScreen() {
                     </View>
 
                     <View style={styles.cardFooter}>
-                      {cardStatus && (
-                        <View
-                          style={[
-                            styles.statusIndicator,
-                            {
-                              backgroundColor:
-                                cardStatus === "known"
-                                  ? colors.correct + "22"
-                                  : colors.warning + "22",
-                            },
-                          ]}
-                        >
-                          <Ionicons
-                            name={
-                              cardStatus === "known"
-                                ? "checkmark-circle"
-                                : "refresh-circle"
-                            }
-                            size={14}
-                            color={
-                              cardStatus === "known"
-                                ? colors.correct
-                                : colors.warning
-                            }
-                          />
-                          <Text
-                            style={[
-                              styles.statusText,
-                              {
-                                color:
-                                  cardStatus === "known"
-                                    ? colors.correct
-                                    : colors.warning,
-                              },
-                            ]}
-                          >
-                            {cardStatus === "known" ? "Known" : "Learning"}
-                          </Text>
-                        </View>
-                      )}
-                      <View style={styles.cardHint}>
-                        <Ionicons
-                          name="hand-left-outline"
-                          size={14}
-                          color={colors.textMuted}
-                        />
-                        <Text style={styles.hintText}>
-                          Tap to reveal answer
-                        </Text>
-                      </View>
+                      <Text style={styles.hintText}>Tap to reveal answer</Text>
                     </View>
                   </>
                 ) : (
@@ -362,22 +305,12 @@ export default function FlashCardScreen() {
                     showsVerticalScrollIndicator={false}
                   >
                     <View style={styles.cardTopRow}>
-                      <Text style={styles.answerLabel}>Answer</Text>
-                      <View
-                        style={[
-                          styles.serviceBadge,
-                          { backgroundColor: meta.color + "22" },
-                        ]}
+                      <Text style={styles.answerLabel}>ANSWER</Text>
+                      <Text
+                        style={[styles.domainBadgeText, { color: meta.color }]}
                       >
-                        <Text
-                          style={[
-                            styles.serviceBadgeText,
-                            { color: meta.color },
-                          ]}
-                        >
-                          {currentCard.service}
-                        </Text>
-                      </View>
+                        {currentCard.service}
+                      </Text>
                     </View>
 
                     <AbbreviatedText
@@ -386,12 +319,12 @@ export default function FlashCardScreen() {
                     />
 
                     <View style={styles.keyPointsSection}>
-                      <Text style={styles.keyPointsLabel}>Key Points</Text>
+                      <Text style={styles.keyPointsLabel}>KEY POINTS</Text>
                       {currentCard.keyPoints.map((pt, i) => (
                         <View key={i} style={styles.keyPoint}>
                           <View
                             style={[
-                              styles.bullet,
+                              styles.keyBullet,
                               { backgroundColor: meta.color },
                             ]}
                           />
@@ -423,20 +356,9 @@ export default function FlashCardScreen() {
         {flipped ? (
           <View style={styles.ratingRow}>
             <TouchableOpacity
-              style={[
-                styles.ratingBtn,
-                {
-                  backgroundColor: colors.warning + "22",
-                  borderColor: colors.warning,
-                },
-              ]}
+              style={[styles.ratingBtn, { borderColor: colors.warning }]}
               onPress={() => markCard("learning")}
             >
-              <Ionicons
-                name="refresh-circle"
-                size={22}
-                color={colors.warning}
-              />
               <Text style={[styles.ratingBtnText, { color: colors.warning }]}>
                 Still Learning
               </Text>
@@ -445,19 +367,14 @@ export default function FlashCardScreen() {
               style={[
                 styles.ratingBtn,
                 {
-                  backgroundColor: colors.correct + "22",
                   borderColor: colors.correct,
+                  backgroundColor: colors.correct,
                 },
               ]}
               onPress={() => markCard("known")}
             >
-              <Ionicons
-                name="checkmark-circle"
-                size={22}
-                color={colors.correct}
-              />
-              <Text style={[styles.ratingBtnText, { color: colors.correct }]}>
-                Got It!
+              <Text style={[styles.ratingBtnText, { color: colors.surface }]}>
+                Got It
               </Text>
             </TouchableOpacity>
           </View>
@@ -469,14 +386,16 @@ export default function FlashCardScreen() {
               disabled={index === 0}
             >
               <Ionicons
-                name="arrow-back-circle"
-                size={44}
-                color={index === 0 ? colors.textMuted : colors.primary}
+                name="arrow-back"
+                size={22}
+                color={index === 0 ? colors.textMuted : colors.textPrimary}
               />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.flipBtn} onPress={handleFlip}>
-              <Ionicons name="eye-outline" size={20} color={colors.secondary} />
+            <TouchableOpacity
+              style={[styles.flipBtn, { backgroundColor: meta.color }]}
+              onPress={handleFlip}
+            >
               <Text style={styles.flipBtnText}>Show Answer</Text>
             </TouchableOpacity>
 
@@ -486,9 +405,9 @@ export default function FlashCardScreen() {
               disabled={isLast}
             >
               <Ionicons
-                name="arrow-forward-circle"
-                size={44}
-                color={isLast ? colors.textMuted : colors.primary}
+                name="arrow-forward"
+                size={22}
+                color={isLast ? colors.textMuted : colors.textPrimary}
               />
             </TouchableOpacity>
           </View>
@@ -496,10 +415,9 @@ export default function FlashCardScreen() {
 
         {isLast && flipped && (
           <TouchableOpacity
-            style={styles.doneBtn}
+            style={[styles.doneBtn, { borderColor: colors.border }]}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="flag" size={18} color={colors.secondary} />
             <Text style={styles.doneBtnText}>
               Done · {sessionKnown} known · {sessionLearning} learning
             </Text>
@@ -517,8 +435,10 @@ function makeStyles(colors: ThemeColors) {
     header: {
       flexDirection: "row",
       alignItems: "center",
-      padding: spacing.md,
-      paddingBottom: spacing.sm,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.rule,
     },
     headerBtn: { padding: spacing.xs },
     headerCenter: { flex: 1, alignItems: "center" },
@@ -526,24 +446,45 @@ function makeStyles(colors: ThemeColors) {
       fontSize: fontSize.lg,
       fontWeight: "800",
       color: colors.textPrimary,
+      fontVariant: ["tabular-nums"],
     },
-    headerDomain: { fontSize: fontSize.xs, color: colors.textSecondary },
-    sessionStats: { flexDirection: "row", alignItems: "center", gap: 4 },
-    sessionStat: { fontSize: fontSize.sm, fontWeight: "700", marginRight: 6 },
+    headerCountOf: {
+      fontSize: fontSize.md,
+      fontWeight: "400",
+      color: colors.textMuted,
+    },
+    headerDomain: {
+      fontSize: fontSize.xs,
+      color: colors.textSecondary,
+      letterSpacing: 0.5,
+    },
+    sessionStats: {
+      flexDirection: "row",
+      gap: spacing.sm,
+    },
+    sessionStat: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
+      fontVariant: ["tabular-nums"],
+    },
 
-    progressBarBg: {
-      height: 3,
-      backgroundColor: colors.border,
+    routeProgressBg: {
+      height: ROUTE_LINE_WIDTH,
+      backgroundColor: colors.rule,
       marginHorizontal: spacing.md,
-      borderRadius: radius.full,
+      marginTop: spacing.sm,
+      borderRadius: 2,
       overflow: "hidden",
-      marginBottom: spacing.md,
     },
-    progressBarFill: { height: "100%", borderRadius: radius.full },
+    routeProgressFill: {
+      height: "100%" as any,
+      borderRadius: 2,
+    },
 
     cardContainer: {
       flex: 1,
       paddingHorizontal: spacing.md,
+      paddingTop: spacing.md,
       justifyContent: "center",
     },
     cardSlide: { height: CARD_HEIGHT },
@@ -551,8 +492,11 @@ function makeStyles(colors: ThemeColors) {
 
     card: {
       flex: 1,
-      borderRadius: radius.xl,
-      borderWidth: 1.5,
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
       overflow: "hidden",
     },
 
@@ -563,24 +507,38 @@ function makeStyles(colors: ThemeColors) {
       padding: spacing.md,
       paddingBottom: spacing.sm,
     },
-    serviceBadge: {
+    cardBadgeRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    domainBadge: {
       flexDirection: "row",
       alignItems: "center",
       gap: 5,
       paddingHorizontal: spacing.sm,
-      paddingVertical: 4,
-      borderRadius: radius.full,
+      paddingVertical: 3,
+      borderWidth: 1,
+      borderRadius: radius.sm,
     },
-    serviceBadgeText: { fontSize: fontSize.xs, fontWeight: "700" },
-    diffBadge: {
-      paddingHorizontal: spacing.sm,
-      paddingVertical: 4,
-      borderRadius: radius.full,
+    domainDot: {
+      width: STATION_DOT_SIZE - 4,
+      height: STATION_DOT_SIZE - 4,
+      borderRadius: (STATION_DOT_SIZE - 4) / 2,
     },
-    diffBadgeText: {
+    domainBadgeText: {
       fontSize: fontSize.xs,
       fontWeight: "700",
-      textTransform: "capitalize",
+    },
+    diffText: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    statusChip: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
     },
 
     cardBody: {
@@ -589,7 +547,6 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "center",
       alignItems: "center",
     },
-    cardIcon: { marginBottom: spacing.md },
     questionText: {
       fontSize: fontSize.lg,
       fontWeight: "600",
@@ -601,30 +558,19 @@ function makeStyles(colors: ThemeColors) {
     cardFooter: {
       alignItems: "center",
       paddingBottom: spacing.md,
-      gap: spacing.xs,
     },
-    cardHint: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 6,
+    hintText: {
+      fontSize: fontSize.xs,
+      color: colors.textMuted,
+      letterSpacing: 0.3,
     },
-    hintText: { fontSize: fontSize.xs, color: colors.textMuted },
-    statusIndicator: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 5,
-      paddingHorizontal: spacing.sm,
-      paddingVertical: 4,
-      borderRadius: radius.full,
-    },
-    statusText: { fontSize: fontSize.xs, fontWeight: "600" },
 
     backContent: { padding: spacing.md, paddingBottom: spacing.lg },
     answerLabel: {
-      fontSize: fontSize.sm,
-      fontWeight: "700",
-      color: colors.textSecondary,
+      fontSize: fontSize.xs,
+      fontWeight: "800",
+      color: colors.textMuted,
+      letterSpacing: 1.5,
     },
     answerText: {
       fontSize: fontSize.md,
@@ -634,9 +580,10 @@ function makeStyles(colors: ThemeColors) {
     },
     keyPointsSection: { marginBottom: spacing.md },
     keyPointsLabel: {
-      fontSize: fontSize.sm,
-      fontWeight: "700",
-      color: colors.textSecondary,
+      fontSize: fontSize.xs,
+      fontWeight: "800",
+      color: colors.textMuted,
+      letterSpacing: 1.5,
       marginBottom: spacing.sm,
     },
     keyPoint: {
@@ -645,7 +592,12 @@ function makeStyles(colors: ThemeColors) {
       marginBottom: 8,
       gap: spacing.sm,
     },
-    bullet: { width: 6, height: 6, borderRadius: radius.full, marginTop: 7 },
+    keyBullet: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      marginTop: 7,
+    },
     keyPointText: {
       flex: 1,
       fontSize: fontSize.sm,
@@ -654,62 +606,74 @@ function makeStyles(colors: ThemeColors) {
     },
     tagRow: { flexDirection: "row", flexWrap: "wrap", gap: 4 },
     tag: {
-      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
       borderRadius: radius.sm,
       paddingHorizontal: 8,
       paddingVertical: 3,
     },
     tagText: { fontSize: fontSize.xs, color: colors.textMuted },
 
-    controls: { padding: spacing.md, paddingTop: spacing.sm, gap: spacing.sm },
+    controls: {
+      padding: spacing.md,
+      paddingTop: spacing.sm,
+      gap: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.rule,
+    },
     navRow: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
     },
-    navBtn: { padding: spacing.xs },
+    navBtn: {
+      width: 44,
+      height: 44,
+      borderRadius: radius.full,
+      borderWidth: 1,
+      borderColor: colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+    },
     navBtnDisabled: { opacity: 0.3 },
     flipBtn: {
-      flexDirection: "row",
+      flex: 1,
+      marginHorizontal: spacing.sm,
       alignItems: "center",
-      gap: spacing.sm,
-      backgroundColor: colors.primary,
-      paddingHorizontal: spacing.lg,
       paddingVertical: spacing.sm + 4,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
     },
     flipBtnText: {
       fontSize: fontSize.md,
       fontWeight: "700",
-      color: colors.secondary,
+      color: "#FFFFFF",
     },
 
     ratingRow: { flexDirection: "row", gap: spacing.sm },
     ratingBtn: {
       flex: 1,
-      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: spacing.sm,
-      borderWidth: 1.5,
-      borderRadius: radius.md,
       paddingVertical: spacing.md,
+      borderWidth: 1.5,
+      borderRadius: radius.sm,
     },
-    ratingBtnText: { fontSize: fontSize.md, fontWeight: "700" },
+    ratingBtnText: {
+      fontSize: fontSize.md,
+      fontWeight: "700",
+    },
 
     doneBtn: {
-      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: spacing.sm,
-      backgroundColor: colors.accent,
-      borderRadius: radius.md,
-      paddingVertical: spacing.sm + 4,
+      paddingVertical: spacing.sm + 2,
+      borderWidth: 1,
+      borderRadius: radius.sm,
     },
     doneBtnText: {
       fontSize: fontSize.sm,
       fontWeight: "700",
-      color: colors.textPrimary,
+      color: colors.textSecondary,
     },
 
     empty: {
@@ -720,15 +684,16 @@ function makeStyles(colors: ThemeColors) {
     },
     emptyText: { fontSize: fontSize.lg, color: colors.textMuted },
     backBtn: {
-      backgroundColor: colors.primary,
+      borderWidth: 1,
+      borderColor: colors.border,
       paddingHorizontal: spacing.lg,
       paddingVertical: spacing.sm,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
     },
     backBtnText: {
       fontSize: fontSize.md,
       fontWeight: "700",
-      color: colors.secondary,
+      color: colors.textPrimary,
     },
   });
 }

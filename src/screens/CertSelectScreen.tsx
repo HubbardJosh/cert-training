@@ -10,7 +10,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { spacing, radius, fontSize, ThemeColors } from "../utils/theme";
+import {
+  spacing,
+  radius,
+  fontSize,
+  ThemeColors,
+  ROUTE_LINE_WIDTH,
+} from "../utils/theme";
 import {
   useCert,
   CertificationId,
@@ -41,10 +47,7 @@ const AWS_GROUPS: CertGroup[] = [
     level: "Foundational",
     description: "No prior cloud experience required",
     certs: [
-      {
-        meta: CERT_META["clf-c02"],
-        next: "DVA-C02 / SAA-C03 / AIF-C01",
-      },
+      { meta: CERT_META["clf-c02"], next: "DVA-C02 / SAA-C03 / AIF-C01" },
     ],
   },
   {
@@ -72,10 +75,7 @@ const AWS_GROUPS: CertGroup[] = [
         prev: "CLF-C02",
         next: "MLS-C01 / ANS-C01",
       },
-      {
-        meta: CERT_META["mls-c01"],
-        prev: "AIF-C01",
-      },
+      { meta: CERT_META["mls-c01"], prev: "AIF-C01" },
     ],
   },
 ];
@@ -84,18 +84,13 @@ const ANTHROPIC_GROUPS: CertGroup[] = [
   {
     level: "Foundational",
     description: "Core Claude AI operations knowledge",
-    certs: [
-      {
-        meta: CERT_META["ccao-f"],
-        next: "CCDV-F / CCAR-F",
-      },
-    ],
+    certs: [{ meta: CERT_META["ccao-f"], next: "CCDV-F / CCAR-F" }],
   },
 ];
 
-const AWS_COLOR = "#FF9900";
-const ANTHROPIC_COLOR = "#D97706";
-const TOPICS_COLOR = "#00BCD4";
+const AWS_COLOR = "#E96B18";
+const ANTHROPIC_COLOR = "#9C27B0";
+const TOPICS_COLOR = "#0066CC";
 
 export default function CertSelectScreen() {
   const navigation = useNavigation<Nav>();
@@ -119,92 +114,59 @@ export default function CertSelectScreen() {
     return (
       <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
         <View style={styles.pickerContent}>
-          <View style={styles.header}>
-            <View style={styles.logoWrap}>
-              <Ionicons name="ribbon" size={36} color={colors.primary} />
-            </View>
-            <Text style={styles.title}>Certifications</Text>
-            <Text style={styles.subtitle}>
-              Choose a certification provider to get started
+          {/* System map header */}
+          <View style={styles.mapHeader}>
+            <Text style={styles.mapTitle}>SYSTEM MAP</Text>
+            <Text style={styles.mapSubtitle}>
+              Select a certification network
             </Text>
           </View>
 
-          <TouchableOpacity
-            style={[styles.providerCard, { borderColor: AWS_COLOR }]}
+          <ProviderCard
+            label="Amazon Web Services"
+            sub="Cloud Practitioner · Developer · AI Practitioner · Machine Learning"
+            icon="cloud"
+            color={AWS_COLOR}
+            colors={colors}
             onPress={() => setProvider("aws")}
-            activeOpacity={0.8}
-          >
-            <View
-              style={[
-                styles.providerIcon,
-                { backgroundColor: AWS_COLOR + "22" },
-              ]}
-            >
-              <Ionicons name="cloud" size={36} color={AWS_COLOR} />
-            </View>
-            <View style={styles.providerText}>
-              <Text style={[styles.providerName, { color: AWS_COLOR }]}>
-                Amazon Web Services
-              </Text>
-              <Text style={styles.providerDesc}>
-                Cloud Practitioner · Developer · AI Practitioner · Machine
-                Learning
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={22} color={AWS_COLOR} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.providerCard, { borderColor: ANTHROPIC_COLOR }]}
+          />
+          <ProviderCard
+            label="Anthropic"
+            sub="Claude AI Operations · Foundations & beyond"
+            icon="sparkles"
+            color={ANTHROPIC_COLOR}
+            colors={colors}
             onPress={() => setProvider("anthropic")}
-            activeOpacity={0.8}
-          >
-            <View
-              style={[
-                styles.providerIcon,
-                { backgroundColor: ANTHROPIC_COLOR + "22" },
-              ]}
-            >
-              <Ionicons name="sparkles" size={36} color={ANTHROPIC_COLOR} />
-            </View>
-            <View style={styles.providerText}>
-              <Text style={[styles.providerName, { color: ANTHROPIC_COLOR }]}>
-                Anthropic
-              </Text>
-              <Text style={styles.providerDesc}>
-                Claude AI Operations · Foundations &amp; beyond
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={22}
-              color={ANTHROPIC_COLOR}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.providerCard, { borderColor: TOPICS_COLOR }]}
+          />
+          <ProviderCard
+            label="Deep-Dive Topics"
+            sub="Focused study beyond the cert curriculum · Bedrock AgentCore"
+            icon="telescope"
+            color={TOPICS_COLOR}
+            colors={colors}
             onPress={() => navigation.navigate("TopicSelect")}
-            activeOpacity={0.8}
-          >
-            <View
-              style={[
-                styles.providerIcon,
-                { backgroundColor: TOPICS_COLOR + "22" },
-              ]}
-            >
-              <Ionicons name="telescope" size={36} color={TOPICS_COLOR} />
+          />
+
+          <View style={styles.mapLegend}>
+            <View style={styles.legendRow}>
+              <View
+                style={[styles.legendDot, { backgroundColor: AWS_COLOR }]}
+              />
+              <Text style={styles.legendText}>AWS Network</Text>
             </View>
-            <View style={styles.providerText}>
-              <Text style={[styles.providerName, { color: TOPICS_COLOR }]}>
-                Deep-Dive Topics
-              </Text>
-              <Text style={styles.providerDesc}>
-                Focused study beyond the cert curriculum · Bedrock AgentCore
-              </Text>
+            <View style={styles.legendRow}>
+              <View
+                style={[styles.legendDot, { backgroundColor: ANTHROPIC_COLOR }]}
+              />
+              <Text style={styles.legendText}>Anthropic Network</Text>
             </View>
-            <Ionicons name="chevron-forward" size={22} color={TOPICS_COLOR} />
-          </TouchableOpacity>
+            <View style={styles.legendRow}>
+              <View
+                style={[styles.legendDot, { backgroundColor: TOPICS_COLOR }]}
+              />
+              <Text style={styles.legendText}>Topic Lines</Text>
+            </View>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -217,44 +179,40 @@ export default function CertSelectScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backRow}
-            onPress={() => setProvider(null)}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="chevron-back" size={18} color={providerColor} />
-            <Text style={[styles.backLabel, { color: providerColor }]}>
-              Providers
-            </Text>
-          </TouchableOpacity>
+        {/* Back nav */}
+        <TouchableOpacity
+          style={styles.backRow}
+          onPress={() => setProvider(null)}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chevron-back" size={16} color={providerColor} />
+          <Text style={[styles.backLabel, { color: providerColor }]}>
+            System Map
+          </Text>
+        </TouchableOpacity>
 
+        {/* Line header */}
+        <View style={styles.lineHeader}>
           <View
-            style={[styles.logoWrap, { backgroundColor: providerColor + "18" }]}
-          >
-            <Ionicons
-              name={provider === "aws" ? "cloud" : "sparkles"}
-              size={36}
-              color={providerColor}
-            />
+            style={[styles.lineStrip, { backgroundColor: providerColor }]}
+          />
+          <View style={styles.lineHeaderText}>
+            <Text style={styles.lineTitle}>
+              {provider === "aws"
+                ? "AWS Certifications"
+                : "Anthropic Certifications"}
+            </Text>
+            <Text style={styles.lineSubtitle}>
+              Choose a certification to study for
+            </Text>
           </View>
-          <Text style={styles.title}>
-            {provider === "aws"
-              ? "AWS Certifications"
-              : "Anthropic Certifications"}
-          </Text>
-          <Text style={styles.subtitle}>
-            Choose a certification to study for
-          </Text>
         </View>
 
         {groups.map((group) => (
           <View key={group.level} style={styles.group}>
-            <View
-              style={[styles.groupHeader, { borderLeftColor: providerColor }]}
-            >
+            <View style={styles.groupHeader}>
               <Text style={[styles.groupLevel, { color: providerColor }]}>
-                {group.level}
+                {group.level.toUpperCase()}
               </Text>
               <Text style={styles.groupDesc}>{group.description}</Text>
             </View>
@@ -265,69 +223,64 @@ export default function CertSelectScreen() {
                 <TouchableOpacity
                   key={cert.id}
                   style={[
-                    styles.card,
-                    active && { borderColor: cert.color, borderWidth: 2 },
+                    styles.certCard,
+                    active && {
+                      borderLeftColor: cert.color,
+                      borderLeftWidth: ROUTE_LINE_WIDTH,
+                    },
                   ]}
                   onPress={() => handleSelect(cert.id)}
                   activeOpacity={0.8}
                 >
-                  <View
-                    style={[
-                      styles.iconWrap,
-                      { backgroundColor: cert.color + "22" },
-                    ]}
-                  >
-                    <Ionicons
-                      name={cert.icon as any}
-                      size={28}
-                      color={cert.color}
-                    />
-                  </View>
-                  <View style={styles.cardText}>
-                    <View style={styles.cardTitleRow}>
-                      <Text style={[styles.certCode, { color: cert.color }]}>
-                        {cert.name}
-                      </Text>
-                      {active && (
+                  <View style={styles.certCardLeft}>
+                    <Text style={[styles.certCode, { color: cert.color }]}>
+                      {cert.name}
+                    </Text>
+                    {active && (
+                      <View
+                        style={[
+                          styles.activeBadge,
+                          { borderColor: cert.color },
+                        ]}
+                      >
                         <View
                           style={[
-                            styles.activeBadge,
-                            { backgroundColor: cert.color + "22" },
+                            styles.activeDot,
+                            { backgroundColor: cert.color },
+                          ]}
+                        />
+                        <Text
+                          style={[
+                            styles.activeBadgeText,
+                            { color: cert.color },
                           ]}
                         >
-                          <Text
-                            style={[
-                              styles.activeBadgeText,
-                              { color: cert.color },
-                            ]}
-                          >
-                            Active
-                          </Text>
-                        </View>
-                      )}
-                    </View>
+                          Active
+                        </Text>
+                      </View>
+                    )}
                     <Text style={styles.certName}>{cert.fullName}</Text>
                     <Text style={styles.examInfo}>{cert.examInfo}</Text>
                     {(prev || next) && (
                       <View style={styles.progressionStack}>
                         {prev && (
-                          <View style={styles.progressionItem}>
-                            <Text style={styles.progressionLabel}>Prereq:</Text>
-                            <Text style={styles.progressionText}>{prev}</Text>
-                          </View>
+                          <Text style={styles.progressionText}>
+                            <Text style={styles.progressionLabel}>from </Text>
+                            {prev}
+                          </Text>
                         )}
                         {next && (
-                          <View style={styles.progressionItem}>
-                            <Text style={styles.progressionLabel}>Next:</Text>
-                            <Text style={styles.progressionText}>{next}</Text>
-                          </View>
+                          <Text style={styles.progressionText}>
+                            <Text style={styles.progressionLabel}>→ </Text>
+                            {next}
+                          </Text>
                         )}
                       </View>
                     )}
                   </View>
                   <Ionicons
                     name="chevron-forward"
-                    size={20}
+                    size={18}
                     color={active ? cert.color : colors.textMuted}
                   />
                 </TouchableOpacity>
@@ -337,11 +290,6 @@ export default function CertSelectScreen() {
         ))}
 
         <View style={styles.footer}>
-          <Ionicons
-            name="information-circle-outline"
-            size={16}
-            color={colors.textMuted}
-          />
           <Text style={styles.footerText}>
             Progress is tracked separately for each certification.
           </Text>
@@ -351,14 +299,50 @@ export default function CertSelectScreen() {
   );
 }
 
+function ProviderCard({
+  label,
+  sub,
+  icon,
+  color,
+  colors,
+  onPress,
+}: {
+  label: string;
+  sub: string;
+  icon: string;
+  color: string;
+  colors: ThemeColors;
+  onPress: () => void;
+}) {
+  const styles = makeStyles(colors);
+  return (
+    <TouchableOpacity
+      style={styles.providerCard}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <View style={[styles.providerStrip, { backgroundColor: color }]} />
+      <View style={styles.providerBody}>
+        <View style={styles.providerIconWrap}>
+          <Ionicons name={icon as any} size={22} color={color} />
+        </View>
+        <View style={styles.providerText}>
+          <Text style={[styles.providerName, { color: colors.textPrimary }]}>
+            {label}
+          </Text>
+          <Text style={styles.providerSub}>{sub}</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
 function makeStyles(colors: ThemeColors) {
   return StyleSheet.create({
     safe: { flex: 1, backgroundColor: colors.background },
     scroll: { flex: 1 },
-    content: {
-      padding: spacing.lg,
-      paddingTop: spacing.xl,
-    },
+    content: { padding: spacing.lg },
 
     pickerContent: {
       flex: 1,
@@ -367,88 +351,123 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "center",
     },
 
-    header: {
-      alignItems: "center",
+    mapHeader: {
       marginBottom: spacing.xl,
     },
-    backRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      alignSelf: "flex-start",
-      marginBottom: spacing.md,
-      gap: 2,
-    },
-    backLabel: {
-      fontSize: fontSize.sm,
-      fontWeight: "700",
-    },
-    logoWrap: {
-      width: 72,
-      height: 72,
-      borderRadius: radius.xl,
-      backgroundColor: colors.primary + "18",
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: spacing.md,
-    },
-    title: {
-      fontSize: fontSize.xxl,
+    mapTitle: {
+      fontSize: fontSize.xxxl,
       fontWeight: "900",
       color: colors.textPrimary,
-      marginBottom: spacing.xs,
+      letterSpacing: -0.5,
     },
-    subtitle: {
+    mapSubtitle: {
       fontSize: fontSize.md,
       color: colors.textSecondary,
-      textAlign: "center",
+      marginTop: spacing.xs,
     },
 
     providerCard: {
       flexDirection: "row",
-      alignItems: "center",
       backgroundColor: colors.surface,
-      borderRadius: radius.xl,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: spacing.sm,
+      overflow: "hidden",
+    },
+    providerStrip: {
+      width: ROUTE_LINE_WIDTH,
+    },
+    providerBody: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
       padding: spacing.lg,
-      marginBottom: spacing.md,
-      borderWidth: 2,
       gap: spacing.md,
     },
-    providerIcon: {
-      width: 64,
-      height: 64,
-      borderRadius: radius.lg,
+    providerIconWrap: {
+      width: 40,
+      height: 40,
+      borderRadius: radius.full,
+      borderWidth: 1,
+      borderColor: colors.border,
       justifyContent: "center",
       alignItems: "center",
     },
-    providerText: {
-      flex: 1,
-      gap: 4,
-    },
+    providerText: { flex: 1, gap: 3 },
     providerName: {
-      fontSize: fontSize.lg,
-      fontWeight: "800",
+      fontSize: fontSize.md,
+      fontWeight: "700",
     },
-    providerDesc: {
+    providerSub: {
       fontSize: fontSize.sm,
       color: colors.textSecondary,
       lineHeight: 18,
     },
 
-    group: {
+    mapLegend: {
+      marginTop: spacing.xl,
+      gap: spacing.xs,
+    },
+    legendRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+    },
+    legendDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    legendText: {
+      fontSize: fontSize.xs,
+      color: colors.textMuted,
+    },
+
+    backRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
       marginBottom: spacing.lg,
     },
+    backLabel: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
+    },
+
+    lineHeader: {
+      flexDirection: "row",
+      gap: spacing.md,
+      marginBottom: spacing.xl,
+    },
+    lineStrip: {
+      width: ROUTE_LINE_WIDTH,
+      borderRadius: 2,
+    },
+    lineHeaderText: { flex: 1 },
+    lineTitle: {
+      fontSize: fontSize.xxl,
+      fontWeight: "800",
+      color: colors.textPrimary,
+      letterSpacing: -0.5,
+    },
+    lineSubtitle: {
+      fontSize: fontSize.sm,
+      color: colors.textSecondary,
+      marginTop: 2,
+    },
+
+    group: { marginBottom: spacing.lg },
     groupHeader: {
       marginBottom: spacing.sm,
-      borderLeftWidth: 3,
-      borderLeftColor: colors.primary,
-      paddingLeft: spacing.sm,
+      paddingBottom: spacing.xs,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.rule,
     },
     groupLevel: {
       fontSize: fontSize.xs,
       fontWeight: "800",
-      color: colors.primary,
-      letterSpacing: 1,
-      textTransform: "uppercase",
+      letterSpacing: 1.5,
     },
     groupDesc: {
       fontSize: fontSize.xs,
@@ -456,38 +475,38 @@ function makeStyles(colors: ThemeColors) {
       marginTop: 2,
     },
 
-    card: {
+    certCard: {
       flexDirection: "row",
       alignItems: "center",
       backgroundColor: colors.surface,
-      borderRadius: radius.xl,
-      padding: spacing.lg,
-      marginBottom: spacing.sm,
+      borderRadius: radius.md,
+      padding: spacing.md,
+      marginBottom: spacing.xs,
       borderWidth: 1,
       borderColor: colors.border,
       gap: spacing.md,
     },
-    iconWrap: {
-      width: 56,
-      height: 56,
-      borderRadius: radius.lg,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    cardText: { flex: 1, gap: 3 },
-    cardTitleRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacing.xs,
-    },
+    certCardLeft: { flex: 1, gap: 3 },
     certCode: {
       fontSize: fontSize.lg,
       fontWeight: "800",
+      letterSpacing: -0.3,
     },
     activeBadge: {
-      borderRadius: radius.full,
-      paddingHorizontal: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      alignSelf: "flex-start",
+      borderWidth: 1,
+      borderRadius: radius.sm,
+      paddingHorizontal: spacing.sm,
       paddingVertical: 2,
+      marginBottom: 2,
+    },
+    activeDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
     },
     activeBadgeText: {
       fontSize: fontSize.xs,
@@ -501,34 +520,22 @@ function makeStyles(colors: ThemeColors) {
     examInfo: {
       fontSize: fontSize.xs,
       color: colors.textSecondary,
-      marginTop: 1,
     },
     progressionStack: {
       marginTop: spacing.xs,
-      gap: 3,
-    },
-    progressionItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 4,
+      gap: 2,
     },
     progressionLabel: {
-      fontSize: fontSize.xs,
       color: colors.textMuted,
-      fontWeight: "600",
     },
     progressionText: {
       fontSize: fontSize.xs,
-      color: colors.textMuted,
+      color: colors.textSecondary,
     },
 
     footer: {
-      flexDirection: "row",
+      paddingVertical: spacing.lg,
       alignItems: "center",
-      gap: spacing.xs,
-      justifyContent: "center",
-      marginTop: spacing.sm,
-      paddingBottom: spacing.lg,
     },
     footerText: {
       fontSize: fontSize.xs,

@@ -327,22 +327,19 @@ function QuizCard({
       <AbbreviatedText text={q.question} style={styles.quizQuestion} />
 
       {q.options.map((opt, i) => {
-        let bg = colors.surfaceElevated;
+        let bg = colors.surface;
         let border = colors.border;
         let textColor = colors.textSecondary;
 
         if (revealed) {
           if (i === q.correctIndex) {
-            bg = colors.correct + "22";
             border = colors.correct;
             textColor = colors.correct;
           } else if (i === selected) {
-            bg = colors.incorrect + "22";
             border = colors.incorrect;
             textColor = colors.incorrect;
           }
         } else if (i === selected) {
-          bg = colors.primary + "22";
           border = colors.primary;
           textColor = colors.textPrimary;
         }
@@ -505,7 +502,7 @@ function makeStyles(colors: ThemeColors) {
       alignItems: "center",
       justifyContent: "center",
       gap: spacing.xs,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
       paddingVertical: spacing.sm + 2,
       paddingHorizontal: spacing.lg,
       marginTop: spacing.xs,
@@ -518,11 +515,11 @@ function makeStyles(colors: ThemeColors) {
 
     listCard: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderRadius: radius.md,
       padding: spacing.md,
       gap: spacing.sm,
+      borderLeftWidth: 3,
+      borderLeftColor: colors.incorrect,
     },
     listCardHeader: {
       flexDirection: "row",
@@ -530,8 +527,9 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "space-between",
     },
     sourceBadge: {
-      backgroundColor: colors.primary + "18",
-      borderRadius: radius.full,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.sm,
       paddingVertical: 3,
     },
@@ -561,11 +559,11 @@ function makeStyles(colors: ThemeColors) {
 
     quizCard: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderRadius: radius.md,
       padding: spacing.md,
       gap: spacing.sm,
+      borderLeftWidth: 3,
+      borderLeftColor: colors.primary,
     },
     quizQuestion: {
       fontSize: fontSize.sm,
@@ -595,9 +593,9 @@ function makeStyles(colors: ThemeColors) {
     explanation: {
       flexDirection: "row",
       gap: spacing.xs,
-      backgroundColor: colors.surfaceElevated,
-      borderRadius: radius.sm,
-      padding: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.rule,
+      paddingTop: spacing.sm,
     },
     explanationText: {
       flex: 1,

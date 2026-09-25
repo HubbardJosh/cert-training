@@ -17,6 +17,7 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
 } from "../utils/theme";
 import { RootStackParamList } from "../navigation";
 import { loadProgress, getMissedQuestions } from "../utils/storage";
@@ -200,6 +201,7 @@ export default function GuideListScreen() {
                   key={guide.id}
                   style={[
                     styles.card,
+                    { borderLeftColor: meta.color },
                     isCompleted && styles.cardCompleted,
                     isDesktop && { flexBasis: "48%", flexGrow: 1 },
                   ]}
@@ -209,18 +211,6 @@ export default function GuideListScreen() {
                   activeOpacity={0.8}
                 >
                   <View style={styles.cardHeader}>
-                    <View
-                      style={[
-                        styles.iconBox,
-                        { backgroundColor: meta.color + "22" },
-                      ]}
-                    >
-                      <Ionicons
-                        name={meta.icon as any}
-                        size={18}
-                        color={meta.color}
-                      />
-                    </View>
                     <View style={styles.cardInfo}>
                       <Text style={styles.cardTitle}>{guide.service}</Text>
                       <Text style={styles.cardTagline} numberOfLines={1}>
@@ -253,10 +243,7 @@ export default function GuideListScreen() {
                   </View>
                   <View style={styles.cardFooter}>
                     <View
-                      style={[
-                        styles.domainBadge,
-                        { backgroundColor: meta.color + "22" },
-                      ]}
+                      style={[styles.domainBadge, { borderColor: meta.color }]}
                     >
                       <Text style={[styles.domainText, { color: meta.color }]}>
                         {meta.label}
@@ -340,7 +327,7 @@ function makeStyles(colors: ThemeColors) {
     filterRow: { marginBottom: spacing.sm },
     chip: {
       borderWidth: 1,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.xs + 2,
       marginRight: spacing.xs,
@@ -351,10 +338,9 @@ function makeStyles(colors: ThemeColors) {
       flexDirection: "row",
       alignItems: "center",
       gap: spacing.xs,
-      backgroundColor: colors.incorrect + "12",
       borderWidth: 1,
-      borderColor: colors.incorrect + "44",
-      borderRadius: radius.md,
+      borderColor: colors.incorrect,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
       marginBottom: spacing.sm,
@@ -369,6 +355,7 @@ function makeStyles(colors: ThemeColors) {
     resultCount: {
       fontSize: fontSize.xs,
       color: colors.textMuted,
+      letterSpacing: 0.5,
       marginBottom: spacing.sm,
     },
 
@@ -379,28 +366,20 @@ function makeStyles(colors: ThemeColors) {
     },
     card: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       padding: spacing.md,
       marginBottom: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
     },
     cardCompleted: {
-      borderColor: colors.correct + "44",
+      opacity: 1,
     },
     cardHeader: {
       flexDirection: "row",
       alignItems: "center",
       marginBottom: spacing.sm,
     },
-    iconBox: {
-      width: 36,
-      height: 36,
-      borderRadius: radius.sm,
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: spacing.sm,
-    },
+    iconBox: {},
     cardInfo: { flex: 1 },
     cardTitle: {
       fontSize: fontSize.md,
@@ -418,6 +397,7 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "space-between",
     },
     domainBadge: {
+      borderWidth: 1,
       borderRadius: radius.sm,
       paddingHorizontal: 8,
       paddingVertical: 3,
@@ -426,7 +406,8 @@ function makeStyles(colors: ThemeColors) {
     sectionCount: { fontSize: fontSize.xs, color: colors.textMuted },
 
     orderBadge: {
-      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
       borderRadius: radius.sm,
       paddingHorizontal: 7,
       paddingVertical: 3,

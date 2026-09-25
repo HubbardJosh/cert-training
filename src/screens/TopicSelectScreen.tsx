@@ -10,7 +10,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { spacing, radius, fontSize, ThemeColors } from "../utils/theme";
+import {
+  spacing,
+  radius,
+  fontSize,
+  ThemeColors,
+  ROUTE_LINE_WIDTH,
+} from "../utils/theme";
 import { useTopic, TOPIC_META, TopicMeta } from "../context/TopicContext";
 import { RootStackParamList } from "../navigation";
 import { useTheme } from "../context/ThemeContext";
@@ -66,9 +72,6 @@ export default function TopicSelectScreen() {
             </Text>
           </TouchableOpacity>
 
-          <View style={styles.logoWrap}>
-            <Ionicons name="telescope" size={36} color={colors.primary} />
-          </View>
           <Text style={styles.title}>Deep-Dive Topics</Text>
           <Text style={styles.subtitle}>
             Focused study on specific services and technologies — beyond the
@@ -93,26 +96,12 @@ export default function TopicSelectScreen() {
                   key={topic.id}
                   style={[
                     styles.card,
-                    active && {
-                      borderColor: topic.color,
-                      borderWidth: 2,
-                    },
+                    { borderLeftColor: topic.color },
+                    active && styles.cardActive,
                   ]}
                   onPress={() => handleSelect(topic.id)}
                   activeOpacity={0.8}
                 >
-                  <View
-                    style={[
-                      styles.iconWrap,
-                      { backgroundColor: topic.color + "22" },
-                    ]}
-                  >
-                    <Ionicons
-                      name={topic.icon as any}
-                      size={28}
-                      color={topic.color}
-                    />
-                  </View>
                   <View style={styles.cardText}>
                     <View style={styles.cardTitleRow}>
                       <Text style={[styles.topicName, { color: topic.color }]}>
@@ -122,7 +111,7 @@ export default function TopicSelectScreen() {
                         <View
                           style={[
                             styles.activeBadge,
-                            { backgroundColor: topic.color + "22" },
+                            { borderColor: topic.color },
                           ]}
                         >
                           <Text
@@ -175,7 +164,6 @@ function makeStyles(colors: ThemeColors) {
     },
 
     header: {
-      alignItems: "center",
       marginBottom: spacing.xl,
     },
     backRow: {
@@ -188,15 +176,6 @@ function makeStyles(colors: ThemeColors) {
     backLabel: {
       fontSize: fontSize.sm,
       fontWeight: "700",
-    },
-    logoWrap: {
-      width: 72,
-      height: 72,
-      borderRadius: radius.xl,
-      backgroundColor: colors.primary + "18",
-      justifyContent: "center",
-      alignItems: "center",
-      marginBottom: spacing.md,
     },
     title: {
       fontSize: fontSize.xxl,
@@ -229,20 +208,14 @@ function makeStyles(colors: ThemeColors) {
       flexDirection: "row",
       alignItems: "center",
       backgroundColor: colors.surface,
-      borderRadius: radius.xl,
-      padding: spacing.lg,
+      borderRadius: radius.md,
+      padding: spacing.md,
       marginBottom: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
       gap: spacing.md,
     },
-    iconWrap: {
-      width: 56,
-      height: 56,
-      borderRadius: radius.lg,
-      justifyContent: "center",
-      alignItems: "center",
-    },
+    cardActive: {},
+    iconWrap: {},
     cardText: { flex: 1, gap: 3 },
     cardTitleRow: {
       flexDirection: "row",
@@ -254,7 +227,8 @@ function makeStyles(colors: ThemeColors) {
       fontWeight: "800",
     },
     activeBadge: {
-      borderRadius: radius.full,
+      borderWidth: 1,
+      borderRadius: radius.sm,
       paddingHorizontal: 8,
       paddingVertical: 2,
     },

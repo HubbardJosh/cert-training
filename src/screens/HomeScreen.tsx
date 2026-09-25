@@ -16,6 +16,8 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
+  STATION_DOT_SIZE,
 } from "../utils/theme";
 import {
   loadProgress,
@@ -81,6 +83,10 @@ export default function HomeScreen() {
     ? Object.values(progress.guideProgress).filter((g) => g.completed).length
     : 0;
 
+  const accentColor = isTopicMode
+    ? (topicMeta?.color ?? colors.primary)
+    : colors.primary;
+
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
       <ScreenHeader />
@@ -88,27 +94,30 @@ export default function HomeScreen() {
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.greeting}>
-              {isTopicMode ? (topicMeta?.name ?? "Topic") : certMeta.name}
-            </Text>
-            <Text style={styles.subtitle}>
-              {isTopicMode ? (topicMeta?.fullName ?? "") : certMeta.fullName}
-            </Text>
+          {/* Destination sign header */}
+          <View style={styles.destinationSign}>
+            <View
+              style={[styles.routeIndicator, { backgroundColor: accentColor }]}
+            />
+            <View style={styles.destinationText}>
+              <Text style={styles.destinationName}>
+                {isTopicMode ? (topicMeta?.name ?? "Topic") : certMeta.name}
+              </Text>
+              <Text style={styles.destinationFull}>
+                {isTopicMode ? (topicMeta?.fullName ?? "") : certMeta.fullName}
+              </Text>
+            </View>
           </View>
 
           {/* Tagline banner — topic mode */}
           {isTopicMode && topicMeta && (
             <View
-              style={[
-                styles.examBanner,
-                { backgroundColor: topicMeta.color + "18" },
-              ]}
+              style={[styles.infoBanner, { borderLeftColor: topicMeta.color }]}
             >
-              <Ionicons name="telescope" size={18} color={topicMeta.color} />
-              <Text style={[styles.examBannerText, { color: topicMeta.color }]}>
+              <Ionicons name="telescope" size={15} color={topicMeta.color} />
+              <Text style={[styles.infoBannerText, { color: topicMeta.color }]}>
                 {topicMeta.tagline}
               </Text>
             </View>
@@ -116,73 +125,84 @@ export default function HomeScreen() {
 
           {/* Exam info banner — cert mode only */}
           {!isTopicMode && (
-            <View style={styles.examBanner}>
+            <View
+              style={[styles.infoBanner, { borderLeftColor: colors.primary }]}
+            >
               <Ionicons
                 name="information-circle"
-                size={18}
+                size={15}
                 color={colors.primary}
               />
-              <Text style={styles.examBannerText}>{certMeta.examInfo}</Text>
+              <Text
+                style={[styles.infoBannerText, { color: colors.textSecondary }]}
+              >
+                {certMeta.examInfo}
+              </Text>
             </View>
           )}
 
-          {/* Overall stats */}
-          <View style={styles.statsRow}>
-            {isTopicMode ? (
-              <>
-                <StatCard
-                  icon="book-outline"
-                  color={topicMeta?.color ?? colors.accent}
-                  label="Cards Mastered"
-                  value={`${totalStudied}/${totalCards}`}
-                  colors={colors}
-                />
-                <StatCard
-                  icon="library-outline"
-                  color={colors.accent}
-                  label="Guides Done"
-                  value={`${guidesViewed}/${guides.length}`}
-                  colors={colors}
-                />
-                <StatCard
-                  icon="trophy-outline"
-                  color={colors.correct}
-                  label="Last Quiz"
-                  value={lastQuizScore !== null ? `${lastQuizScore}%` : "–"}
-                  colors={colors}
-                />
-              </>
-            ) : (
-              <>
-                <StatCard
-                  icon="checkmark-circle"
-                  color={colors.correct}
-                  label="Readiness"
-                  value={`${overallAccuracy}%`}
-                  colors={colors}
-                />
-                <StatCard
-                  icon="book-outline"
-                  color={colors.accent}
-                  label="Cards Mastered"
-                  value={`${totalStudied}/${totalCards}`}
-                  colors={colors}
-                />
-                <StatCard
-                  icon="help-circle"
-                  color={colors.primary}
-                  label="Quiz Questions"
-                  value={`${totalQuizQ}`}
-                  colors={colors}
-                />
-              </>
-            )}
+          {/* Departure board stats */}
+          <View style={styles.departureBoard}>
+            <View style={styles.departureBoardHeader}>
+              <Text style={styles.departureBoardLabel}>SERVICE STATUS</Text>
+            </View>
+            <View style={styles.departureBoardRows}>
+              {isTopicMode ? (
+                <>
+                  <DepartureRow
+                    label="Cards Mastered"
+                    value={`${totalStudied}/${totalCards}`}
+                    color={topicMeta?.color ?? colors.primary}
+                    colors={colors}
+                  />
+                  <DepartureRow
+                    label="Guides Done"
+                    value={`${guidesViewed}/${guides.length}`}
+                    color={colors.accent}
+                    colors={colors}
+                  />
+                  <DepartureRow
+                    label="Last Quiz"
+                    value={lastQuizScore !== null ? `${lastQuizScore}%` : "—"}
+                    color={colors.correct}
+                    colors={colors}
+                  />
+                </>
+              ) : (
+                <>
+                  <DepartureRow
+                    label="Readiness"
+                    value={`${overallAccuracy}%`}
+                    color={
+                      overallAccuracy >= 80
+                        ? colors.correct
+                        : overallAccuracy >= 60
+                          ? colors.warning
+                          : colors.incorrect
+                    }
+                    colors={colors}
+                  />
+                  <DepartureRow
+                    label="Cards Mastered"
+                    value={`${totalStudied}/${totalCards}`}
+                    color={colors.primary}
+                    colors={colors}
+                  />
+                  <DepartureRow
+                    label="Quiz Questions"
+                    value={`${totalQuizQ}`}
+                    color={colors.accent}
+                    colors={colors}
+                  />
+                </>
+              )}
+            </View>
           </View>
 
-          {/* Domain breakdown — cert mode only */}
+          {/* Route lines / domain breakdown — cert mode only */}
           {!isTopicMode && (
             <>
-              <Text style={styles.sectionTitle}>Exam Domains</Text>
+              <Text style={styles.sectionLabel}>ROUTE MAP</Text>
               <View style={isDesktop ? styles.twoColGrid : undefined}>
                 {DOMAINS.map((domain) => {
                   const meta = DOMAIN_META[domain];
@@ -198,111 +218,43 @@ export default function HomeScreen() {
                   const domainQuestions = quizQuestions.filter(
                     (q) => q.domain === domain,
                   ).length;
+                  const stationsTotal = domainCards;
+                  const stationsTraveled = progress
+                    ? Object.entries(progress.studiedCards).filter(
+                        ([id, s]) =>
+                          s === "known" &&
+                          flashcards.find((c) => c.id === id)?.domain ===
+                            domain,
+                      ).length
+                    : 0;
 
                   return (
-                    <View
+                    <RouteCard
                       key={domain}
-                      style={[
-                        styles.domainCard,
-                        isDesktop && { flexBasis: "48%", flexGrow: 1 },
-                      ]}
-                    >
-                      <View style={styles.domainHeader}>
-                        <View
-                          style={[
-                            styles.domainIcon,
-                            { backgroundColor: meta.color + "22" },
-                          ]}
-                        >
-                          <Ionicons
-                            name={meta.icon as any}
-                            size={20}
-                            color={meta.color}
-                          />
-                        </View>
-                        <View style={styles.domainInfo}>
-                          <Text style={styles.domainLabel}>{meta.label}</Text>
-                          <Text style={styles.domainMeta}>
-                            {domainCards} cards · {domainQuestions} quiz
-                            questions · {meta.weight} of exam
-                          </Text>
-                        </View>
-                        <Text
-                          style={[
-                            styles.domainAccuracy,
-                            { color: accuracyColor(accuracy, colors) },
-                          ]}
-                        >
-                          {attempted > 0 ? `${accuracy}%` : "–"}
-                        </Text>
-                      </View>
-                      <View style={styles.progressBarBg}>
-                        <View
-                          style={[
-                            styles.progressBarFill,
-                            {
-                              width: `${accuracy}%`,
-                              backgroundColor: meta.color,
-                            },
-                          ]}
-                        />
-                      </View>
-                      <View style={styles.domainActions}>
-                        <TouchableOpacity
-                          style={[
-                            styles.domainBtn,
-                            { borderColor: meta.color },
-                          ]}
-                          onPress={() =>
-                            navigation.navigate("FlashCard", {
-                              domain,
-                              difficulty: "all",
-                            })
-                          }
-                        >
-                          <Ionicons
-                            name="book-outline"
-                            size={14}
-                            color={meta.color}
-                          />
-                          <Text
-                            style={[
-                              styles.domainBtnText,
-                              { color: meta.color },
-                            ]}
-                          >
-                            Study
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={[
-                            styles.domainBtn,
-                            { borderColor: meta.color },
-                          ]}
-                          onPress={() =>
-                            navigation.navigate("Quiz", {
-                              domain,
-                              difficulty: "all",
-                              count: 10,
-                            })
-                          }
-                        >
-                          <Ionicons
-                            name="trophy-outline"
-                            size={14}
-                            color={meta.color}
-                          />
-                          <Text
-                            style={[
-                              styles.domainBtnText,
-                              { color: meta.color },
-                            ]}
-                          >
-                            Quiz
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
+                      domain={domain}
+                      meta={meta}
+                      accuracy={accuracy}
+                      attempted={attempted}
+                      stationsTotal={stationsTotal}
+                      stationsTraveled={stationsTraveled}
+                      domainCards={domainCards}
+                      domainQuestions={domainQuestions}
+                      colors={colors}
+                      isDesktop={isDesktop}
+                      onStudy={() =>
+                        navigation.navigate("FlashCard", {
+                          domain,
+                          difficulty: "all",
+                        })
+                      }
+                      onQuiz={() =>
+                        navigation.navigate("Quiz", {
+                          domain,
+                          difficulty: "all",
+                          count: 10,
+                        })
+                      }
+                    />
                   );
                 })}
               </View>
@@ -310,36 +262,27 @@ export default function HomeScreen() {
           )}
 
           {/* Quick start */}
-          <Text style={styles.sectionTitle}>Quick Start</Text>
+          <Text style={styles.sectionLabel}>NEXT DEPARTURE</Text>
           <View style={styles.quickRow}>
             <TouchableOpacity
-              style={[
-                styles.quickCard,
-                {
-                  backgroundColor:
-                    (isTopicMode ? topicMeta?.color : colors.primary) + "18",
-                },
-              ]}
+              style={[styles.quickCard, { borderTopColor: accentColor }]}
               onPress={() =>
                 navigation.navigate("FlashCard", {
                   domain: "all",
                   difficulty: "all",
                 })
               }
+              activeOpacity={0.8}
             >
-              <Ionicons
-                name="shuffle"
-                size={28}
-                color={isTopicMode ? topicMeta?.color : colors.primary}
+              <View
+                style={[styles.quickDot, { backgroundColor: accentColor }]}
               />
-              <Text style={styles.quickLabel}>Random Flashcards</Text>
-              <Text style={styles.quickSub}>All {totalCards} cards</Text>
+              <Text style={styles.quickLabel}>Flashcards</Text>
+              <Text style={styles.quickCount}>{totalCards}</Text>
+              <Text style={styles.quickSub}>cards</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
-                styles.quickCard,
-                { backgroundColor: colors.accent + "18" },
-              ]}
+              style={[styles.quickCard, { borderTopColor: colors.accent }]}
               onPress={() =>
                 navigation.navigate("Quiz", {
                   domain: "all",
@@ -347,89 +290,92 @@ export default function HomeScreen() {
                   count: Math.min(20, quizQuestions.length),
                 })
               }
+              activeOpacity={0.8}
             >
-              <Ionicons name="timer" size={28} color={colors.accent} />
+              <View
+                style={[styles.quickDot, { backgroundColor: colors.accent }]}
+              />
               <Text style={styles.quickLabel}>Practice Quiz</Text>
-              <Text style={styles.quickSub}>
-                {Math.min(20, quizQuestions.length)} questions · timed
+              <Text style={styles.quickCount}>
+                {Math.min(20, quizQuestions.length)}
               </Text>
+              <Text style={styles.quickSub}>timed</Text>
             </TouchableOpacity>
           </View>
 
           {/* Guides list — topic mode */}
           {isTopicMode && (
             <>
-              <Text style={styles.sectionTitle}>
-                Study Guides ({guides.length})
+              <Text style={styles.sectionLabel}>
+                STUDY GUIDES · {guides.length}
               </Text>
               {guides.map((guide) => {
                 const gProgress = progress?.guideProgress?.[guide.id];
                 const completed = gProgress?.completed ?? false;
                 const viewed = !!gProgress;
-                const accentColor = topicMeta?.color ?? colors.primary;
+                const lineColor = topicMeta?.color ?? colors.primary;
                 return (
                   <TouchableOpacity
                     key={guide.id}
-                    style={styles.guideCard}
+                    style={styles.stationRow}
                     onPress={() =>
                       navigation.navigate("GuideDetail", { id: guide.id })
                     }
                     activeOpacity={0.8}
                   >
-                    <View
-                      style={[
-                        styles.guideIcon,
-                        { backgroundColor: accentColor + "22" },
-                      ]}
-                    >
-                      <Ionicons
-                        name={completed ? "checkmark-circle" : "book-outline"}
-                        size={22}
-                        color={completed ? colors.correct : accentColor}
+                    <View style={styles.stationLineCol}>
+                      <View
+                        style={[
+                          styles.stationLine,
+                          { backgroundColor: lineColor },
+                        ]}
+                      />
+                      <View
+                        style={[
+                          styles.stationDot,
+                          {
+                            borderColor: lineColor,
+                            backgroundColor: completed
+                              ? lineColor
+                              : colors.surface,
+                          },
+                        ]}
+                      />
+                      <View
+                        style={[
+                          styles.stationLine,
+                          { backgroundColor: lineColor },
+                        ]}
                       />
                     </View>
-                    <View style={styles.guideText}>
-                      <Text style={styles.guideName}>{guide.service}</Text>
-                      <Text style={styles.guideTagline} numberOfLines={1}>
+                    <View style={styles.stationContent}>
+                      <Text style={styles.stationName}>{guide.service}</Text>
+                      <Text style={styles.stationTagline} numberOfLines={1}>
                         {guide.tagline}
                       </Text>
-                      <Text style={styles.guideMeta}>
+                      <Text style={styles.stationMeta}>
                         {guide.sections.length} sections ·{" "}
                         {guide.keyFacts.length} key facts
                       </Text>
                     </View>
-                    <View style={styles.guideStatus}>
-                      {completed ? (
-                        <Text
-                          style={[
-                            styles.guideStatusText,
-                            { color: colors.correct },
-                          ]}
-                        >
-                          Done
-                        </Text>
-                      ) : viewed ? (
-                        <Text
-                          style={[
-                            styles.guideStatusText,
-                            { color: colors.warning },
-                          ]}
-                        >
-                          In Progress
-                        </Text>
-                      ) : (
-                        <Text
-                          style={[
-                            styles.guideStatusText,
-                            { color: colors.textMuted },
-                          ]}
-                        >
-                          New
-                        </Text>
-                      )}
+                    <View style={styles.stationStatus}>
+                      <Text
+                        style={[
+                          styles.stationStatusText,
+                          {
+                            color: completed
+                              ? colors.correct
+                              : viewed
+                                ? colors.warning
+                                : colors.textMuted,
+                          },
+                        ]}
+                      >
+                        {completed ? "Done" : viewed ? "In Progress" : "New"}
+                      </Text>
                       <Ionicons
                         name="chevron-forward"
-                        size={16}
+                        size={14}
                         color={colors.textMuted}
                       />
                     </View>
@@ -442,36 +388,31 @@ export default function HomeScreen() {
           {/* Exam tips — cert mode only */}
           {!isTopicMode && (
             <>
-              <Text style={styles.sectionTitle}>Exam Tips</Text>
+              <Text style={styles.sectionLabel}>PLATFORM NOTICES</Text>
               {EXAM_TIPS.map((tip, i) => (
-                <View key={i} style={styles.tipCard}>
-                  <Ionicons
-                    name="bulb-outline"
-                    size={18}
-                    color={colors.primary}
-                    style={styles.tipIcon}
-                  />
-                  <Text style={styles.tipText}>{tip}</Text>
+                <View key={i} style={styles.noticeRow}>
+                  <View style={styles.noticeBullet} />
+                  <Text style={styles.noticeText}>{tip}</Text>
                 </View>
               ))}
             </>
           )}
 
-          {/* Sources link — always shown */}
+          {/* Sources link */}
           <TouchableOpacity
-            style={styles.sourcesBtn}
+            style={styles.sourcesLink}
             onPress={() => navigation.navigate("Sources")}
             activeOpacity={0.7}
           >
             <Ionicons
               name="document-text-outline"
-              size={15}
+              size={13}
               color={colors.textMuted}
             />
-            <Text style={styles.sourcesBtnText}>View sources & references</Text>
+            <Text style={styles.sourcesLinkText}>Sources & references</Text>
             <Ionicons
               name="chevron-forward"
-              size={14}
+              size={12}
               color={colors.textMuted}
             />
           </TouchableOpacity>
@@ -483,33 +424,136 @@ export default function HomeScreen() {
   );
 }
 
-function StatCard({
-  icon,
-  color,
+function DepartureRow({
   label,
   value,
+  color,
   colors,
 }: {
-  icon: string;
-  color: string;
   label: string;
   value: string;
+  color: string;
   colors: ThemeColors;
 }) {
   const styles = makeStyles(colors);
   return (
-    <View style={[styles.statCard, { borderColor: color + "44" }]}>
-      <Ionicons name={icon as any} size={22} color={color} />
-      <Text style={styles.statValue}>{value}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+    <View style={styles.departureRow}>
+      <View style={[styles.departureDot, { backgroundColor: color }]} />
+      <Text style={styles.departureLabel}>{label}</Text>
+      <Text style={[styles.departureValue, { color }]}>{value}</Text>
     </View>
   );
 }
 
-function accuracyColor(pct: number, colors: ThemeColors): string {
-  if (pct >= 80) return colors.correct;
-  if (pct >= 60) return colors.warning;
-  return colors.incorrect;
+function RouteCard({
+  domain,
+  meta,
+  accuracy,
+  attempted,
+  stationsTotal,
+  stationsTraveled,
+  domainCards,
+  domainQuestions,
+  colors,
+  isDesktop,
+  onStudy,
+  onQuiz,
+}: {
+  domain: string;
+  meta: { label: string; color: string; weight: string; icon: string };
+  accuracy: number;
+  attempted: number;
+  stationsTotal: number;
+  stationsTraveled: number;
+  domainCards: number;
+  domainQuestions: number;
+  colors: ThemeColors;
+  isDesktop: boolean;
+  onStudy: () => void;
+  onQuiz: () => void;
+}) {
+  const styles = makeStyles(colors);
+  const travelPct =
+    stationsTotal > 0
+      ? Math.round((stationsTraveled / stationsTotal) * 100)
+      : 0;
+
+  return (
+    <View
+      style={[styles.routeCard, isDesktop && { flexBasis: "48%", flexGrow: 1 }]}
+    >
+      {/* Route line strip */}
+      <View style={[styles.routeStrip, { backgroundColor: meta.color }]} />
+
+      <View style={styles.routeCardBody}>
+        <View style={styles.routeCardHeader}>
+          <View style={styles.routeCardTitle}>
+            <Text style={[styles.routeLabel, { color: meta.color }]}>
+              {meta.label.toUpperCase()}
+            </Text>
+            <Text style={styles.routeWeight}>{meta.weight} of exam</Text>
+          </View>
+          <Text
+            style={[
+              styles.routeAccuracy,
+              {
+                color:
+                  attempted === 0
+                    ? colors.textMuted
+                    : accuracy >= 80
+                      ? colors.correct
+                      : accuracy >= 60
+                        ? colors.warning
+                        : colors.incorrect,
+              },
+            ]}
+          >
+            {attempted > 0 ? `${accuracy}%` : "—"}
+          </Text>
+        </View>
+
+        {/* Station progress track */}
+        <View style={styles.stationTrack}>
+          <View
+            style={[styles.trackLine, { backgroundColor: meta.color + "30" }]}
+          >
+            <View
+              style={[
+                styles.trackFill,
+                {
+                  width: `${travelPct}%` as any,
+                  backgroundColor: meta.color,
+                },
+              ]}
+            />
+          </View>
+          <Text style={styles.trackLabel}>
+            {stationsTraveled}/{stationsTotal} cards · {domainQuestions} quiz
+          </Text>
+        </View>
+
+        {/* Action buttons */}
+        <View style={styles.routeActions}>
+          <TouchableOpacity
+            style={[styles.routeBtn, { borderColor: meta.color }]}
+            onPress={onStudy}
+          >
+            <Text style={[styles.routeBtnText, { color: meta.color }]}>
+              Study
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.routeBtn, { borderColor: meta.color }]}
+            onPress={onQuiz}
+          >
+            <Text style={[styles.routeBtnText, { color: meta.color }]}>
+              Quiz
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
 }
 
 const EXAM_TIPS = [
@@ -529,126 +573,181 @@ function makeStyles(colors: ThemeColors) {
     scroll: { flex: 1 },
     content: { padding: spacing.md },
 
-    header: {
+    // Destination sign header
+    destinationSign: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.md,
       marginBottom: spacing.md,
     },
-    greeting: {
+    routeIndicator: {
+      width: ROUTE_LINE_WIDTH,
+      height: 44,
+      borderRadius: 2,
+    },
+    destinationText: { flex: 1 },
+    destinationName: {
       fontSize: fontSize.xxl,
       fontWeight: "800",
       color: colors.textPrimary,
+      letterSpacing: -0.5,
     },
-    subtitle: {
+    destinationFull: {
       fontSize: fontSize.sm,
       color: colors.textSecondary,
-      marginTop: 2,
+      marginTop: 1,
     },
-    examBanner: {
+
+    // Info banner
+    infoBanner: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: colors.primary + "15",
-      borderRadius: radius.md,
-      padding: spacing.sm + 4,
+      borderLeftWidth: 3,
+      paddingLeft: spacing.sm,
+      paddingVertical: spacing.xs,
       marginBottom: spacing.md,
       gap: spacing.xs,
     },
-    examBannerText: {
+    infoBannerText: {
       fontSize: fontSize.sm,
-      color: colors.primary,
-      fontWeight: "600",
+      lineHeight: 18,
+      flex: 1,
     },
 
-    statsRow: {
-      flexDirection: "row",
-      gap: spacing.sm,
-      marginBottom: spacing.lg,
-    },
-    statCard: {
-      flex: 1,
+    // Departure board
+    departureBoard: {
       backgroundColor: colors.surface,
       borderRadius: radius.md,
-      padding: spacing.sm + 2,
-      alignItems: "center",
       borderWidth: 1,
-      gap: 4,
+      borderColor: colors.border,
+      marginBottom: spacing.lg,
+      overflow: "hidden",
     },
-    statValue: {
-      fontSize: fontSize.lg,
-      fontWeight: "800",
-      color: colors.textPrimary,
+    departureBoardHeader: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.xs + 2,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.rule,
+      backgroundColor: colors.surfaceElevated,
     },
-    statLabel: {
+    departureBoardLabel: {
       fontSize: fontSize.xs,
-      color: colors.textSecondary,
-      textAlign: "center",
+      fontWeight: "700",
+      color: colors.textMuted,
+      letterSpacing: 1.5,
     },
-
-    sectionTitle: {
+    departureBoardRows: {},
+    departureRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm + 2,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.rule,
+      gap: spacing.sm,
+    },
+    departureDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+    },
+    departureLabel: {
+      flex: 1,
+      fontSize: fontSize.sm,
+      color: colors.textSecondary,
+    },
+    departureValue: {
       fontSize: fontSize.md,
       fontWeight: "700",
-      color: colors.textPrimary,
-      marginBottom: spacing.sm,
-      marginTop: spacing.xs,
+      fontVariant: ["tabular-nums"],
+      minWidth: 56,
+      textAlign: "right",
     },
 
+    // Section labels — transit map style
+    sectionLabel: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+      color: colors.textMuted,
+      letterSpacing: 1.5,
+      marginBottom: spacing.sm,
+      marginTop: spacing.sm,
+    },
+
+    // Route cards
     twoColGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
       gap: spacing.sm,
-    },
-    domainCard: {
-      backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      padding: spacing.md,
       marginBottom: spacing.sm,
+    },
+    routeCard: {
+      flexDirection: "row",
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
       borderWidth: 1,
       borderColor: colors.border,
-    },
-    domainHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: spacing.sm,
-    },
-    domainIcon: {
-      width: 40,
-      height: 40,
-      borderRadius: radius.md,
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: spacing.sm,
-    },
-    domainInfo: { flex: 1 },
-    domainLabel: {
-      fontSize: fontSize.md,
-      fontWeight: "700",
-      color: colors.textPrimary,
-    },
-    domainMeta: {
-      fontSize: fontSize.xs,
-      color: colors.textSecondary,
-      marginTop: 2,
-    },
-    domainAccuracy: { fontSize: fontSize.lg, fontWeight: "800" },
-    progressBarBg: {
-      height: 4,
-      backgroundColor: colors.border,
-      borderRadius: radius.full,
       marginBottom: spacing.sm,
       overflow: "hidden",
     },
-    progressBarFill: { height: "100%", borderRadius: radius.full },
-    domainActions: { flexDirection: "row", gap: spacing.sm },
-    domainBtn: {
+    routeStrip: {
+      width: ROUTE_LINE_WIDTH,
+    },
+    routeCardBody: {
       flex: 1,
+      padding: spacing.md,
+      gap: spacing.sm,
+    },
+    routeCardHeader: {
       flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+    },
+    routeCardTitle: { flex: 1 },
+    routeLabel: {
+      fontSize: fontSize.xs,
+      fontWeight: "800",
+      letterSpacing: 1,
+    },
+    routeWeight: {
+      fontSize: fontSize.xs,
+      color: colors.textMuted,
+      marginTop: 1,
+    },
+    routeAccuracy: {
+      fontSize: fontSize.xl,
+      fontWeight: "800",
+      fontVariant: ["tabular-nums"],
+    },
+    stationTrack: { gap: 4 },
+    trackLine: {
+      height: 3,
+      borderRadius: 2,
+      overflow: "hidden",
+    },
+    trackFill: { height: "100%" as any, borderRadius: 2 },
+    trackLabel: {
+      fontSize: fontSize.xs,
+      color: colors.textMuted,
+    },
+    routeActions: {
+      flexDirection: "row",
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    routeBtn: {
+      flex: 1,
       alignItems: "center",
-      justifyContent: "center",
-      gap: 6,
+      paddingVertical: 7,
       borderWidth: 1,
       borderRadius: radius.sm,
-      paddingVertical: 8,
     },
-    domainBtnText: { fontSize: fontSize.sm, fontWeight: "600" },
+    routeBtnText: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
+    },
 
+    // Quick start
     quickRow: {
       flexDirection: "row",
       gap: spacing.sm,
@@ -656,10 +755,20 @@ function makeStyles(colors: ThemeColors) {
     },
     quickCard: {
       flex: 1,
-      borderRadius: radius.lg,
+      backgroundColor: colors.surface,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderTopWidth: 3,
       padding: spacing.md,
       alignItems: "center",
-      gap: spacing.xs,
+      gap: 2,
+    },
+    quickDot: {
+      width: STATION_DOT_SIZE,
+      height: STATION_DOT_SIZE,
+      borderRadius: STATION_DOT_SIZE / 2,
+      marginBottom: spacing.xs,
     },
     quickLabel: {
       fontSize: fontSize.sm,
@@ -667,79 +776,104 @@ function makeStyles(colors: ThemeColors) {
       color: colors.textPrimary,
       textAlign: "center",
     },
-    quickSub: { fontSize: fontSize.xs, color: colors.textSecondary },
-
-    tipCard: {
-      flexDirection: "row",
-      backgroundColor: colors.surface,
-      borderRadius: radius.md,
-      padding: spacing.sm + 4,
-      marginBottom: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
-      alignItems: "flex-start",
+    quickCount: {
+      fontSize: fontSize.xl,
+      fontWeight: "800",
+      color: colors.textPrimary,
+      fontVariant: ["tabular-nums"],
     },
-    tipIcon: { marginRight: spacing.sm, marginTop: 1 },
-    tipText: {
+    quickSub: {
+      fontSize: fontSize.xs,
+      color: colors.textSecondary,
+    },
+
+    // Station rows (guide list in topic mode)
+    stationRow: {
+      flexDirection: "row",
+      alignItems: "stretch",
+      marginBottom: spacing.xs,
+      minHeight: 60,
+    },
+    stationLineCol: {
+      width: 24,
+      alignItems: "center",
+    },
+    stationLine: {
+      flex: 1,
+      width: 2,
+    },
+    stationDot: {
+      width: STATION_DOT_SIZE,
+      height: STATION_DOT_SIZE,
+      borderRadius: STATION_DOT_SIZE / 2,
+      borderWidth: 2,
+      marginVertical: 2,
+    },
+    stationContent: {
+      flex: 1,
+      paddingLeft: spacing.sm,
+      paddingVertical: spacing.xs,
+      gap: 2,
+    },
+    stationName: {
+      fontSize: fontSize.sm,
+      fontWeight: "700",
+      color: colors.textPrimary,
+    },
+    stationTagline: {
+      fontSize: fontSize.xs,
+      color: colors.textSecondary,
+    },
+    stationMeta: {
+      fontSize: fontSize.xs,
+      color: colors.textMuted,
+    },
+    stationStatus: {
+      alignItems: "flex-end",
+      justifyContent: "center",
+      gap: 2,
+      paddingLeft: spacing.xs,
+    },
+    stationStatusText: {
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+    },
+
+    // Notices
+    noticeRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      paddingVertical: spacing.xs,
+      gap: spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.rule,
+    },
+    noticeBullet: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      backgroundColor: colors.textMuted,
+      marginTop: 6,
+    },
+    noticeText: {
       flex: 1,
       fontSize: fontSize.sm,
       color: colors.textSecondary,
       lineHeight: 20,
     },
 
-    sourcesBtn: {
+    // Sources
+    sourcesLink: {
       flexDirection: "row",
       alignItems: "center",
       gap: spacing.xs,
       justifyContent: "center",
-      paddingVertical: spacing.sm,
-      marginTop: spacing.xs,
+      paddingVertical: spacing.md,
+      marginTop: spacing.sm,
     },
-    sourcesBtnText: {
-      fontSize: fontSize.sm,
-      color: colors.textMuted,
-    },
-
-    guideCard: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: colors.surface,
-      borderRadius: radius.lg,
-      padding: spacing.md,
-      marginBottom: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
-      gap: spacing.sm,
-    },
-    guideIcon: {
-      width: 44,
-      height: 44,
-      borderRadius: radius.md,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    guideText: { flex: 1, gap: 2 },
-    guideName: {
-      fontSize: fontSize.sm,
-      fontWeight: "700",
-      color: colors.textPrimary,
-    },
-    guideTagline: {
-      fontSize: fontSize.xs,
-      color: colors.textSecondary,
-    },
-    guideMeta: {
+    sourcesLinkText: {
       fontSize: fontSize.xs,
       color: colors.textMuted,
-      marginTop: 1,
-    },
-    guideStatus: {
-      alignItems: "flex-end",
-      gap: 2,
-    },
-    guideStatusText: {
-      fontSize: fontSize.xs,
-      fontWeight: "700",
     },
   });
 }

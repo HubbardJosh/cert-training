@@ -16,6 +16,7 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
 } from "../utils/theme";
 import { Domain } from "../types";
 import { RootStackParamList } from "../navigation";
@@ -74,7 +75,7 @@ export default function StudyScreen() {
           </Text>
 
           {/* Domain filter */}
-          <Text style={styles.filterLabel}>Domain</Text>
+          <Text style={styles.filterLabel}>DOMAIN</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -100,7 +101,7 @@ export default function StudyScreen() {
           </ScrollView>
 
           {/* Difficulty filter */}
-          <Text style={styles.filterLabel}>Difficulty</Text>
+          <Text style={styles.filterLabel}>DIFFICULTY</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -153,7 +154,7 @@ export default function StudyScreen() {
             return (
               <TouchableOpacity
                 key={service}
-                style={styles.serviceCard}
+                style={[styles.serviceCard, { borderLeftColor: meta.color }]}
                 onPress={() =>
                   navigation.navigate("FlashCard", {
                     domain: selectedDomain,
@@ -164,18 +165,6 @@ export default function StudyScreen() {
                 activeOpacity={0.8}
               >
                 <View style={styles.serviceHeader}>
-                  <View
-                    style={[
-                      styles.serviceIcon,
-                      { backgroundColor: meta.color + "22" },
-                    ]}
-                  >
-                    <Ionicons
-                      name={meta.icon as any}
-                      size={18}
-                      color={meta.color}
-                    />
-                  </View>
                   <View style={styles.serviceInfo}>
                     <Text style={styles.serviceName}>{service}</Text>
                     <Text style={styles.serviceMeta}>
@@ -287,16 +276,17 @@ function makeStyles(colors: ThemeColors) {
     },
 
     filterLabel: {
-      fontSize: fontSize.sm,
-      fontWeight: "600",
-      color: colors.textSecondary,
+      fontSize: fontSize.xs,
+      fontWeight: "700",
+      color: colors.textMuted,
+      letterSpacing: 1.5,
       marginBottom: spacing.xs,
     },
     filterRow: { marginBottom: spacing.md },
 
     chip: {
       borderWidth: 1,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.xs + 2,
       marginRight: spacing.xs,
@@ -309,37 +299,29 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "center",
       gap: spacing.sm,
       backgroundColor: colors.primary,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
       paddingVertical: spacing.md,
       marginBottom: spacing.lg,
     },
     startAllText: {
       fontSize: fontSize.md,
       fontWeight: "700",
-      color: colors.secondary,
+      color: "#FFFFFF",
     },
 
     serviceCard: {
       backgroundColor: colors.surface,
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       padding: spacing.md,
       marginBottom: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
     },
     serviceHeader: {
       flexDirection: "row",
       alignItems: "center",
       marginBottom: spacing.sm,
     },
-    serviceIcon: {
-      width: 36,
-      height: 36,
-      borderRadius: radius.sm,
-      justifyContent: "center",
-      alignItems: "center",
-      marginRight: spacing.sm,
-    },
+    serviceIcon: {},
     serviceInfo: { flex: 1 },
     serviceName: {
       fontSize: fontSize.md,
@@ -356,7 +338,8 @@ function makeStyles(colors: ThemeColors) {
 
     tagRow: { flexDirection: "row", flexWrap: "wrap", gap: 4 },
     tag: {
-      backgroundColor: colors.surfaceElevated,
+      borderWidth: 1,
+      borderColor: colors.border,
       borderRadius: radius.sm,
       paddingHorizontal: 8,
       paddingVertical: 3,

@@ -16,6 +16,7 @@ import {
   fontSize,
   getDomainMeta,
   ThemeColors,
+  ROUTE_LINE_WIDTH,
 } from "../utils/theme";
 import { Domain, UserProgress } from "../types";
 import { RootStackParamList } from "../navigation";
@@ -123,11 +124,6 @@ export default function QuizMenuScreen() {
 
           {/* Exam info */}
           <View style={styles.examCard}>
-            <Ionicons
-              name="information-circle-outline"
-              size={20}
-              color={colors.primary}
-            />
             <View style={styles.examCardText}>
               <Text style={styles.examCardTitle}>
                 {topicId && topicMeta ? topicMeta.name : certMeta.name}{" "}
@@ -148,11 +144,6 @@ export default function QuizMenuScreen() {
               }
               activeOpacity={0.8}
             >
-              <Ionicons
-                name="close-circle"
-                size={15}
-                color={colors.incorrect}
-              />
               <Text style={styles.missedBtnText}>
                 Review {missedCount} missed question
                 {missedCount !== 1 ? "s" : ""}
@@ -160,21 +151,23 @@ export default function QuizMenuScreen() {
               <Ionicons
                 name="chevron-forward"
                 size={14}
-                color={colors.incorrect + "99"}
+                color={colors.incorrect}
               />
             </TouchableOpacity>
           )}
 
           {/* Domain */}
-          <Text style={styles.sectionLabel}>Domain</Text>
+          <Text style={styles.sectionLabel}>DOMAIN</Text>
           <TouchableOpacity
             style={[
               styles.optionRow,
-              selectedDomain === "all" && styles.optionRowActive,
+              selectedDomain === "all" && {
+                borderLeftWidth: ROUTE_LINE_WIDTH,
+                borderLeftColor: colors.primary,
+              },
             ]}
             onPress={() => setSelectedDomain("all")}
           >
-            <Ionicons name="grid-outline" size={20} color={colors.primary} />
             <View style={styles.optionText}>
               <Text style={styles.optionLabel}>All Domains</Text>
               <Text style={styles.optionSub}>
@@ -199,24 +192,12 @@ export default function QuizMenuScreen() {
                 style={[
                   styles.optionRow,
                   selectedDomain === d && {
-                    ...styles.optionRowActive,
-                    borderColor: meta.color + "66",
+                    borderLeftWidth: ROUTE_LINE_WIDTH,
+                    borderLeftColor: meta.color,
                   },
                 ]}
                 onPress={() => setSelectedDomain(d)}
               >
-                <View
-                  style={[
-                    styles.domainIcon,
-                    { backgroundColor: meta.color + "22" },
-                  ]}
-                >
-                  <Ionicons
-                    name={meta.icon as any}
-                    size={18}
-                    color={meta.color}
-                  />
-                </View>
                 <View style={styles.optionText}>
                   <Text style={styles.optionLabel}>{meta.label}</Text>
                   <Text style={styles.optionSub}>
@@ -235,7 +216,7 @@ export default function QuizMenuScreen() {
           })}
 
           {/* Difficulty */}
-          <Text style={styles.sectionLabel}>Difficulty</Text>
+          <Text style={styles.sectionLabel}>DIFFICULTY</Text>
           <View style={styles.pillRow}>
             {(["all", "easy", "medium", "hard"] as const).map((d) => {
               const color =
@@ -276,7 +257,7 @@ export default function QuizMenuScreen() {
           </View>
 
           {/* Question count */}
-          <Text style={styles.sectionLabel}>Number of Questions</Text>
+          <Text style={styles.sectionLabel}>NUMBER OF QUESTIONS</Text>
           <View style={styles.pillRow}>
             {COUNTS.map((c) => (
               <TouchableOpacity
@@ -356,11 +337,11 @@ export default function QuizMenuScreen() {
           </TouchableOpacity>
 
           {/* Quick modes */}
-          <Text style={styles.sectionLabel}>Quick Modes</Text>
+          <Text style={styles.sectionLabel}>QUICK MODES</Text>
           {QUICK_MODES.map((mode) => (
             <TouchableOpacity
               key={mode.label}
-              style={styles.quickMode}
+              style={[styles.quickMode, { borderLeftColor: mode.color }]}
               onPress={() =>
                 navigation.navigate("Quiz", {
                   domain: mode.domain,
@@ -369,18 +350,6 @@ export default function QuizMenuScreen() {
                 })
               }
             >
-              <View
-                style={[
-                  styles.quickModeIcon,
-                  { backgroundColor: mode.color + "22" },
-                ]}
-              >
-                <Ionicons
-                  name={mode.icon as any}
-                  size={20}
-                  color={mode.color}
-                />
-              </View>
               <View style={styles.optionText}>
                 <Text style={styles.optionLabel}>{mode.label}</Text>
                 <Text style={styles.optionSub}>{mode.description}</Text>
@@ -421,10 +390,9 @@ function makeStyles(colors: ThemeColors) {
       flexDirection: "row",
       alignItems: "center",
       gap: spacing.xs,
-      backgroundColor: colors.incorrect + "12",
       borderWidth: 1,
-      borderColor: colors.incorrect + "44",
-      borderRadius: radius.md,
+      borderColor: colors.incorrect,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.sm,
       marginBottom: spacing.sm,
@@ -437,19 +405,18 @@ function makeStyles(colors: ThemeColors) {
     },
 
     examCard: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      backgroundColor: colors.primary + "15",
+      backgroundColor: colors.surface,
       borderRadius: radius.md,
       padding: spacing.md,
-      gap: spacing.sm,
       marginBottom: spacing.lg,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
+      borderLeftColor: colors.primary,
     },
     examCardText: { flex: 1 },
     examCardTitle: {
       fontSize: fontSize.sm,
       fontWeight: "700",
-      color: colors.primary,
+      color: colors.textPrimary,
     },
     examCardSub: {
       fontSize: fontSize.xs,
@@ -459,9 +426,10 @@ function makeStyles(colors: ThemeColors) {
     },
 
     sectionLabel: {
-      fontSize: fontSize.sm,
+      fontSize: fontSize.xs,
       fontWeight: "700",
-      color: colors.textSecondary,
+      color: colors.textMuted,
+      letterSpacing: 1.5,
       marginBottom: spacing.sm,
       marginTop: spacing.md,
     },
@@ -477,17 +445,8 @@ function makeStyles(colors: ThemeColors) {
       borderColor: colors.border,
       gap: spacing.sm,
     },
-    optionRowActive: {
-      borderColor: colors.primary + "66",
-      backgroundColor: colors.primary + "0D",
-    },
-    domainIcon: {
-      width: 36,
-      height: 36,
-      borderRadius: radius.sm,
-      justifyContent: "center",
-      alignItems: "center",
-    },
+    optionRowActive: {},
+    domainIcon: {},
     optionText: { flex: 1 },
     optionLabel: {
       fontSize: fontSize.md,
@@ -507,7 +466,7 @@ function makeStyles(colors: ThemeColors) {
     },
     pill: {
       borderWidth: 1,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.xs + 2,
     },
@@ -527,7 +486,7 @@ function makeStyles(colors: ThemeColors) {
       justifyContent: "center",
       gap: spacing.sm,
       backgroundColor: colors.primary,
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
       paddingVertical: spacing.md + 2,
       marginBottom: spacing.lg,
     },
@@ -539,7 +498,7 @@ function makeStyles(colors: ThemeColors) {
     startBtnText: {
       fontSize: fontSize.lg,
       fontWeight: "800",
-      color: colors.secondary,
+      color: "#FFFFFF",
     },
 
     quickMode: {
@@ -549,16 +508,8 @@ function makeStyles(colors: ThemeColors) {
       borderRadius: radius.md,
       padding: spacing.md,
       marginBottom: spacing.xs,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderLeftWidth: ROUTE_LINE_WIDTH,
       gap: spacing.sm,
-    },
-    quickModeIcon: {
-      width: 40,
-      height: 40,
-      borderRadius: radius.md,
-      justifyContent: "center",
-      alignItems: "center",
     },
   });
 }

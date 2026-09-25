@@ -21,14 +21,14 @@ export function ScreenHeaderButtons() {
   return (
     <View style={styles.btnRow}>
       <TouchableOpacity
-        style={[styles.btn, { backgroundColor: colors.primary + "22" }]}
+        style={styles.btn}
         onPress={() => navigation.navigate("Settings")}
         activeOpacity={0.7}
       >
         <Ionicons name="settings-outline" size={20} color={colors.primary} />
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.btn, { backgroundColor: colors.primary + "22" }]}
+        style={styles.btn}
         onPress={() => navigation.navigate("CertSelect")}
         activeOpacity={0.7}
       >
@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   btn: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
+    width: 36,
+    height: 36,
+    borderRadius: radius.sm,
     justifyContent: "center",
     alignItems: "center",
   },
