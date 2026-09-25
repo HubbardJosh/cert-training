@@ -1000,7 +1000,19 @@ export default function GuideDetailScreen() {
 
 type BodyToken =
   | { kind: "line"; index: number; content: string }
-  | { kind: "codeBlock"; index: number; lines: string[]; language: string };
+  | { kind: "codeBlock"; index: number; lines: string[]; language: string }
+  | { kind: "table"; index: number; headers: string[]; rows: string[][] };
+
+function parseTableCells(line: string): string[] {
+  return line
+    .split("|")
+    .map((c) => c.trim())
+    .filter((_, i, arr) => i > 0 && i < arr.length - 1);
+}
+
+function isTableSeparator(line: string): boolean {
+  return /^\|[\s|:-]+\|$/.test(line.trim());
+}
 
 function tokenizeBody(lines: string[]): BodyToken[] {
   const tokens: BodyToken[] = [];
@@ -1021,12 +1033,69 @@ function tokenizeBody(lines: string[]): BodyToken[] {
         lines: codeLines,
         language,
       });
+    } else if (
+      lines[i].trim().startsWith("|") &&
+      i + 1 < lines.length &&
+      isTableSeparator(lines[i + 1])
+    ) {
+      const headers = parseTableCells(lines[i]);
+      i += 2; // skip header + separator
+      const rows: string[][] = [];
+      while (i < lines.length && lines[i].trim().startsWith("|")) {
+        rows.push(parseTableCells(lines[i]));
+        i++;
+      }
+      tokens.push({ kind: "table", index: tokens.length, headers, rows });
     } else {
       tokens.push({ kind: "line", index: tokens.length, content: lines[i] });
       i++;
     }
   }
   return tokens;
+}
+
+function TableBlock({
+  headers,
+  rows,
+  colors,
+}: {
+  headers: string[];
+  rows: string[][];
+  colors: ThemeColors;
+}) {
+  const mdStyles = makeMdStyles(colors);
+  return (
+    <View style={mdStyles.tableContainer}>
+      {/* Header row */}
+      <View style={[mdStyles.tableRow, mdStyles.tableHeaderRow]}>
+        {headers.map((h, i) => (
+          <View key={i} style={mdStyles.tableCell}>
+            <InlineText
+              text={h}
+              colors={colors}
+              style={mdStyles.tableHeaderText}
+            />
+          </View>
+        ))}
+      </View>
+      {/* Data rows */}
+      {rows.map((row, ri) => (
+        <View
+          key={ri}
+          style={[
+            mdStyles.tableRow,
+            ri % 2 === 1 ? mdStyles.tableRowAlt : undefined,
+          ]}
+        >
+          {headers.map((_, ci) => (
+            <View key={ci} style={mdStyles.tableCell}>
+              <InlineText text={row[ci] ?? ""} colors={colors} />
+            </View>
+          ))}
+        </View>
+      ))}
+    </View>
+  );
 }
 
 function MarkdownBody({
@@ -1044,6 +1113,17 @@ function MarkdownBody({
   return (
     <View style={{ gap: 6 }}>
       {tokens.map((token) => {
+        if (token.kind === "table") {
+          return (
+            <TableBlock
+              key={token.index}
+              headers={token.headers}
+              rows={token.rows}
+              colors={colors}
+            />
+          );
+        }
+
         if (token.kind === "codeBlock") {
           const codeBg = isDark ? "#282c34" : "#fafafa";
           return (
@@ -1120,11 +1200,19 @@ function MarkdownBody({
   );
 }
 
-function InlineText({ text, colors }: { text: string; colors: ThemeColors }) {
+function InlineText({
+  text,
+  colors,
+  style,
+}: {
+  text: string;
+  colors: ThemeColors;
+  style?: object;
+}) {
   const mdStyles = makeMdStyles(colors);
   const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
   return (
-    <Text style={mdStyles.para}>
+    <Text style={[mdStyles.para, style]}>
       {parts.map((part, i) => {
         if (part.startsWith("**") && part.endsWith("**")) {
           return (
@@ -1445,6 +1533,34 @@ function makeMdStyles(colors: ThemeColors) {
       color: colors.textMuted,
       lineHeight: 22,
       minWidth: 16,
+    },
+    tableContainer: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radius.sm,
+      overflow: "hidden",
+      marginVertical: 4,
+    },
+    tableRow: {
+      flexDirection: "row",
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    tableHeaderRow: {
+      backgroundColor: colors.surfaceElevated,
+    },
+    tableRowAlt: {
+      backgroundColor: colors.surface,
+    },
+    tableCell: {
+      flex: 1,
+      padding: spacing.sm,
+      borderRightWidth: 1,
+      borderRightColor: colors.border,
+    },
+    tableHeaderText: {
+      fontWeight: "700",
+      color: colors.textPrimary,
     },
   });
 }
