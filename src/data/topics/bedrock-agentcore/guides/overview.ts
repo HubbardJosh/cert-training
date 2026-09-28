@@ -149,6 +149,53 @@ app.run()
       ],
     },
     {
+      heading: "How the Seven Components Work Together",
+      body: `Understanding each component in isolation is only half the picture. In production, agents compose multiple components into a unified flow. Here is a typical pattern:
+
+**Common enterprise agent architecture**:
+
+\`\`\`
+User (via corporate IdP)
+    ↓  [Identity: inbound auth via Okta/Entra/Cognito]
+AgentCore Gateway
+    ↓  [routes request to agent; provides MCP tools with managed credentials]
+AgentCore Runtime (microVM session)
+    ↑↓ [Memory: retrieves long-term context at session start; stores new facts at session end]
+    ↑↓ [Code Interpreter: agent executes Python/JS for deterministic computation]
+    ↑↓ [Browser: agent navigates web apps, fills forms, captures screenshots]
+    ↑↓ [Gateway outbound: calls Slack, Salesforce, Lambda via managed OAuth/API keys]
+AWS Agent Registry
+    [other agents discover and call this agent via A2A]
+\`\`\`
+
+**How a session flows end-to-end**:
+
+1. **User authenticates** — Identity verifies the user's corporate credentials (Okta SSO) before the request reaches the agent.
+2. **Gateway routes the request** — The request arrives at Gateway, which looks up the target agent, enforces inbound auth policies, and forwards to the Runtime endpoint.
+3. **Runtime starts a microVM** — A dedicated microVM is provisioned (V2 snapshot-based cold start). The agent code begins executing.
+4. **Memory retrieves context** — At session start, the agent queries long-term Memory for relevant user preferences and prior session summaries. Short-term memory tracks the current conversation.
+5. **Agent calls tools** — Through Gateway (MCP), the agent calls Salesforce, Slack, internal Lambda functions, or another agent (A2A). Gateway injects the correct OAuth token or API key for each downstream service — the agent never handles raw credentials.
+6. **Code Interpreter / Browser** — For computation tasks, the agent spawns a Code Interpreter session. For web workflows, it opens a Browser session (with Live View for human-in-loop if needed).
+7. **Session ends** — Memory extracts facts and preferences from the conversation into long-term storage. The microVM is terminated and its memory is sanitized. The next user's session starts with a clean environment.
+
+**Key insight**: Each component handles one concern. Runtime handles *where* code runs. Gateway handles *how* tools are reached. Identity handles *who* is calling and *what* each call is authorized to do. Memory handles *what* was learned. Code Interpreter and Browser handle *what* the agent can do beyond language reasoning.`,
+      quiz: [
+        {
+          question:
+            "In a typical AgentCore agent session, which component is responsible for injecting the correct OAuth token when the agent calls Salesforce?",
+          options: [
+            "AgentCore Runtime — it manages all outbound credentials for the agent",
+            "AgentCore Identity — it stores the token and the agent retrieves it directly",
+            "AgentCore Gateway — it handles outbound auth and injects the correct credential per downstream service",
+            "AgentCore Memory — it caches credentials from prior sessions for reuse",
+          ],
+          correctIndex: 2,
+          explanation:
+            "AgentCore Gateway handles outbound authentication — injecting the correct OAuth token, API key, or credential for each downstream service. The agent calls a tool through Gateway and never handles raw credentials itself. Identity manages workload identities and credential storage, but Gateway is the runtime injection point during tool calls. Memory stores conversation knowledge, not credentials.",
+        },
+      ],
+    },
+    {
       heading: "How AgentCore Relates to Other Bedrock Services",
       body: `Amazon Bedrock is an umbrella service containing multiple capabilities. Understanding where AgentCore fits relative to other Bedrock services prevents confusion:
 
@@ -181,6 +228,7 @@ app.run()
 
   keyFacts: [
     "AgentCore = 7 components: Runtime, Memory, Identity, Gateway, Code Interpreter, Browser, AWS Agent Registry",
+    "Typical flow: Identity (inbound auth) → Gateway (routing + outbound auth) → Runtime (execution) → Memory (context) → tools",
     "Framework-agnostic: LangGraph, Strands, CrewAI, OpenAI Agents SDK, Claude Agent SDK, custom",
     "Model-agnostic: works with Bedrock models, Anthropic, OpenAI, Google Gemini, and others",
     "Runtime microVM sessions: up to 8 hours; Runtime Instance sessions: up to 14 days",

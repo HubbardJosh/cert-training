@@ -94,6 +94,47 @@ AgentCore Identity addresses all of these by treating agents as **workload ident
       ],
     },
     {
+      heading: "How Identity Federation Works",
+      body: `Understanding the mechanics of how AgentCore Identity connects to external IdPs helps clarify what happens at runtime.
+
+**Inbound auth flow (user authenticates to the agent)**:
+1. User navigates to the agent's endpoint
+2. AgentCore Identity redirects to the corporate IdP (Okta, Entra, Cognito) using **OIDC** (OpenID Connect) — the standard protocol for identity federation
+3. User authenticates with the IdP (username/password, MFA, SSO)
+4. IdP returns an **ID token** (JWT) to AgentCore Identity
+5. AgentCore validates the JWT (issuer, audience, expiry, signature)
+6. The request proceeds to the agent with the user's identity claims attached
+7. AgentCore uses a **JWT authorizer** for configuring which claims are required, which OIDC discovery URL to use, and which client IDs are allowed
+
+**Outbound auth flow (agent calls external service on behalf of user)**:
+1. Agent needs to call Slack as the authenticated user
+2. Identity checks whether the user has already authorized this service via the consent portal
+3. If not yet authorized: Identity redirects the user to Slack's OAuth 2.0 consent screen
+4. User grants access; Slack returns an authorization code
+5. Identity exchanges the code for an **access token** and **refresh token**, storing them securely
+6. When the agent calls Slack, Identity injects the access token automatically
+7. When the access token expires, Identity uses the stored refresh token to get a new one — the agent never handles token expiry
+
+**Private IdP connectivity**: Organizations using on-premises or private identity providers (not publicly reachable) can connect them via AWS PrivateLink or VPC peering. The private connectivity option allows AgentCore Identity to reach an IdP inside a VPC without exposing it to the internet.
+
+**Token security**: Credentials stored by Identity are encrypted at rest. The agent code never sees raw OAuth tokens — Gateway and Identity inject them at call time.`,
+      quiz: [
+        {
+          question:
+            "An employee uses an AgentCore agent that needs to call GitHub on their behalf. When the employee first uses the agent, they are redirected to a GitHub authorization screen. What mechanism in AgentCore Identity is handling this flow?",
+          options: [
+            "Inbound JWT authorizer — validates the employee's GitHub token",
+            "Outbound OAuth 2.0 delegated flow — Identity redirects the user to GitHub's consent screen and then manages the token lifecycle",
+            "Workload identity federation — AgentCore assumes a GitHub role on behalf of the user",
+            "API key injection — Identity generates a GitHub API key for the user",
+          ],
+          correctIndex: 1,
+          explanation:
+            "This is the outbound OAuth 2.0 delegated flow: when an agent needs to call GitHub on behalf of a user for the first time, Identity redirects the user to GitHub's OAuth consent screen. After the user grants access, Identity stores the access and refresh tokens securely. On subsequent calls, Identity injects the access token automatically and refreshes it when it expires — the employee only sees the consent screen once. Inbound JWT is for verifying who calls the agent, not for outbound service calls.",
+        },
+      ],
+    },
+    {
       heading: "Supported Identity Providers and Consent",
       body: `AgentCore Identity integrates with major enterprise and consumer identity providers:
 
@@ -139,7 +180,9 @@ AgentCore Identity addresses all of these by treating agents as **workload ident
     "Consent portal: built-in user authorization flow — auditable record of what agents can access",
     "JWT authorizer: configurable validation of JWT tokens for inbound requests",
     "Pricing: $0.010/1,000 token or API key requests; FREE when used through Runtime or Gateway",
-    "Supports private/on-premises IdPs via private connectivity",
+    "Supports private/on-premises IdPs via AWS PrivateLink or VPC peering",
+    "Inbound flow uses OIDC (OpenID Connect); JWT authorizer validates issuer, audience, expiry, signature",
+    "Outbound OAuth flow: Identity stores access + refresh tokens; auto-refreshes when expired — agent never handles token lifecycle",
     "OAuth outbound providers include: Google, GitHub, Salesforce, Slack, Microsoft 365",
     // Source: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity.html
   ],
@@ -159,6 +202,9 @@ AgentCore Identity addresses all of these by treating agents as **workload ident
     "Delegated mode = agent uses USER's OAuth token; Service account mode = agent uses its own credentials",
     "Consent portal = auditable record that the user authorized the agent — key for compliance",
     "Supported IdPs: Okta, Microsoft Entra, Amazon Cognito — NOT Google Workspace SSO as an inbound IdP",
+    "Inbound flow = OIDC: IdP issues a JWT, Identity validates it (issuer, audience, expiry, signature)",
+    "Outbound first-use = OAuth consent screen; after consent, Identity stores + auto-refreshes tokens silently",
     "Token refresh is automatic — agents never need to handle token expiry themselves",
+    "Private IdP: connect via AWS PrivateLink or VPC peering — IdP doesn't need to be publicly reachable",
   ],
 };

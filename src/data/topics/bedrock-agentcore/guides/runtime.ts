@@ -70,7 +70,18 @@ export const runtimeGuide: ServiceGuide = {
 
 **Inbound authentication** (who can reach your agent) and **outbound authentication** (credentials the agent uses to call external services) are both handled natively through AgentCore Identity integration.
 
-**Persistent filesystems**: Runtime supports persisting filesystem state across session stop/resume cycles. An agent's files, installed packages, and build artifacts survive session stops without needing external storage (e.g., S3 or EFS).`,
+**Persistent filesystems**: Runtime supports persisting filesystem state across session stop/resume cycles. An agent's files, installed packages, and build artifacts survive session stops without needing external storage. There are four filesystem types:
+
+| Type | Isolation | Persistence | Compute type |
+|---|---|---|---|
+| Session storage (Preview) | Per-session | Survives stop/resume; reset after 14-day idle or runtime version update | microVM |
+| Capacity provider volume | Per-session | Survives stop/resume; deleted when session is deleted | Instances (EC2) |
+| S3 Files access point | Shared across sessions | Customer-managed (permanent) | microVM (VPC required) |
+| EFS access point | Shared across sessions | Customer-managed (permanent) | microVM (VPC required) |
+
+**Mount paths**: All filesystem mounts must be under \`/mnt/\` with one subdirectory level (e.g., \`/mnt/workspace\`). Up to 5 total configurations per agent runtime.
+
+**Session storage lifecycle**: Data resets if the session is not invoked for 14 days, or when the agent runtime version is updated. Explicit \`DeleteAgentRuntime\` deletes all session storage.`,
       quiz: [
         {
           question:
@@ -91,13 +102,21 @@ export const runtimeGuide: ServiceGuide = {
       heading: "Protocol Support and Communication",
       body: `AgentCore Runtime agents communicate using standard protocols, enabling interoperability across tools and agents:
 
-**MCP (Model Context Protocol)**: Agents can deploy and expose tools as MCP servers, or connect to external MCP servers. MCP is the emerging standard for tool-use in agentic systems.
+**MCP (Model Context Protocol)**: Agents expose or consume tools as MCP servers. Runs on port **8000** at \`/mcp\`. MCP is the emerging standard for agent-to-tool communication.
 
-**A2A (Agent-to-Agent)**: Agents can communicate with other agents using the A2A protocol, enabling multi-agent collaboration where agents delegate sub-tasks to specialized agents.
+**A2A (Agent-to-Agent)**: Agents communicate with other agents using the A2A protocol on port **9000**. Enables supervisor/specialist patterns where orchestrator agents delegate sub-tasks to specialized agents.
 
-**AG-UI**: For user-facing agents that need rich interactive interfaces, AG-UI protocol support enables structured front-end integration.
+**AG-UI (Agent User Interface)**: The protocol for structured agent-to-user-interface communication. Runs on port **8080** at \`/invocations\` (HTTP/SSE) or \`/ws\` (WebSocket). AG-UI streams typed events — \`RUN_STARTED\`, \`TEXT_MESSAGE_CONTENT\`, \`RUN_FINISHED\`, \`RUN_ERROR\` — to rich frontend clients via Server-Sent Events (SSE). Frameworks like CopilotKit use AG-UI to build live, streaming chat UIs backed by any agent framework. Unlike HTTP which returns a single response, AG-UI streams a structured event sequence so the UI can update progressively.
 
-**HTTP and WebSocket**: Agents can be invoked via standard HTTP API calls or maintain persistent WebSocket connections for real-time bidirectional streaming. WebSocket connections enable immediate response feedback and maintained conversation context for interactive applications.
+**HTTP and WebSocket**: Standard HTTP at port 8080 (\`/invocations\`) for request/response. WebSocket at port 8080 (\`/ws\`) for persistent bidirectional streaming — immediate response feedback and maintained conversation context for interactive applications.
+
+**Protocol ports summary**:
+| Protocol | Port | Path |
+|---|---|---|
+| MCP | 8000 | \`/mcp\` |
+| A2A | 9000 | \`/\` |
+| HTTP / AG-UI | 8080 | \`/invocations\` |
+| WebSocket | 8080 | \`/ws\` |
 
 **Payload limits**: AgentCore Runtime handles payloads up to **100 MB**, supporting multi-modal content (text, images, audio, video) and large datasets.
 
@@ -170,6 +189,64 @@ The observability stack makes it possible to debug agent failures, identify reas
       ],
     },
     {
+      heading: "Error Handling and Failure Modes",
+      body: `Understanding how AgentCore Runtime handles failures is essential for production deployments.
+
+**Common HTTP error codes**:
+| Code | Meaning | Action |
+|---|---|---|
+| 422 | Unprocessable Entity — invalid payload (missing fields, wrong types) | Fix payload structure; ensure nested input field if expected |
+| 403 | Forbidden — container startup failure, bad auth token, or missing IAM permissions | Check CloudWatch logs; verify execution role and bearer token |
+| 409 RetryableConflictException | Session provisioning or teardown in progress | Retry with short exponential backoff (AWS SDKs auto-retry for HTTP; manual retry for WebSocket) |
+| 500 | Internal Server Error — runtime exception in your agent code | Check CloudWatch logs for stack trace |
+| 504 | Gateway Timeout — agent didn't respond in time | Check container port (must be 8080), ARM64 compatibility, and retry logic |
+
+**Session idle timeout**: AgentCore terminates sessions after 15 minutes of inactivity. For long-running background tasks, your /ping endpoint must return \`{"status": "HealthyBusy"}\` while work is in progress. A Healthy ping response starts the idle timer.
+
+**Session quota exhaustion**: If your /ping handler sets time_of_last_update to the current time on every ping (instead of only when status changes), the idle timer never fires and sessions accumulate until you hit your quota. Always update time_of_last_update only on status transitions, or omit it entirely.
+
+**Code changes not reflected**: Each microVM session uses the code assets from when the session was created. Updating the agent runtime does not affect in-flight sessions — only new sessions pick up updated code. Use a new runtimeSessionId after deployments.
+
+**Container requirements** (common deployment failures):
+- Container must expose port **8080** with a /invocations endpoint
+- Container must be **ARM64** compatible (not x86)
+- Containers with >53 layers **and** a non-numeric USER directive may fail with HTTP 424 — use numeric UIDs (e.g., USER 1000) or reduce layers
+- Required boto3 version: **1.39.8+**
+
+**Debugging checklist**:
+1. Test the container locally with the exact same payload before deploying
+2. Check CloudWatch log group: /aws/bedrock-agentcore/runtimes/agent_id-endpoint/runtime-logs
+3. Enable X-Ray active tracing on any Lambda that invokes your agent (prevents missing spans)`,
+      quiz: [
+        {
+          question:
+            "An AgentCore Runtime agent is performing a complex, multi-step data migration that takes 45 minutes. Halfway through, the session is terminated with no error from the agent code. What is the most likely cause?",
+          options: [
+            "The 8-hour microVM session limit was reached",
+            "The agent's /ping endpoint returned 'Healthy' instead of 'HealthyBusy', triggering the 15-minute idle timeout",
+            "The 100 MB payload limit was exceeded during the migration",
+            "The V2 platform snapshot expired after 30 minutes",
+          ],
+          correctIndex: 1,
+          explanation:
+            "AgentCore terminates sessions after 15 minutes of inactivity, determined by the agent's /ping response. If the agent is doing background work but its /ping endpoint returns 'Healthy' (instead of 'HealthyBusy'), AgentCore treats the session as idle and terminates it after 15 minutes. The fix is to return 'HealthyBusy' while background processing is in progress. The 8-hour limit applies to the full session, not idle periods. Payload limits apply per invocation, not per session.",
+        },
+        {
+          question:
+            "A developer deploys an updated agent to AgentCore Runtime. Active user sessions are still using the old agent behavior. What explains this?",
+          options: [
+            "Runtime cache takes up to 30 minutes to propagate code changes",
+            "Each microVM session uses the code assets from when it was created; only new sessions pick up updated code",
+            "The deployment requires a manual restart of all active sessions",
+            "The V2 platform only updates code on the next snapshot cycle",
+          ],
+          correctIndex: 1,
+          explanation:
+            "Each microVM session is created with the code assets deployed at session creation time. Updating the agent runtime does not affect active sessions — they continue with the version they started with. New sessions created after the deployment will use the updated code. This is by design: it ensures session consistency during rolling deployments. To route users to new code, create new sessions (use a new runtimeSessionId).",
+        },
+      ],
+    },
+    {
       heading: "Pricing Model",
       body: `AgentCore Runtime uses a consumption-based pricing model that aligns costs with actual work done:
 
@@ -220,9 +297,13 @@ Source: https://aws.amazon.com/bedrock/agentcore/pricing/`,
     "After session ends: entire microVM terminated, memory sanitized",
     "Persistent filesystem: files/packages survive session stop/resume without external storage",
     "Max payload: 100 MB (text, images, audio, video, large datasets)",
-    "Protocol support: MCP, A2A, AG-UI, HTTP, WebSocket (bidirectional streaming)",
+    "Protocol support: MCP (port 8000), A2A (port 9000), HTTP/AG-UI/WebSocket (port 8080)",
+    "AG-UI = Agent User Interface: streams typed events (SSE) to rich frontend clients; used with CopilotKit",
     "V2 platform: snapshot-based cold starts — fast and consistent regardless of image size",
     "Frameworks: LangGraph, Strands, CrewAI, OpenAI Agents SDK, Claude Agent SDK, custom",
+    "Idle timeout: 15 minutes; prevent with HealthyBusy ping response during background work",
+    "Container requirements: port 8080, /invocations endpoint, ARM64 architecture",
+    "Session storage: resets after 14-day idle or runtime version update; max 5 filesystem configs",
     // Source: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html
   ],
 
@@ -243,6 +324,10 @@ Source: https://aws.amazon.com/bedrock/agentcore/pricing/`,
     "V2 platform uses snapshots for fast cold starts — no penalty for large images",
     "100 MB payload limit enables multi-modal agents (images, audio, video)",
     "Persistent filesystem survives stop/resume — no need to re-download packages between pauses",
-    "A2A = agent-to-agent; MCP = model-to-tool; AG-UI = agent-to-user-interface",
+    "A2A = agent-to-agent (port 9000); MCP = model-to-tool (port 8000); AG-UI = agent-to-user-interface (port 8080, SSE events)",
+    "Idle timeout prevention: /ping must return HealthyBusy while background work is in progress",
+    "409 RetryableConflictException = transient; retry with backoff (AWS SDK auto-retries HTTP but NOT WebSocket)",
+    "Container must be ARM64; must expose port 8080 with /invocations endpoint",
+    "Code changes only affect NEW sessions — existing sessions keep the version they started with",
   ],
 };

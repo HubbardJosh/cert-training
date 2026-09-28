@@ -409,6 +409,112 @@ export const quizQuestions: QuizQuestion[] = [
     tags: ["agentcore", "browser", "live-view", "human-in-loop"],
   },
 
+  // ─── Error Handling & Operations ─────────────────────────────────────────────
+  {
+    id: "agc-qq-013",
+    domain: "deployment",
+    difficulty: "medium",
+    type: "single",
+    service: "AgentCore Runtime",
+    question:
+      "An AgentCore Runtime microVM session is processing a file migration in the background. After 15 minutes the session is terminated, even though the migration is not complete and no error occurred in the agent code. What is the most likely cause and fix?",
+    options: [
+      "The agent exceeded the 100 MB payload limit; reduce the file size",
+      "The agent's /ping endpoint returned 'Healthy' during background work; it should return 'HealthyBusy'",
+      "Background tasks require Runtime Instances, not microVMs",
+      "The V2 platform snapshot expired; redeploy with --platform v1",
+    ],
+    correctIndices: [1],
+    explanation:
+      "AgentCore terminates sessions after 15 minutes of inactivity. Inactivity is determined by the /ping response: 'Healthy' starts the idle timer; 'HealthyBusy' prevents it. For background work (no active invocation in flight), the /ping endpoint must return HealthyBusy until the task completes. The Bedrock AgentCore SDK handles this automatically; custom servers must implement it manually.",
+    optionExplanations: [
+      "Incorrect. The 100 MB payload limit applies to individual invocation payloads, not background processing duration. No payload size issue is described.",
+      "Correct. The idle timeout fires when the /ping endpoint has been returning 'Healthy' for 15 minutes. During background tasks, /ping must return 'HealthyBusy' to signal the platform that work is in progress.",
+      "Incorrect. Background tasks can run on microVMs up to 8 hours. The distinction between microVMs and Instances is session duration and GPU support, not whether background tasks are allowed.",
+      "Incorrect. V2 is a platform version that affects cold start behavior, not session duration. There is no snapshot expiry concept in V2.",
+    ],
+    tags: ["agentcore", "runtime", "error-handling", "idle-timeout"],
+  },
+  {
+    id: "agc-qq-014",
+    domain: "deployment",
+    difficulty: "hard",
+    type: "single",
+    service: "AgentCore Runtime",
+    question:
+      "A developer deploys an updated agent to AgentCore Runtime to fix a critical bug. Existing active user sessions continue to exhibit the buggy behavior. Which statement correctly explains this and the right resolution?",
+    options: [
+      "The Runtime cache takes up to 30 minutes to propagate; wait and the sessions will update automatically",
+      "Each microVM session uses the code assets from when the session was created; only new sessions pick up updated code — route affected users to new sessions",
+      "The developer must call StopRuntimeSession on all active sessions to force a code refresh",
+      "The bug fix requires a full agent runtime recreation; UpdateAgentRuntime does not affect session behavior",
+    ],
+    correctIndices: [1],
+    explanation:
+      "By design, each microVM session is created with the code assets (agentRuntimeArtifact) that were deployed at session creation time. Updating the agent runtime does not affect in-flight sessions. New sessions created after the update use the new code. For a critical bug, the resolution is to route users to new sessions (new runtimeSessionId). StopRuntimeSession terminates a session, but starting new sessions with the same ID would create fresh sessions with updated code.",
+    optionExplanations: [
+      "Incorrect. There is no automatic propagation to existing sessions. Existing sessions always use the code version they were created with.",
+      "Correct. This is a documented design decision: sessions are immutable code-wise once created. To get updated code, users need new sessions. The developer should direct users to start new sessions.",
+      "Incorrect. StopRuntimeSession terminates the session, but then the user needs to start a new session anyway. The key insight is that new sessions get updated code, not that stopping forces a code refresh.",
+      "Incorrect. UpdateAgentRuntime does work and does affect new sessions. It does not require full recreation. The limitation is that it only applies to sessions created after the update.",
+    ],
+    tags: ["agentcore", "runtime", "deployment", "session-lifecycle"],
+  },
+
+  // ─── Multi-Agent & Architecture ──────────────────────────────────────────────
+  {
+    id: "agc-qq-072",
+    domain: "development",
+    difficulty: "hard",
+    type: "single",
+    service: "Amazon Bedrock AgentCore",
+    question:
+      "A team is building a multi-agent system: an orchestrator agent delegates research tasks to a research specialist agent and writing tasks to a writing specialist agent. All three need to maintain shared state about completed steps. Which combination of AgentCore components handles this architecture?",
+    options: [
+      "Runtime (execution) + Gateway (A2A routing between agents) + Memory (shared state)",
+      "Runtime (execution) + Identity (agent-to-agent auth) + Gateway (tool calls only)",
+      "Runtime (execution) + Code Interpreter (agent coordination logic) + Memory (state)",
+      "Gateway (orchestration) + Memory (delegation tracking) + Runtime (specialist execution only)",
+    ],
+    correctIndices: [0],
+    explanation:
+      "Multi-agent systems in AgentCore use: Runtime for executing each agent's code (orchestrator and specialists each run in their own sessions/instances); Gateway for routing A2A traffic between agents (the orchestrator sends tasks to specialists via A2A protocol through Gateway); Memory for shared state (all three agents can read from and write to a shared memory store to track completed steps). Identity handles auth; Code Interpreter is for computation, not coordination; Gateway orchestrates routing but doesn't own task tracking.",
+    optionExplanations: [
+      "Correct. Runtime provides isolated execution for each agent. Gateway's A2A routing connects the orchestrator to specialist agents. Memory's shared store lets all agents read/write shared workflow state. This is the standard multi-agent pattern in AgentCore.",
+      "Incorrect. Identity manages workload identities and credentials — not agent-to-agent traffic routing. A2A routing is handled by Gateway. Also, this option omits Memory, which is needed for shared state.",
+      "Incorrect. Code Interpreter executes user-generated code in sandboxes — it is not an agent coordination mechanism. Agent delegation uses A2A via Gateway.",
+      "Incorrect. Gateway routes traffic but does not orchestrate agents or track tasks. Orchestration logic runs in the orchestrator agent's Runtime execution. Gateway is a routing layer, not a control plane.",
+    ],
+    tags: ["agentcore", "multi-agent", "a2a", "gateway", "memory"],
+  },
+
+  // ─── Identity: Federation ─────────────────────────────────────────────────────
+  {
+    id: "agc-qq-032",
+    domain: "security",
+    difficulty: "hard",
+    type: "single",
+    service: "AgentCore Identity",
+    question:
+      "An employee opens an AgentCore agent for the first time to file a Jira ticket. The agent needs to call Jira on the employee's behalf. The employee is redirected to a Jira authorization screen, grants access, and the agent completes the task. The next day, the same employee uses the agent again — they are NOT redirected to Jira. What explains the difference?",
+    options: [
+      "Jira's OAuth tokens have a 24-hour TTL — the token from yesterday is still valid",
+      "The agent cached the Jira session in AgentCore Memory during the first session",
+      "AgentCore Identity stored the OAuth access and refresh tokens after first consent; it injects the token automatically on subsequent calls and refreshes it silently when expired",
+      "The employee's Okta session token grants Jira access; no re-authorization is needed",
+    ],
+    correctIndices: [2],
+    explanation:
+      "On the first use, AgentCore Identity redirects the user through Jira's OAuth 2.0 consent flow (outbound delegated auth). After the user grants access, Identity securely stores both the access token and refresh token. On subsequent calls, Identity injects the access token automatically. When the access token expires, Identity uses the stored refresh token to obtain a new one silently — the user never sees another consent screen. This is distinct from Memory (conversational knowledge) and Okta (inbound auth, not outbound service access).",
+    optionExplanations: [
+      "Incorrect. Identity does not rely on a raw token TTL to determine whether to show the consent screen. It stores the refresh token and handles renewal automatically, independent of the access token's expiry.",
+      "Incorrect. AgentCore Memory stores conversational facts and preferences — not OAuth tokens or service credentials. Credential management is Identity's domain.",
+      "Correct. This is the outbound OAuth delegated flow: Identity stores the token pair after first consent and manages the lifecycle automatically. The employee only consents once per service.",
+      "Incorrect. Okta is an inbound identity provider — it verifies the employee can reach the agent. Jira access requires a separate OAuth authorization specific to Jira, managed by Identity's outbound credential provider.",
+    ],
+    tags: ["agentcore", "identity", "oauth", "delegation", "token-refresh"],
+  },
+
   // ─── Cross-Component ─────────────────────────────────────────────────────────
   {
     id: "agc-qq-070",

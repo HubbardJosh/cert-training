@@ -448,6 +448,78 @@ export const flashcards: FlashCard[] = [
     tags: ["agentcore", "browser", "code-interpreter", "pricing"],
   },
 
+  // ─── Runtime: Error Handling ─────────────────────────────────────────────────
+  {
+    id: "agc-fc-015",
+    service: "AgentCore Runtime",
+    domain: "deployment",
+    difficulty: "medium",
+    question:
+      "What causes an AgentCore Runtime session to be terminated by the idle timeout, and how do you prevent it?",
+    answer:
+      "Sessions are terminated after 15 minutes of inactivity. Inactivity is determined by the /ping endpoint: returning 'Healthy' starts the idle timer; returning 'HealthyBusy' keeps the session alive. For background tasks, your /ping must return HealthyBusy while work is in progress.",
+    keyPoints: [
+      "Idle timeout: 15 minutes of 'Healthy' ping responses",
+      "Prevention: return {'status': 'HealthyBusy'} while processing",
+      "Bedrock AgentCore SDK handles ping automatically",
+      "StopRuntimeSession can manually release stuck sessions",
+    ],
+    tags: ["agentcore", "runtime", "error-handling", "idle-timeout"],
+  },
+  {
+    id: "agc-fc-016",
+    service: "AgentCore Runtime",
+    domain: "deployment",
+    difficulty: "medium",
+    question:
+      "What are the key container requirements for deploying to AgentCore Runtime?",
+    answer:
+      "Container must expose port 8080, have a /invocations endpoint, and be ARM64 compatible. Containers with more than 53 layers and a non-numeric USER directive may fail with HTTP 424 — use numeric UIDs (USER 1000) or reduce layers.",
+    keyPoints: [
+      "Port: 8080 (not 8000 or 9000)",
+      "Endpoint: /invocations path required",
+      "Architecture: ARM64 only",
+      "boto3 minimum: 1.39.8+",
+    ],
+    tags: ["agentcore", "runtime", "container", "deployment"],
+  },
+  {
+    id: "agc-fc-017",
+    service: "AgentCore Runtime",
+    domain: "deployment",
+    difficulty: "hard",
+    question:
+      "What is the AG-UI protocol in AgentCore Runtime and how does it differ from HTTP?",
+    answer:
+      "AG-UI (Agent User Interface) is the protocol for agent-to-frontend communication. It streams typed events (RUN_STARTED, TEXT_MESSAGE_CONTENT, RUN_FINISHED, RUN_ERROR) via Server-Sent Events (SSE) or WebSocket on port 8080. Unlike plain HTTP (single response), AG-UI delivers a structured event sequence so UIs update progressively. Used with frameworks like CopilotKit.",
+    keyPoints: [
+      "Port 8080, path /invocations — same port as HTTP",
+      "Streams SSE events: RUN_STARTED, TEXT_MESSAGE_CONTENT, RUN_FINISHED, RUN_ERROR",
+      "HTTP/SSE or WebSocket (/ws) transport",
+      "Protocol focus: agent-to-user-interface (vs MCP=tools, A2A=agents)",
+    ],
+    tags: ["agentcore", "runtime", "ag-ui", "protocols"],
+  },
+
+  // ─── Runtime: Filesystem ────────────────────────────────────────────────────
+  {
+    id: "agc-fc-018",
+    service: "AgentCore Runtime",
+    domain: "deployment",
+    difficulty: "medium",
+    question:
+      "What are the four persistent filesystem types in AgentCore Runtime and when do you use each?",
+    answer:
+      "Session storage (Preview): per-session, microVM, no VPC needed — best for scratch space. Capacity provider volume: per-session, Instances, EBS-backed. S3 Files access point: shared across sessions, microVM, VPC required. EFS access point: shared across sessions, microVM, VPC required — best for multi-agent shared data.",
+    keyPoints: [
+      "Session storage: isolated per session, resets after 14-day idle or version update",
+      "Capacity provider volume: for Instances compute only",
+      "S3 Files / EFS: shared — multiple agents/sessions can access the same data",
+      "Max 5 filesystem configurations per runtime; all mounts under /mnt/<name>",
+    ],
+    tags: ["agentcore", "runtime", "filesystem", "session-storage"],
+  },
+
   // ─── AWS Agent Registry ───────────────────────────────────────────────────────
   {
     id: "agc-fc-070",
@@ -460,9 +532,63 @@ export const flashcards: FlashCard[] = [
     keyPoints: [
       "Discover and share agents/tools org-wide",
       "Free tier: 5,000 records, 1M search calls, 2M get/list calls/month",
-      "After free tier: $0.400/1,000 records, $0.020/1,000 search calls",
+      "After free tier: $0.400/1,000 records, $0.020/1,000 search calls, $0.004/1,000 Get/List calls",
       "Part of the AgentCore platform",
     ],
     tags: ["agentcore", "agent-registry", "free-tier"],
+  },
+  {
+    id: "agc-fc-071",
+    service: "AWS Agent Registry",
+    domain: "development",
+    difficulty: "hard",
+    question:
+      "What is the paid pricing for AWS Agent Registry beyond the free tier?",
+    answer:
+      "$0.400 per 1,000 records (after 5,000 free), $0.020 per 1,000 Search API calls (after 1M free), $0.004 per 1,000 Get/List API calls (after 2M free combined).",
+    keyPoints: [
+      "Records: $0.400/1,000 (free tier: 5,000/month)",
+      "Search API: $0.020/1,000 (free tier: 1M/month)",
+      "Get/List API: $0.004/1,000 (free tier: 2M/month combined)",
+      "Registry enables A2A discovery — agents find other agents to delegate to",
+    ],
+    tags: ["agentcore", "agent-registry", "pricing"],
+  },
+
+  // ─── Cross-Component ─────────────────────────────────────────────────────────
+  {
+    id: "agc-fc-080",
+    service: "Amazon Bedrock AgentCore",
+    domain: "development",
+    difficulty: "hard",
+    question:
+      "In a typical production AgentCore agent, what is the role of each component in the request flow?",
+    answer:
+      "Identity handles inbound auth (verifies the user via Okta/Entra/Cognito). Gateway routes the request to Runtime and provides MCP tools with managed outbound credentials. Runtime executes agent code in an isolated microVM. Memory supplies long-term context and records new facts. Code Interpreter/Browser extend agent capabilities. Agent Registry enables other agents to discover and call this agent.",
+    keyPoints: [
+      "Identity → inbound auth (who can reach the agent)",
+      "Gateway → routing + outbound credentials (what the agent can call)",
+      "Runtime → execution isolation (where code runs)",
+      "Memory → context continuity (what was learned)",
+      "Code Interpreter/Browser → action capabilities beyond language",
+    ],
+    tags: ["agentcore", "architecture", "cross-component"],
+  },
+  {
+    id: "agc-fc-081",
+    service: "Amazon Bedrock AgentCore",
+    domain: "development",
+    difficulty: "medium",
+    question:
+      "When should you choose Runtime microVMs vs Instances, Code Interpreter vs Lambda via Gateway?",
+    answer:
+      "microVMs: bursty/interactive agents, sessions under 8 hours, consumption billing. Instances: sessions over 8 hours, GPU needed, multi-agent collaboration. Code Interpreter: ad-hoc computation the agent generates dynamically. Lambda via Gateway: pre-built deterministic logic available as a registered tool.",
+    keyPoints: [
+      "microVM cap: 8 hours; Instance cap: 14 days",
+      "Instances add GPU + multi-agent collaboration on shared instance",
+      "Code Interpreter = agent writes and runs code dynamically",
+      "Lambda via Gateway = pre-existing service the agent calls as a tool",
+    ],
+    tags: ["agentcore", "decision-matrix", "microvms", "instances"],
   },
 ];

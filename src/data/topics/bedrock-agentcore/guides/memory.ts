@@ -100,6 +100,10 @@ The service manages both tiers, automatically extracting information from conver
 
 **Architecture**: Long-term memory is stored in a managed store (no separate vector database to provision). The extraction is automatic — you do not write extraction code. You can configure extraction strategies and what types of facts to retain.
 
+**Namespace paths**: Long-term memory records are organized under namespace paths (e.g., \`namespace_path="/"\`). Namespaces allow you to partition memory by user, tenant, or context — so a multi-tenant agent can keep each user's memories isolated. The search API accepts a \`namespace_path\` parameter to scope retrieval to the relevant partition.
+
+**Retention and deletion**: Long-term memory records persist until explicitly deleted. You can delete individual records or clear an entire namespace. There is no automatic TTL on long-term records — unlike session storage, memory retention is customer-managed.
+
 **Pricing**:
 - Storage: $0.75 per 1,000 records/month
 - Retrieval: $0.50 per 1,000 memory record retrievals
