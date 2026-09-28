@@ -11,7 +11,7 @@ export const cloudformationGuide: ServiceGuide = {
   sections: [
     {
       heading: "Template Structure",
-      body: `A CloudFormation template is a JSON or YAML document. Only the \`Resources\` section is required — everything else is optional. Here's a template that illustrates the main sections working together:
+      body: `A CloudFormation template is a JSON or YAML document. Only the \`Resources\` section is required — everything else is optional. Here's a template that illustrates the main sections working together (YAML):
 
 \`\`\`yaml
 AWSTemplateFormatVersion: '2010-09-09'
@@ -176,7 +176,7 @@ CloudFormation has three update behaviors: **No interruption** (resource is upda
     },
     {
       heading: "Nested Stacks & Stack Sets",
-      body: `As templates grow large, **nested stacks** let you decompose them into modular, reusable units. A parent template references child templates stored in S3 using the \`AWS::CloudFormation::Stack\` resource type. Parameters flow down from parent to child, and outputs flow back up.
+      body: `As templates grow large, **nested stacks** let you decompose them into modular, reusable units. A parent template references child templates stored in S3 using the \`AWS::CloudFormation::Stack\` resource type. Parameters flow down from parent to child, and outputs flow back up. Example nested stack resource (YAML):
 
 \`\`\`yaml
 NetworkStack:
@@ -234,7 +234,7 @@ Nested stacks share a lifecycle with the parent — when you delete the parent, 
     },
     {
       heading: "CloudFormation Helper Scripts & cfn-init",
-      body: `For EC2 instances that need software installed and configured at launch, CloudFormation provides a set of helper scripts. **\`cfn-init\`** reads configuration from \`AWS::CloudFormation::Init\` metadata in the template and applies it: installing packages, writing files, setting file permissions, and starting services.
+      body: `For EC2 instances that need software installed and configured at launch, CloudFormation provides a set of helper scripts. **\`cfn-init\`** reads configuration from \`AWS::CloudFormation::Init\` metadata in the template and applies it: installing packages, writing files, setting file permissions, and starting services. Example EC2 instance with cfn-init and cfn-signal (YAML):
 
 \`\`\`yaml
 MyInstance:

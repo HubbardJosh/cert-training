@@ -105,7 +105,7 @@ The service manages both tiers, automatically extracting information from conver
 - Retrieval: $0.50 per 1,000 memory record retrievals
 - Short-term events (feeding long-term): $0.25 per 1,000 new events
 
-Writing conversation turns to memory and querying long-term records:
+Writing conversation turns to memory and querying long-term records (Python):
 
 \`\`\`python
 import boto3

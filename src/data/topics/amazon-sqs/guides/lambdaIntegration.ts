@@ -64,7 +64,7 @@ Setting BatchSize=1 and MaximumBatchingWindowInSeconds=0 gives you the lowest la
 
 When you set the ESM's \`FunctionResponseType=ReportBatchItemFailures\`, your Lambda function can return a partial success response. Instead of throwing an exception, the function catches per-message errors and returns a response body listing the \`itemIdentifier\` (the messageId) of each failed message. Lambda then deletes all messages NOT in the failure list and leaves the failed messages in the queue for retry.
 
-The response format is:
+The response format is (JSON):
 \`\`\`json
 {
   "batchItemFailures": [

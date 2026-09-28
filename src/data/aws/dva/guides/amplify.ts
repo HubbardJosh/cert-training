@@ -13,7 +13,7 @@ export const amplifyGuide: ServiceGuide = {
       heading: "Amplify Hosting",
       body: `**Amplify Hosting** is a fully managed CI/CD and hosting platform for web applications. You connect a Git repository — GitHub, Bitbucket, GitLab, or CodeCommit — and Amplify automatically builds and deploys your app on every push. It supports virtually every major framework including React, Next.js, Vue, Angular, Gatsby, Hugo, and plain HTML.
 
-Build behavior is controlled by an \`amplify.yml\` file at the root of your repository (or Amplify auto-detects the framework and generates sensible defaults). Each Git branch gets its own unique URL automatically — for example, your \`dev\` branch might be at \`dev.d111.amplifyapp.com\` while \`main\` is at \`main.d111.amplifyapp.com\`. Pull requests also get their own preview URLs, making it easy to share staging environments before merging.
+Build behavior is controlled by an \`amplify.yml\` file at the root of your repository (or Amplify auto-detects the framework and generates sensible defaults). Each Git branch gets its own unique URL automatically — for example, your \`dev\` branch might be at \`dev.d111.amplifyapp.com\` while \`main\` is at \`main.d111.amplifyapp.com\`. Pull requests also get their own preview URLs, making it easy to share staging environments before merging. Example \`amplify.yml\` build configuration (YAML):
 
 \`\`\`yaml
 version: 1
@@ -79,7 +79,7 @@ Custom domains are fully managed: connect your domain and Amplify automatically 
     },
     {
       heading: "Amplify Backend (Gen 2)",
-      body: `**Amplify Gen 2** is the current approach to defining your backend: instead of running CLI prompts, you write TypeScript code that describes your backend resources. This code is version-controlled alongside your frontend and deployed automatically when you push to your repository.
+      body: `**Amplify Gen 2** is the current approach to defining your backend: instead of running CLI prompts, you write TypeScript code that describes your backend resources. This code is version-controlled alongside your frontend and deployed automatically when you push to your repository. Example Gen 2 Auth and Data resource definitions (TypeScript):
 
 \`\`\`typescript
 // amplify/auth/resource.ts
@@ -141,7 +141,7 @@ The TypeScript definitions map to real AWS services under the hood: Auth provisi
     },
     {
       heading: "Amplify Libraries (Frontend SDK)",
-      body: `The **Amplify JavaScript/TypeScript library** (the \`aws-amplify\` npm package) provides a unified SDK for React, React Native, Vue, Angular, and Next.js. You configure it once with your backend's generated config file, and then import individual categories as you need them.
+      body: `The **Amplify JavaScript/TypeScript library** (the \`aws-amplify\` npm package) provides a unified SDK for React, React Native, Vue, Angular, and Next.js. You configure it once with your backend's generated config file, and then import individual categories as you need them (TypeScript):
 
 \`\`\`typescript
 import { Amplify } from 'aws-amplify';
@@ -149,7 +149,7 @@ import config from './amplifyconfiguration.json';
 Amplify.configure(config);
 \`\`\`
 
-The Auth category wraps Cognito, providing sign-up, sign-in, sign-out, and token management through a clean API. \`fetchAuthSession()\` retrieves current JWT tokens without forcing you to understand the underlying Cognito flows. The API category wraps AppSync — \`generateClient()\` returns a typed client that infers query and mutation types from your schema, catching type errors at compile time. The Storage category wraps S3 with Cognito Identity Pool credentials for per-user access.
+The Auth category wraps Cognito, providing sign-up, sign-in, sign-out, and token management through a clean API. \`fetchAuthSession()\` retrieves current JWT tokens without forcing you to understand the underlying Cognito flows. The API category wraps AppSync — \`generateClient()\` returns a typed client that infers query and mutation types from your schema, catching type errors at compile time. The Storage category wraps S3 with Cognito Identity Pool credentials for per-user access. Using Auth, API, and Storage categories together (TypeScript):
 
 \`\`\`typescript
 import { signIn, fetchAuthSession } from 'aws-amplify/auth';

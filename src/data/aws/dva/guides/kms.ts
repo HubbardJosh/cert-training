@@ -113,7 +113,7 @@ The encryption flow has three steps. First, call \`KMS:GenerateDataKey\` with yo
 
 Decryption reverses the process: call \`KMS:Decrypt\` with the encrypted DEK to recover the plaintext DEK, then decrypt the data locally, then discard the plaintext DEK again. The CMK never leaves KMS and is never directly applied to your data — KMS only ever decrypts the small DEK blob.
 
-The practical benefits are significant: there's no size limit on the data you encrypt, you make only one KMS API call per object (not per operation), and the encrypted DEK is useless without KMS access, so your data is protected even if the encrypted bytes are leaked. \`GenerateDataKeyWithoutPlaintext\` is a variant that returns only the encrypted DEK — useful for pre-generating keys for future encryption operations without returning plaintext material that must be immediately handled.
+The practical benefits are significant: there's no size limit on the data you encrypt, you make only one KMS API call per object (not per operation), and the encrypted DEK is useless without KMS access, so your data is protected even if the encrypted bytes are leaked. \`GenerateDataKeyWithoutPlaintext\` is a variant that returns only the encrypted DEK — useful for pre-generating keys for future encryption operations without returning plaintext material that must be immediately handled. Envelope encryption with the AWS SDK (TypeScript):
 
 \`\`\`typescript
 import { KMSClient, GenerateDataKeyCommand, DecryptCommand } from "@aws-sdk/client-kms";

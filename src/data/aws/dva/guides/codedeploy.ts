@@ -101,7 +101,7 @@ For **Lambda**, CodeDeploy manages traffic shifting between two function version
       heading: "AppSpec File",
       body: `The **appspec.yml** file is the deployment manifest that tells CodeDeploy what to deploy and what lifecycle hooks to run. The structure differs significantly between compute platforms.
 
-For EC2 deployments, the AppSpec specifies which files to copy where and hooks to run at each lifecycle event:
+For EC2 deployments, the AppSpec specifies which files to copy where and hooks to run at each lifecycle event (YAML):
 
 \`\`\`yaml
 version: 0.0
@@ -125,7 +125,7 @@ hooks:
       timeout: 300
 \`\`\`
 
-For Lambda deployments, the AppSpec references the function name, alias, and the two versions to shift traffic between:
+For Lambda deployments, the AppSpec references the function name, alias, and the two versions to shift traffic between (YAML):
 
 \`\`\`yaml
 version: 0.0

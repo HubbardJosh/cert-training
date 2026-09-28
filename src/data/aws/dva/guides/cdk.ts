@@ -59,7 +59,9 @@ When you run \`cdk synth\`, CDK evaluates your code and emits a standard CloudFo
     },
     {
       heading: "CDK Code Example",
-      body: `\`\`\`typescript
+      body: `A complete CDK stack defining a Lambda + DynamoDB + API Gateway (TypeScript):
+
+\`\`\`typescript
 import * as cdk from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
@@ -126,9 +128,9 @@ Three patterns in this example are characteristic of idiomatic CDK. The **\`gran
       heading: "CDK CLI Commands",
       body: `The CDK CLI is your interface for synthesizing, comparing, and deploying stacks. Before your first deployment to any account/region combination, you must run \`cdk bootstrap\`. This deploys the CDKToolkit CloudFormation stack, which creates an S3 bucket for assets and an ECR repository for container images. Without bootstrapping, deployments will fail.
 
-\`cdk synth\` evaluates your CDK code and generates the CloudFormation template, writing it to \`cdk.out/\`. Run this to preview exactly what CloudFormation will receive — it's a good habit before any deployment. \`cdk diff\` compares the synthesized template against the currently deployed stack and shows you what will change, similar to a CloudFormation change set preview. Review \`cdk diff\` before deploying to catch unexpected changes.
+\`cdk synth\` evaluates your CDK code and generates the CloudFormation template, writing it to \`cdk.out/\`. Run this to preview exactly what CloudFormation will receive — it's a good habit before any deployment. \`cdk diff\` compares the synthesized template against the currently deployed stack and shows you what will change, similar to a CloudFormation change set preview. Review \`cdk diff\` before deploying to catch unexpected changes. Common CDK CLI commands (Bash):
 
-\`\`\`
+\`\`\`bash
 cdk deploy MyStack
 cdk deploy --all  # deploy all stacks in the app
 cdk deploy --require-approval never  # skip manual approval for security group changes
@@ -177,7 +179,7 @@ cdk deploy --require-approval never  # skip manual approval for security group c
     },
     {
       heading: "Constructs Library & Patterns",
-      body: `The main CDK library is \`aws-cdk-lib\`, which contains constructs for every AWS service organized by module:
+      body: `The main CDK library is \`aws-cdk-lib\`, which contains constructs for every AWS service organized by module (TypeScript):
 
 \`\`\`typescript
 import * as s3 from 'aws-cdk-lib/aws-s3';
@@ -189,7 +191,7 @@ L3 pattern constructs are particularly powerful for common architectures. \`Appl
 
 You can create your own reusable constructs by extending the \`Construct\` base class. An organization can publish a library of approved, secure constructs that teams use as building blocks — ensuring consistent security settings across projects without each team needing to know the details.
 
-When an L2 construct doesn't expose a property you need, the **escape hatch** pattern lets you access the underlying L1 resource:
+When an L2 construct doesn't expose a property you need, the **escape hatch** pattern lets you access the underlying L1 resource (TypeScript):
 
 \`\`\`typescript
 const cfnBucket = bucket.node.defaultChild as s3.CfnBucket;
@@ -265,7 +267,7 @@ This gives you the full expressiveness of CloudFormation while keeping most of y
 
 CDK's integration with **Lambda** includes the \`NodejsFunction\` construct (from \`@aws-cdk/aws-lambda-nodejs\`), which automatically bundles TypeScript with esbuild during synthesis. You don't need a separate build step — CDK handles the transpilation and bundling as part of \`cdk synth\`.
 
-For testing CDK infrastructure code, \`aws-cdk-lib/assertions\` provides a test framework that evaluates the synthesized CloudFormation template:
+For testing CDK infrastructure code, \`aws-cdk-lib/assertions\` provides a test framework that evaluates the synthesized CloudFormation template (TypeScript):
 
 \`\`\`typescript
 Template.fromStack(myStack).hasResourceProperties('AWS::S3::Bucket', {

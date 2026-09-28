@@ -114,7 +114,7 @@ Beanstalk supports a wide range of runtimes through **platforms**: Node.js, Pyth
     },
     {
       heading: ".ebextensions Configuration",
-      body: `The **.ebextensions** directory in your application bundle contains configuration files (YAML or JSON with a \`.config\` extension) that customize the environment. These run during environment creation and during deployments, letting you install packages, write files, run commands, and add CloudFormation resources.
+      body: `The **.ebextensions** directory in your application bundle contains configuration files (YAML or JSON with a \`.config\` extension) that customize the environment. These run during environment creation and during deployments, letting you install packages, write files, run commands, and add CloudFormation resources. Example .ebextensions config file (YAML):
 
 \`\`\`yaml
 # .ebextensions/01-packages.config

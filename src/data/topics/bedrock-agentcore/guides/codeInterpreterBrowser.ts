@@ -35,7 +35,7 @@ export const codeInterpreterBrowserGuide: ServiceGuide = {
 
 **Why this matters for agents**: Many reasoning tasks that seem simple are hard to do accurately in natural language. Asking an LLM to compute compound interest or sort 10,000 rows is unreliable. Code Interpreter lets the agent write the code and execute it deterministically — then return the verified result.
 
-Starting a session and executing Python code directly via boto3:
+Starting a session and executing Python code directly via boto3 (Python):
 
 \`\`\`python
 import boto3
@@ -117,7 +117,7 @@ finally:
 - Close sessions when done to release resources
 - Clean up temporary files to avoid storage accumulation
 
-Using the high-level SDK client, which handles session lifecycle automatically:
+Using the high-level SDK client, which handles session lifecycle automatically (Python):
 
 \`\`\`python
 from bedrock_agentcore.tools.code_interpreter_client import CodeInterpreter

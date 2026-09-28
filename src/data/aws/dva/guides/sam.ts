@@ -12,7 +12,7 @@ export const samGuide: ServiceGuide = {
   sections: [
     {
       heading: "SAM Template",
-      body: `A SAM template is a CloudFormation template with one key addition: the \`Transform: AWS::Serverless-2016-10-31\` declaration at the top. This tells CloudFormation's transform engine to expand SAM's shorthand resource types into their full CloudFormation equivalents before deployment. Without this transform declaration, the SAM-specific resource types would be rejected by CloudFormation.
+      body: `A SAM template is a CloudFormation template with one key addition: the \`Transform: AWS::Serverless-2016-10-31\` declaration at the top. This tells CloudFormation's transform engine to expand SAM's shorthand resource types into their full CloudFormation equivalents before deployment. Without this transform declaration, the SAM-specific resource types would be rejected by CloudFormation. Example SAM template with a function, table, and API event (YAML):
 
 \`\`\`yaml
 AWSTemplateFormatVersion: '2010-09-09'
@@ -130,16 +130,16 @@ The **Globals** section sets default property values that apply to all functions
 
 **sam build** compiles your application code and resolves dependencies, placing the build output in \`.aws-sam/build/\`. It respects \`BuildMethod\` in the template, so TypeScript projects can use esbuild for fast transpilation, and projects with complex build requirements can use a Makefile. Running \`sam build\` before deployment ensures you're deploying the compiled output, not raw source files.
 
-**sam local invoke** runs a Lambda function in a Docker container matching the function's runtime:
-\`\`\`
+**sam local invoke** runs a Lambda function in a Docker container matching the function's runtime (Bash):
+\`\`\`bash
 sam local invoke OrdersFunction --event events/order.json
 \`\`\`
 This lets you validate the function logic against a realistic event without deploying to AWS.
 
 **sam local start-api** starts a local HTTP server at \`localhost:3000\` that emulates API Gateway, routing requests to the appropriate Lambda function containers. Combined with \`--warm-containers\`, containers are kept alive between requests, reducing the overhead of repeated testing.
 
-**sam deploy** packages your build output to S3 and creates or updates the CloudFormation stack:
-\`\`\`
+**sam deploy** packages your build output to S3 and creates or updates the CloudFormation stack (Bash):
+\`\`\`bash
 sam deploy --guided  # interactive first-time setup
 sam deploy           # subsequent deploys using samconfig.toml
 \`\`\`
@@ -177,7 +177,7 @@ The \`samconfig.toml\` file stores deployment configuration — stack name, regi
       heading: "SAM Policy Templates",
       body: `SAM policy templates are one of the most practical features for day-to-day development. They're shorthand aliases for the IAM policy statements that serverless functions need most frequently, and they expand into proper least-privilege policies automatically.
 
-Common templates include \`DynamoDBCrudPolicy\` (GetItem, PutItem, UpdateItem, DeleteItem, Query, Scan on a specified table), \`DynamoDBReadPolicy\` (GetItem, Query, Scan), \`S3CrudPolicy\` (PutObject, GetObject, DeleteObject on a bucket), \`S3ReadPolicy\` (GetObject, ListBucket), \`SQSPollerPolicy\` (ReceiveMessage, DeleteMessage, GetQueueAttributes for SQS event source mapping), \`SQSSendMessagePolicy\` (SendMessage to a queue), \`SNSPublishMessagePolicy\` (Publish to a topic), and \`VPCAccessPolicy\` (the ENI permissions Lambda needs to run in a VPC).
+Common templates include \`DynamoDBCrudPolicy\` (GetItem, PutItem, UpdateItem, DeleteItem, Query, Scan on a specified table), \`DynamoDBReadPolicy\` (GetItem, Query, Scan), \`S3CrudPolicy\` (PutObject, GetObject, DeleteObject on a bucket), \`S3ReadPolicy\` (GetObject, ListBucket), \`SQSPollerPolicy\` (ReceiveMessage, DeleteMessage, GetQueueAttributes for SQS event source mapping), \`SQSSendMessagePolicy\` (SendMessage to a queue), \`SNSPublishMessagePolicy\` (Publish to a topic), and \`VPCAccessPolicy\` (the ENI permissions Lambda needs to run in a VPC). Example SAM policy template usage (YAML):
 
 \`\`\`yaml
 Policies:
@@ -221,8 +221,8 @@ The value over writing raw IAM policies is threefold: you avoid writing verbose 
       heading: "Local Testing & Debugging",
       body: `SAM's local testing capabilities require Docker, which provides the Lambda runtime environment. When you run \`sam local invoke\` or \`sam local start-api\`, SAM pulls the appropriate Lambda runtime Docker image and runs your function code inside it, giving you an accurate representation of the actual Lambda execution environment.
 
-Generating realistic test events is easier with \`sam local generate-event\`, which produces sample event JSON for any supported trigger type:
-\`\`\`
+Generating realistic test events is easier with \`sam local generate-event\`, which produces sample event JSON for any supported trigger type (Bash):
+\`\`\`bash
 sam local generate-event apigateway aws-proxy > events/apigw.json
 sam local generate-event s3 put > events/s3-put.json
 \`\`\`

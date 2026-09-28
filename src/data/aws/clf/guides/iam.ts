@@ -68,7 +68,7 @@ An **IAM Policy** is a JSON document that defines permissions. Policies state wh
       heading: "Policies and the Principle of Least Privilege",
       body: `IAM policies are the mechanism through which permissions are granted and denied. Understanding how policies work is fundamental to AWS security.
 
-A policy document contains one or more **statements**, each with an **Effect** (Allow or Deny), an **Action** (the API operation), and a **Resource** (the ARN of the AWS resource). An optional **Condition** can restrict when the policy applies (e.g., only from a specific IP, only when MFA is used).
+A policy document contains one or more **statements**, each with an **Effect** (Allow or Deny), an **Action** (the API operation), and a **Resource** (the ARN of the AWS resource). An optional **Condition** can restrict when the policy applies (e.g., only from a specific IP, only when MFA is used). Example policy document (JSON):
 
 \`\`\`json
 {

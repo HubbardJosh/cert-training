@@ -58,7 +58,7 @@ CloudWatch offers two resolution tiers. **Standard resolution** stores metrics a
     },
     {
       heading: "Custom Metrics",
-      body: `You publish custom metrics using the \`PutMetricData\` API from any code that can make AWS SDK calls — Lambda functions, EC2 instances, ECS containers, or any other compute environment. Each metric data point includes a namespace, metric name, dimensions, value, unit, and an optional timestamp. Setting \`StorageResolution\` to 1 publishes a high-resolution metric at 1-second granularity.
+      body: `You publish custom metrics using the \`PutMetricData\` API from any code that can make AWS SDK calls — Lambda functions, EC2 instances, ECS containers, or any other compute environment. Each metric data point includes a namespace, metric name, dimensions, value, unit, and an optional timestamp. Setting \`StorageResolution\` to 1 publishes a high-resolution metric at 1-second granularity. Publishing custom metrics and using EMF with the AWS SDK (TypeScript):
 
 \`\`\`typescript
 import { CloudWatchClient, PutMetricDataCommand } from "@aws-sdk/client-cloudwatch";
@@ -122,7 +122,7 @@ The **Embedded Metrics Format (EMF)** is a pattern specifically optimized for La
       heading: "CloudWatch Logs",
       body: `CloudWatch Logs is the centralized logging platform for AWS. Logs are organized into **log groups** (one per application or service, where you set the retention period) and **log streams** (one per source instance — a single Lambda execution environment, a single EC2 instance, a single ECS task). Retention can be set from 1 day to 10 years, or configured to never expire. Setting appropriate retention is important — unlimited log retention accumulates cost.
 
-**CloudWatch Logs Insights** is an interactive query engine for your logs. It uses a SQL-like syntax that supports filtering, aggregating, sorting, and visualizing log data across multiple log groups simultaneously:
+**CloudWatch Logs Insights** is an interactive query engine for your logs. It uses a SQL-like syntax that supports filtering, aggregating, sorting, and visualizing log data across multiple log groups simultaneously (CloudWatch Logs Insights query syntax):
 
 \`\`\`
 fields @timestamp, @message

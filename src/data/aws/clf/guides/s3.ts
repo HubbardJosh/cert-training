@@ -113,7 +113,7 @@ You access objects via URLs in the format \`https://<bucket>.s3.<region>.amazona
 
 **Block Public Access** is a safety mechanism — enabled by default on new buckets — that prevents accidental public exposure regardless of bucket policies or ACLs. Always verify this setting before hosting public content.
 
-**S3 Bucket Policies** are commonly used to make a bucket publicly readable for static website hosting, or to restrict access to specific VPC endpoints or IP ranges.
+**S3 Bucket Policies** are commonly used to make a bucket publicly readable for static website hosting, or to restrict access to specific VPC endpoints or IP ranges. Example bucket policy (JSON):
 
 \`\`\`json
 {

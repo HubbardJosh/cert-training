@@ -64,7 +64,7 @@ A **segment** is the data block that one service emits for its participation in 
       heading: "X-Ray SDK & Integration",
       body: `The X-Ray SDK is available for Node.js, Python, Java, Go, Ruby, and .NET, and it instruments your application in two complementary ways: automatic instrumentation of infrastructure-level calls (HTTP requests, AWS SDK calls) and manual instrumentation for custom business logic.
 
-In Python, \`patch_all()\` automatically wraps the \`boto3\` library, the \`requests\` library, and other supported libraries so that all AWS SDK calls and outbound HTTP requests are automatically traced as subsegments without any additional code:
+In Python, \`patch_all()\` automatically wraps the \`boto3\` library, the \`requests\` library, and other supported libraries so that all AWS SDK calls and outbound HTTP requests are automatically traced as subsegments without any additional code (Python):
 \`\`\`python
 from aws_xray_sdk.core import xray_recorder, patch_all
 patch_all()  # patches boto3, requests, etc.
@@ -76,7 +76,7 @@ def process_order(order_id):
 \`\`\`
 The \`@xray_recorder.capture\` decorator creates a named subsegment for any function, and \`xray_recorder.begin_subsegment\` / \`end_subsegment\` provides the same capability without decorators.
 
-For Node.js Lambda functions, use \`aws-xray-sdk-core\` to wrap the AWS SDK client and add annotations/metadata:
+For Node.js Lambda functions, use \`aws-xray-sdk-core\` to wrap the AWS SDK client and add annotations/metadata (TypeScript):
 
 \`\`\`typescript
 import AWSXRay from "aws-xray-sdk-core";

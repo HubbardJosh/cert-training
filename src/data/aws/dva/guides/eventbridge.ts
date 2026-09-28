@@ -15,7 +15,7 @@ export const eventbridgeGuide: ServiceGuide = {
 
 Events flow into **event buses**, which are the routing layer. The **default event bus** receives events from AWS services automatically — EC2 instance state changes, S3 object lifecycle events, CodePipeline execution state changes, and events from over 90 other AWS services all land here without any configuration. **Custom event buses** are where your application publishes its own events using the \`PutEvents\` API. **Partner event buses** receive events from SaaS partners — Zendesk, Datadog, PagerDuty, Shopify, and others — without you needing to manage webhooks.
 
-**Rules** are the core routing logic. Each rule has an **event pattern** (a filter that matches against incoming events) and up to 5 **targets** (where matching events are sent). A single event can match multiple rules and be delivered to multiple targets simultaneously. Rules are evaluated against every event that arrives on the bus — there's no subscription model where consumers must register interest. Targets include Lambda, SQS, SNS, Step Functions, ECS tasks, API Gateway, Kinesis, and many more.
+**Rules** are the core routing logic. Each rule has an **event pattern** (a filter that matches against incoming events) and up to 5 **targets** (where matching events are sent). A single event can match multiple rules and be delivered to multiple targets simultaneously. Rules are evaluated against every event that arrives on the bus — there's no subscription model where consumers must register interest. Targets include Lambda, SQS, SNS, Step Functions, ECS tasks, API Gateway, Kinesis, and many more. Publishing a custom event with the AWS SDK (TypeScript):
 
 \`\`\`typescript
 import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
@@ -72,7 +72,7 @@ await eb.send(new PutEventsCommand({
       heading: "Event Patterns & Filtering",
       body: `EventBridge's content-based filtering is one of its most powerful features. An event pattern is a JSON structure that specifies which fields to match and what values they must have. Only events where every specified field matches are routed to the rule's targets — unspecified fields are ignored.
 
-Matching is more expressive than simple equality. You can match on exact values (\`{"source": ["com.myapp"]}\`), prefix (\`{"detail": {"key": [{"prefix": "val"}]}}\`), anything-but exclusion (\`{"detail": {"status": [{"anything-but": ["ERROR"]}]}}\`), numeric ranges (\`{"detail": {"price": [{"numeric": [">", 100, "<=", 500]}]}}\`), and existence checks (\`{"detail": {"field": [{"exists": true}]}}\`). Multiple conditions in the same pattern are AND-ed together.
+Matching is more expressive than simple equality. You can match on exact values (\`{"source": ["com.myapp"]}\`), prefix (\`{"detail": {"key": [{"prefix": "val"}]}}\`), anything-but exclusion (\`{"detail": {"status": [{"anything-but": ["ERROR"]}]}}\`), numeric ranges (\`{"detail": {"price": [{"numeric": [">", 100, "<=", 500]}]}}\`), and existence checks (\`{"detail": {"field": [{"exists": true}]}}\`). Multiple conditions in the same pattern are AND-ed together. Example EventBridge event pattern (JSON):
 
 \`\`\`json
 {

@@ -50,7 +50,7 @@ A vague prompt like "Write something about our product launch" can produce anyth
       heading: "Structuring Complex Prompts with XML Tags",
       body: `When a prompt contains multiple types of content — background context, behavioral rules, examples, user input — **XML tags** are the recommended way to organize them. Claude is trained to recognize XML-style tags as semantic boundaries. Wrapping sections in tags like \`<context>\`, \`<instructions>\`, \`<example>\`, and \`<user_input>\` tells Claude exactly what kind of information each section contains and prevents different sections from blurring together.
 
-For example, a customer support system prompt might read:
+For example, a customer support system prompt might read (XML):
 
 \`\`\`xml
 <context>

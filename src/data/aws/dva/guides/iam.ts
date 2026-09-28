@@ -161,9 +161,9 @@ One subtlety worth understanding is \`NotAction\`. Using \`Effect: Allow\` with 
     },
     {
       heading: "Policy Structure",
-      body: `Every IAM policy is a JSON document. The \`Version\` field should always be \`"2012-10-17"\` (the current policy language version). The \`Statement\` array contains one or more statement objects, each with an \`Effect\` of Allow or Deny, one or more \`Action\` values, one or more \`Resource\` ARNs, and an optional \`Condition\` block.
+      body: `Every IAM policy is a JSON document. The \`Version\` field should always be \`"2012-10-17"\` (the current policy language version). The \`Statement\` array contains one or more statement objects, each with an \`Effect\` of Allow or Deny, one or more \`Action\` values, one or more \`Resource\` ARNs, and an optional \`Condition\` block. IAM policy document structure (JSON):
 
-\`\`\`
+\`\`\`json
 {
   "Version": "2012-10-17",
   "Statement": [{
@@ -230,7 +230,7 @@ The \`Condition\` block supports over 40 operators and condition keys. Commonly 
       heading: "Roles & STS",
       body: `Role assumption works through the AWS Security Token Service. A principal calls \`sts:AssumeRole\` with the target role's ARN, and STS returns a set of temporary credentials: an \`AccessKeyId\`, a \`SecretAccessKey\`, and a \`SessionToken\`. These credentials are valid for a configurable duration between 15 minutes and 12 hours (bounded by the role's \`MaxSessionDuration\` setting). All subsequent API calls use these temporary credentials.
 
-Every role has a **trust policy** — a resource-based policy on the role itself that specifies who is allowed to assume it. The trust policy is what makes a role assumable. For an EC2 instance to use a role, the trust policy must trust the EC2 service. For a cross-account assumption, the trust policy must trust the source account or a specific principal within it, and the source account's identity policy must grant \`sts:AssumeRole\` on the role ARN.
+Every role has a **trust policy** — a resource-based policy on the role itself that specifies who is allowed to assume it. The trust policy is what makes a role assumable. For an EC2 instance to use a role, the trust policy must trust the EC2 service. For a cross-account assumption, the trust policy must trust the source account or a specific principal within it, and the source account's identity policy must grant \`sts:AssumeRole\` on the role ARN. Example trust policy with cross-account and service principal (JSON):
 
 \`\`\`json
 {
@@ -344,9 +344,9 @@ In ECS, there are two separate roles to understand. The **task execution role** 
       heading: "Attribute-Based Access Control (ABAC)",
       body: `ABAC is a scaling strategy for IAM that uses tags on both principals and resources to make authorization decisions, rather than explicit per-resource permissions. The core idea is to write one policy that says "grant access when the principal's team tag matches the resource's team tag" — then you never need to update the policy when you add new resources or new team members.
 
-In practice, you tag a role with \`team: payments\`, tag a DynamoDB table with \`team: payments\`, and write a policy with a condition that compares these tags:
+In practice, you tag a role with \`team: payments\`, tag a DynamoDB table with \`team: payments\`, and write a policy with a condition that compares these tags (JSON):
 
-\`\`\`
+\`\`\`json
 "Condition": {
   "StringEquals": {
     "aws:PrincipalTag/Team": "\${aws:ResourceTag/Team}"

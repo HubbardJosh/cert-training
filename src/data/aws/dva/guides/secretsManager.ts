@@ -11,8 +11,8 @@ export const secretsManagerGuide: ServiceGuide = {
   sections: [
     {
       heading: "Core Concepts",
-      body: `Secrets Manager stores sensitive configuration values as **secrets** — encrypted key-value pairs (stored as JSON) or plain text strings, each with a unique ARN and optional human-readable name. The typical pattern for database credentials stores them as a JSON object:
-\`\`\`
+      body: `Secrets Manager stores sensitive configuration values as **secrets** — encrypted key-value pairs (stored as JSON) or plain text strings, each with a unique ARN and optional human-readable name. The typical pattern for database credentials stores them as a JSON object (JSON):
+\`\`\`json
 {
   "username": "admin",
   "password": "s3cr3t",
@@ -97,7 +97,7 @@ During the rotation window, both the old and new passwords are valid, which mean
 
 Because API calls have both latency and cost implications, the recommended approach is to cache the secret value in your application's memory rather than calling \`GetSecretValue\` on every request. The AWS Secrets Manager caching client (available for Java, Python, Go, and .NET) handles caching automatically, with a configurable TTL (defaulting to one hour) and an important behavior: if authentication with the cached credential fails, the client automatically refreshes the cache and retries — detecting rotation transparently without application logic.
 
-For **Lambda functions**, the pattern is to call \`GetSecretValue\` during initialization (outside the handler function) and store the credential in a module-level variable. This executes once per container lifecycle, not once per invocation, keeping both latency and API call costs low. If authentication fails inside the handler (indicating rotation occurred), refresh the cached value and retry once.
+For **Lambda functions**, the pattern is to call \`GetSecretValue\` during initialization (outside the handler function) and store the credential in a module-level variable. This executes once per container lifecycle, not once per invocation, keeping both latency and API call costs low. If authentication fails inside the handler (indicating rotation occurred), refresh the cached value and retry once. Caching a secret with automatic refresh on rotation (TypeScript):
 
 \`\`\`typescript
 import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";

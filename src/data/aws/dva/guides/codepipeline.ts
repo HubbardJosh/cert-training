@@ -108,7 +108,7 @@ The source action produces an output artifact containing the source code as a ZI
     },
     {
       heading: "Build Stage (CodeBuild)",
-      body: `CodeBuild is the most common build provider. It takes the source artifact, compiles the code, runs tests, and produces a build artifact. The build is defined by a \`buildspec.yml\` in your repository or inline in the CodeBuild project configuration:
+      body: `CodeBuild is the most common build provider. It takes the source artifact, compiles the code, runs tests, and produces a build artifact. The build is defined by a \`buildspec.yml\` in your repository or inline in the CodeBuild project configuration (YAML):
 
 \`\`\`yaml
 version: 0.2

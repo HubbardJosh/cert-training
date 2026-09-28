@@ -101,7 +101,7 @@ export const runtimeGuide: ServiceGuide = {
 
 **Payload limits**: AgentCore Runtime handles payloads up to **100 MB**, supporting multi-modal content (text, images, audio, video) and large datasets.
 
-Invoking a deployed agent programmatically via the AWS SDK:
+Invoking a deployed agent programmatically via the AWS SDK (Python):
 
 \`\`\`python
 import json

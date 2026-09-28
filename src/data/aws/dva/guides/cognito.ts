@@ -105,7 +105,7 @@ For OAuth 2.0 flows, **Authorization Code with PKCE** is the correct choice for 
       heading: "Identity Pools (Federated Identities)",
       body: `While User Pools handle authentication (who are you?), **Identity Pools** handle authorization for AWS resources (what AWS services can you access?). An Identity Pool exchanges a third-party token — from a Cognito User Pool, Google, Facebook, Apple, a SAML provider, or an OIDC provider — for **temporary AWS credentials** via STS.
 
-The flow works in four steps: the user authenticates with their identity provider and receives a token; the app passes that token to Cognito Identity Pools \`GetId\`, which returns a Cognito Identity ID; the app then calls \`GetCredentialsForIdentity\`, which triggers an STS \`AssumeRoleWithWebIdentity\` and returns temporary AWS credentials (AccessKeyId, SecretAccessKey, SessionToken); and the app uses those credentials to call AWS services directly — for example, uploading to an S3 bucket or reading from a DynamoDB table.
+The flow works in four steps: the user authenticates with their identity provider and receives a token; the app passes that token to Cognito Identity Pools \`GetId\`, which returns a Cognito Identity ID; the app then calls \`GetCredentialsForIdentity\`, which triggers an STS \`AssumeRoleWithWebIdentity\` and returns temporary AWS credentials (AccessKeyId, SecretAccessKey, SessionToken); and the app uses those credentials to call AWS services directly — for example, uploading to an S3 bucket or reading from a DynamoDB table. Exchanging a User Pool JWT for temporary AWS credentials (TypeScript):
 
 \`\`\`typescript
 import { CognitoIdentityClient, GetIdCommand, GetCredentialsForIdentityCommand } from "@aws-sdk/client-cognito-identity";

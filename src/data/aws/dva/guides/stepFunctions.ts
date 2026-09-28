@@ -60,8 +60,8 @@ export const stepFunctionsGuide: ServiceGuide = {
     },
     {
       heading: "Amazon States Language (ASL)",
-      body: `State machines are defined in **Amazon States Language (ASL)** — a JSON-based declarative language. The top-level structure identifies the starting state and defines all states:
-\`\`\`
+      body: `State machines are defined in **Amazon States Language (ASL)** — a JSON-based declarative language. The top-level structure identifies the starting state and defines all states (ASL/JSON):
+\`\`\`json
 {
   "Comment": "Description",
   "StartAt": "FirstStateName",
@@ -223,8 +223,8 @@ The processing order is always: InputPath → Parameters → (task executes) →
       heading: "Error Handling",
       body: `Step Functions builds retry and error handling logic directly into the workflow definition, rather than requiring each Lambda function to implement its own retry logic. This keeps Lambda functions simple and makes retry behavior visible in the workflow definition.
 
-**Retry** automatically retries a failed Task state according to rules you specify per error type. A typical retry configuration looks like:
-\`\`\`
+**Retry** automatically retries a failed Task state according to rules you specify per error type. A typical retry configuration looks like (ASL/JSON):
+\`\`\`json
 "Retry": [{
   "ErrorEquals": ["Lambda.ServiceException", "Lambda.TooManyRequestsException"],
   "IntervalSeconds": 2,
@@ -235,8 +235,8 @@ The processing order is always: InputPath → Parameters → (task executes) →
 \`\`\`
 \`IntervalSeconds\` is the wait before the first retry. \`BackoffRate\` multiplies the interval on each subsequent attempt (2 means 2s, 4s, 8s, ...). \`MaxAttempts\` limits total retries — 0 means no retries. \`JitterStrategy: FULL\` adds randomness to the calculated delay to prevent multiple parallel executions from retrying in lockstep, which would create thundering herd pressure on a downstream service.
 
-**Catch** provides a fallback transition when all retries are exhausted or when no retry is configured for the error. A catch block routes execution to a fallback state, optionally preserving the error details in a specified path:
-\`\`\`
+**Catch** provides a fallback transition when all retries are exhausted or when no retry is configured for the error. A catch block routes execution to a fallback state, optionally preserving the error details in a specified path (ASL/JSON):
+\`\`\`json
 "Catch": [{
   "ErrorEquals": ["States.ALL"],
   "Next": "HandleError",

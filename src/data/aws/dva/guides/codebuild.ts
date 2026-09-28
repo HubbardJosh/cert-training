@@ -45,7 +45,7 @@ Multiple builds can run concurrently by default. CodeBuild scales automatically 
     },
     {
       heading: "buildspec.yml",
-      body: `The **buildspec.yml** file at the root of your repository is the instruction set CodeBuild follows. It defines environment variables, build phases, artifact packaging, and caching.
+      body: `The **buildspec.yml** file at the root of your repository is the instruction set CodeBuild follows. It defines environment variables, build phases, artifact packaging, and caching. Example buildspec.yml (YAML):
 
 \`\`\`yaml
 version: 0.2
@@ -169,7 +169,7 @@ Environment variables can be set at three levels: **plaintext** variables embedd
     },
     {
       heading: "Artifacts & Cache",
-      body: `Build **artifacts** are the files CodeBuild produces — a JAR, a ZIP, a compiled binary, or a set of static files. You define which files to include in the artifacts section of your buildspec, and CodeBuild uploads them to S3 on success. The \`base-directory\` setting lets you specify a subdirectory as the artifact root so you don't accidentally include source files in the output. You can also configure **secondary artifacts** to produce multiple distinct output packages from a single build run — useful for producing a test report alongside the deployment package.
+      body: `Build **artifacts** are the files CodeBuild produces — a JAR, a ZIP, a compiled binary, or a set of static files. You define which files to include in the artifacts section of your buildspec, and CodeBuild uploads them to S3 on success. The \`base-directory\` setting lets you specify a subdirectory as the artifact root so you don't accidentally include source files in the output. You can also configure **secondary artifacts** to produce multiple distinct output packages from a single build run — useful for producing a test report alongside the deployment package. Example artifacts configuration (YAML):
 
 \`\`\`yaml
 artifacts:

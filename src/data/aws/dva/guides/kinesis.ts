@@ -106,7 +106,7 @@ The **partition key** you assign to each record determines which shard receives 
     },
     {
       heading: "Producing Records",
-      body: `Writing records to a Kinesis stream can be done at different levels of efficiency depending on your volume requirements. **PutRecord** sends a single record and returns its sequence number and shard ID — simple and useful for low-volume use cases but inefficient at scale. **PutRecords** batches up to 500 records in a single API call and returns individual success or failure status for each record, so you retry only the failed records rather than the whole batch.
+      body: `Writing records to a Kinesis stream can be done at different levels of efficiency depending on your volume requirements. **PutRecord** sends a single record and returns its sequence number and shard ID — simple and useful for low-volume use cases but inefficient at scale. **PutRecords** batches up to 500 records in a single API call and returns individual success or failure status for each record, so you retry only the failed records rather than the whole batch. Batch-writing records with the AWS SDK (TypeScript):
 
 \`\`\`typescript
 import { KinesisClient, PutRecordsCommand } from "@aws-sdk/client-kinesis";
@@ -168,7 +168,7 @@ Every record contains the actual data payload (up to 1 MB, base64-encoded in the
 
 **Enhanced Fan-Out** consumers use a push model: each registered consumer gets its own dedicated 2 MB/s per shard, delivered via HTTP/2 with ~70ms latency. Adding a new EFO consumer doesn't degrade existing consumers' throughput. The limit is 20 registered EFO consumers per stream. EFO is the right choice when you're adding a third or fourth consumer to a stream, or when any consumer is latency-sensitive.
 
-**Lambda** can consume from Kinesis via event source mapping using the standard polling model (EFO for Lambda is also available but must be explicitly configured). Lambda processes records in shard order within each shard, with multiple shards executing as separate concurrent invocations. If Lambda fails to process a batch, it retries until the records expire from the stream — configuring \`BisectBatchOnFunctionError\` splits a failing batch in half to isolate the problematic record rather than blocking the entire shard.
+**Lambda** can consume from Kinesis via event source mapping using the standard polling model (EFO for Lambda is also available but must be explicitly configured). Lambda processes records in shard order within each shard, with multiple shards executing as separate concurrent invocations. If Lambda fails to process a batch, it retries until the records expire from the stream — configuring \`BisectBatchOnFunctionError\` splits a failing batch in half to isolate the problematic record rather than blocking the entire shard. Lambda event handler for Kinesis records (TypeScript):
 
 \`\`\`typescript
 import { KinesisStreamEvent } from "aws-lambda";

@@ -115,7 +115,7 @@ Similarly, AgentCore Runtime works with any model — Amazon Bedrock models (Cla
 
 **The deploy story**: You write your agent code locally, test it there, then deploy it to AgentCore Runtime with minimal changes — wrapping your agent in a \`BedrockAgentCoreApp\` and decorating the handler with \`@app.entrypoint\`. The code that runs locally is the same code that runs in production.
 
-A minimal Strands agent wired for AgentCore Runtime deployment:
+A minimal Strands agent wired for AgentCore Runtime deployment (Python):
 
 \`\`\`python
 from strands import Agent

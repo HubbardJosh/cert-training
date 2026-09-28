@@ -59,7 +59,7 @@ The service is fully serverless. You don't provision EC2 instances, manage GPU c
     },
     {
       heading: "Foundation Model Catalog and Invocation",
-      body: `Bedrock's model catalog is accessed through the **InvokeModel** and **InvokeModelWithResponseStream** APIs. Each model has a unique **model ID** (for example, \`anthropic.claude-3-5-sonnet-20241022-v2:0\`) and a request/response schema specific to that model provider. The **Converse API** offers a unified interface that normalizes input and output formats across providers, making it easier to swap models without rewriting application code.
+      body: `Bedrock's model catalog is accessed through the **InvokeModel** and **InvokeModelWithResponseStream** APIs. Each model has a unique **model ID** (for example, \`anthropic.claude-3-5-sonnet-20241022-v2:0\`) and a request/response schema specific to that model provider. The **Converse API** offers a unified interface that normalizes input and output formats across providers, making it easier to swap models without rewriting application code. Example using the Converse API (TypeScript):
 
 \`\`\`typescript
 import { BedrockRuntimeClient, ConverseCommand } from "@aws-sdk/client-bedrock-runtime";

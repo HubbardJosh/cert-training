@@ -74,7 +74,7 @@ Gateway is described as "the only solution that provides both comprehensive ingr
 
 **Supported input types**: OpenAPI, Smithy, and Lambda function definitions.
 
-Connecting an agent to Gateway tools via MCP (using the Strands framework):
+Connecting an agent to Gateway tools via MCP (Python, Strands framework):
 
 \`\`\`python
 from strands import Agent
@@ -130,7 +130,7 @@ Beyond 1-click integrations, Gateway supports any of these as targets:
 
 **Framework compatibility**: Gateway works with CrewAI, LangGraph, LlamaIndex, and Strands Agents out of the box.
 
-Adding a Lambda function as an MCP tool target via the AgentCore CLI:
+Adding a Lambda function as an MCP tool target via the AgentCore CLI (Bash):
 
 \`\`\`bash
 # Create a gateway with no inbound auth

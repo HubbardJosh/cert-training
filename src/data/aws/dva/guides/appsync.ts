@@ -12,7 +12,7 @@ export const appsyncGuide: ServiceGuide = {
   sections: [
     {
       heading: "Core Concepts",
-      body: `AppSync is built around a **GraphQL schema** — a typed definition of all the queries, mutations, and subscriptions your API exposes. Clients use this schema to request exactly the data they need, nothing more and nothing less. AppSync uses the schema to route requests to the appropriate data sources.
+      body: `AppSync is built around a **GraphQL schema** — a typed definition of all the queries, mutations, and subscriptions your API exposes. Clients use this schema to request exactly the data they need, nothing more and nothing less. AppSync uses the schema to route requests to the appropriate data sources. Example AppSync schema (GraphQL):
 
 \`\`\`graphql
 type Todo {
@@ -88,7 +88,7 @@ Each field in a Query, Mutation, or Subscription type is wired to a **resolver**
       heading: "Resolvers & Mapping Templates",
       body: `AppSync resolvers transform the GraphQL request into a data source call and transform the response back into a GraphQL-shaped result. AppSync supports two languages for writing this transformation logic.
 
-**VTL (Velocity Template Language)** is the original approach. Request and response mapping templates are written in VTL and evaluate to the parameters for the data source operation:
+**VTL (Velocity Template Language)** is the original approach. Request and response mapping templates are written in VTL and evaluate to the parameters for the data source operation (VTL):
 
 \`\`\`vtl
 ## Request mapping template (DynamoDB GetItem)
@@ -104,7 +104,7 @@ Each field in a Query, Mutation, or Subscription type is wired to a **resolver**
 $util.toJson($ctx.result)
 \`\`\`
 
-**JavaScript resolvers** are the current recommended approach. The same logic is expressed in JavaScript, which is more readable, easier to test locally, and familiar to most developers:
+**JavaScript resolvers** are the current recommended approach. The same logic is expressed in JavaScript, which is more readable, easier to test locally, and familiar to most developers (JavaScript):
 
 \`\`\`javascript
 export function request(ctx) {
@@ -216,7 +216,7 @@ Authorization can be applied at the type level with schema directives like \`@aw
       heading: "Subscriptions & Real-Time",
       body: `AppSync's subscription system lets clients receive real-time updates over WebSocket whenever data changes. The model is straightforward: a client subscribes to a subscription field, and whenever a matching mutation occurs, AppSync pushes the mutation's result to all subscribed clients.
 
-The \`@aws_subscribe\` directive links a subscription field to the mutations that trigger it:
+The \`@aws_subscribe\` directive links a subscription field to the mutations that trigger it (GraphQL):
 
 \`\`\`graphql
 type Subscription {

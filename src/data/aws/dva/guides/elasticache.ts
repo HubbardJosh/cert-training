@@ -106,7 +106,7 @@ export const elasticacheGuide: ServiceGuide = {
       heading: "Caching Strategies",
       body: `The caching strategy you choose determines the freshness/consistency tradeoff of your cached data.
 
-**Lazy Loading (Cache-Aside)** is the most common pattern. The application checks the cache before querying the database. On a cache hit, the cached value is returned directly without touching the database. On a cache miss, the application queries the database, writes the result to the cache with an appropriate TTL, and returns the value. The advantages are that only requested data is cached (no wasted memory on unread data) and the application still works if the cache is empty or unavailable. The disadvantage is that the first request for any data always incurs a cache miss, and if the database is updated directly (bypassing the cache), the cached data becomes stale until the TTL expires.
+**Lazy Loading (Cache-Aside)** is the most common pattern. The application checks the cache before querying the database. On a cache hit, the cached value is returned directly without touching the database. On a cache miss, the application queries the database, writes the result to the cache with an appropriate TTL, and returns the value. The advantages are that only requested data is cached (no wasted memory on unread data) and the application still works if the cache is empty or unavailable. The disadvantage is that the first request for any data always incurs a cache miss, and if the database is updated directly (bypassing the cache), the cached data becomes stale until the TTL expires. Lazy loading and atomic rate limiting with Redis (TypeScript):
 
 \`\`\`typescript
 import { createClient } from "redis";

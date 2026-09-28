@@ -294,7 +294,7 @@ For encryption, SQS offers two options. **SSE-SQS** uses SQS-managed keys and is
       heading: "SQS with Lambda",
       body: `Lambda consumes SQS messages through an **event source mapping** — Lambda manages the polling loop entirely, so you don't write any polling code. You configure the behavior through three key settings: \`BatchSize\` controls how many messages Lambda receives per invocation (1–10,000), \`MaximumBatchingWindowInSeconds\` tells Lambda to wait up to N seconds to accumulate a full batch before invoking (0–300s), and \`FunctionResponseTypes: [ReportBatchItemFailures]\` enables partial batch success.
 
-The partial batch failure pattern is important to understand. Without it, if any message in a batch fails, the entire batch returns to the queue and every message gets retried — including ones that succeeded. With \`ReportBatchItemFailures\`, your Lambda function returns a list of failed message IDs, and SQS only retries those specific messages. The successfully processed ones are deleted. This prevents unnecessary reprocessing at scale.
+The partial batch failure pattern is important to understand. Without it, if any message in a batch fails, the entire batch returns to the queue and every message gets retried — including ones that succeeded. With \`ReportBatchItemFailures\`, your Lambda function returns a list of failed message IDs, and SQS only retries those specific messages. The successfully processed ones are deleted. This prevents unnecessary reprocessing at scale. Lambda handler with partial batch failure reporting (TypeScript):
 
 \`\`\`typescript
 import { SQSEvent, SQSBatchResponse } from "aws-lambda";

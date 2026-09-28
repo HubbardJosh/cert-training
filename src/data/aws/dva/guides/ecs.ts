@@ -246,9 +246,9 @@ The default **rolling update** replaces old tasks with new ones gradually. \`min
     },
     {
       heading: "Logging & Monitoring",
-      body: `Container logs in ECS are sent to CloudWatch Logs using the **awslogs log driver**, configured in the task definition. Every line written to stdout or stderr by the container is forwarded to a CloudWatch Logs log group, with each container instance creating its own log stream.
+      body: `Container logs in ECS are sent to CloudWatch Logs using the **awslogs log driver**, configured in the task definition. Every line written to stdout or stderr by the container is forwarded to a CloudWatch Logs log group, with each container instance creating its own log stream. Example logConfiguration block in a task definition (JSON):
 
-\`\`\`
+\`\`\`json
 "logConfiguration": {
   "logDriver": "awslogs",
   "options": {
