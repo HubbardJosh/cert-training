@@ -133,11 +133,10 @@ export const <camelCaseName>Guide: ServiceGuide = {
   relatedServices: [
     // services/topics this guide is commonly compared or combined with
   ],
-  examTips: [
-    // practical insights, architectural patterns, and common mistakes
-  ],
 };
 ```
+
+**Do NOT include `examTips`** — deep-dive topics have no associated exam, so exam tips are not relevant.
 
 **Domain values** — use the domain that best describes the sub-topic's nature:
 

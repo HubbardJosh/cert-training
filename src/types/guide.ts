@@ -23,6 +23,6 @@ export interface ServiceGuide {
   sections: GuideSection[];
   keyFacts: string[]; // short bullets for quick reference
   relatedServices: string[];
-  examTips: string[];
+  examTips?: string[];
   topicQuiz?: GuideQuizQuestion[];
 }

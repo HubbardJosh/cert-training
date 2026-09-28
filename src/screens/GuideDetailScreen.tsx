@@ -29,6 +29,7 @@ import {
 } from "../utils/theme";
 import { RootStackParamList } from "../navigation";
 import { useCert } from "../context/CertContext";
+import { useTopic } from "../context/TopicContext";
 import { useActiveData, useActiveStorageKey } from "../context/useActiveData";
 import { useTheme } from "../context/ThemeContext";
 import {
@@ -576,6 +577,8 @@ export default function GuideDetailScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteT>();
   const { certMeta } = useCert();
+  const { topicId } = useTopic();
+  const isTopicMode = !!topicId;
   const activeStorageKey = useActiveStorageKey();
   const { guides: allGuides } = useActiveData();
   const { colors, isDark } = useTheme();
@@ -733,7 +736,9 @@ export default function GuideDetailScreen() {
           [
             { key: "content", label: "Content", icon: "document-text" },
             { key: "facts", label: "Key Facts", icon: "list" },
-            { key: "exam", label: "Exam Tips", icon: "school" },
+            ...(!isTopicMode
+              ? [{ key: "exam", label: "Exam Tips", icon: "school" }]
+              : []),
           ] as { key: Tab; label: string; icon: string }[]
         ).map(({ key, label, icon }) => (
           <TouchableOpacity
@@ -920,7 +925,7 @@ export default function GuideDetailScreen() {
           )}
 
           {/* Exam Tips tab */}
-          {activeTab === "exam" && (
+          {activeTab === "exam" && !isTopicMode && (
             <View>
               <Text style={styles.tabSectionTitle}>Exam Tips</Text>
               <View
@@ -933,11 +938,11 @@ export default function GuideDetailScreen() {
                   style={{ marginBottom: 4 }}
                 />
                 <Text style={styles.examBannerText}>
-                  These are the highest-yield points for DVA-C02 exam questions
-                  on {guide.service}.
+                  These are the highest-yield points for exam questions on{" "}
+                  {guide.service}.
                 </Text>
               </View>
-              {guide.examTips.map((tip, i) => (
+              {(guide.examTips ?? []).map((tip, i) => (
                 <View key={i} style={styles.tipCard}>
                   <View style={styles.tipNumber}>
                     <Text style={styles.tipNumberText}>{i + 1}</Text>

@@ -199,7 +199,7 @@ export default function TopicHomeScreen() {
                   </Text>
                   <Text style={styles.guideMeta}>
                     {guide.sections.length} sections · {guide.keyFacts.length}{" "}
-                    key facts · {guide.examTips.length} exam tips
+                    key facts
                   </Text>
                 </View>
                 <View style={styles.guideStatus}>
