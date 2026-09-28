@@ -35,6 +35,8 @@ export const codeInterpreterBrowserGuide: ServiceGuide = {
 
 **Why this matters for agents**: Many reasoning tasks that seem simple are hard to do accurately in natural language. Asking an LLM to compute compound interest or sort 10,000 rows is unreliable. Code Interpreter lets the agent write the code and execute it deterministically — then return the verified result.
 
+Starting a session and executing Python code directly via boto3:
+
 \`\`\`python
 import boto3
 import json
