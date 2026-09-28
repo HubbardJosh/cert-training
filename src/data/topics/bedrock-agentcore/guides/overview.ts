@@ -279,17 +279,16 @@ AWS Agent Registry
     },
     {
       question:
-        "Which AgentCore pricing model charges only for actual CPU and memory consumed during active processing, excluding I/O wait time?",
+        "In the AgentCore end-to-end session flow, which component acts first when a corporate employee opens the agent, and what does it do?",
       options: [
-        "Runtime Instances (EC2-backed)",
-        "Runtime microVMs (consumption-based)",
-        "Gateway (per-invocation)",
-        "Memory (per-event)",
+        "AgentCore Runtime — it provisions the microVM before anything else can happen",
+        "AgentCore Memory — it retrieves the user's long-term context to personalize the session",
+        "AgentCore Identity — it verifies the employee's corporate credentials before the request reaches the agent",
+        "AgentCore Gateway — it routes the request to the correct Runtime endpoint as the entry point",
       ],
-      correctIndex: 1,
+      correctIndex: 2,
       explanation:
-        // Source: https://aws.amazon.com/bedrock/agentcore/pricing/
-        "Runtime microVMs use consumption-based pricing that aligns CPU billing with actual active processing — charges are typically eliminated during I/O wait periods when agents are waiting for LLM responses. Runtime Instances charge EC2 on-demand prices plus a management fee (12% for CPU, 7.8% for GPU G-series). Gateway charges per invocation. Memory charges per event and per record.",
+        "In the typical flow described in this guide, Identity acts first: it verifies the user's corporate credentials via the integrated IdP (Okta, Entra, or Cognito) before the request is allowed to reach the agent. Gateway then routes the authenticated request to Runtime. Runtime starts the microVM. Memory retrieves context once the session is underway. The order matters — unauthenticated requests are rejected before any compute is provisioned.",
     },
     {
       question:
