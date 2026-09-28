@@ -61,9 +61,16 @@ Before writing anything, read these files to understand the full pattern:
 
 ---
 
-## Step 1 — Map the exam to topics
+## Step 1 — Fetch the official exam guide and map topics
 
-Study the official exam guide for this cert (use your training knowledge). Identify:
+**Do not use training data for exam structure.** Fetch the official exam guide first:
+
+- For AWS certs: retrieve the exam guide PDF or page from `aws.amazon.com/certification` or `d1.awsstatic.com`.
+- For Claude/Anthropic certs: retrieve the cert overview from `docs.anthropic.com` or `anthropic.com/certification`.
+
+Use `WebFetch` on the official page before writing anything. If the page is unreachable, note every domain/weighting as `// TODO: verify against <url>` rather than guessing.
+
+From the fetched document, identify:
 
 - Every domain and its percentage weighting
 - Every topic area explicitly or implicitly tested
