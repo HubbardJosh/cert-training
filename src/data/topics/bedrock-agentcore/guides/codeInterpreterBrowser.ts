@@ -33,7 +33,43 @@ export const codeInterpreterBrowserGuide: ServiceGuide = {
 
 **Data format support**: CSV, Excel, JSON, and other structured data formats. Agents can perform data cleaning, analysis, and transformation.
 
-**Why this matters for agents**: Many reasoning tasks that seem simple are hard to do accurately in natural language. Asking an LLM to compute compound interest or sort 10,000 rows is unreliable. Code Interpreter lets the agent write the code and execute it deterministically — then return the verified result.`,
+**Why this matters for agents**: Many reasoning tasks that seem simple are hard to do accurately in natural language. Asking an LLM to compute compound interest or sort 10,000 rows is unreliable. Code Interpreter lets the agent write the code and execute it deterministically — then return the verified result.
+
+\`\`\`python
+import boto3
+import json
+
+client = boto3.client("bedrock-agentcore", region_name="us-east-1")
+
+# Start a session (required before executing code)
+session = client.start_code_interpreter_session(
+    codeInterpreterIdentifier="aws.codeinterpreter.v1",
+    name="data-analysis-session",
+    sessionTimeoutSeconds=900,  # default 15 min; max 28800 (8 hours)
+)
+session_id = session["sessionId"]
+
+try:
+    response = client.invoke_code_interpreter(
+        codeInterpreterIdentifier="aws.codeinterpreter.v1",
+        sessionId=session_id,
+        name="executeCode",
+        arguments={
+            "language": "python",
+            "code": "import pandas as pd\\ndf = pd.read_csv('sales.csv')\\nprint(df.groupby('region')['revenue'].sum())",
+        },
+    )
+    for event in response["stream"]:
+        if "result" in event:
+            for item in event["result"].get("content", []):
+                if item["type"] == "text":
+                    print(item["text"])
+finally:
+    client.stop_code_interpreter_session(
+        codeInterpreterIdentifier="aws.codeinterpreter.v1",
+        sessionId=session_id,
+    )
+\`\`\``,
       quiz: [
         {
           question:
@@ -77,7 +113,39 @@ export const codeInterpreterBrowserGuide: ServiceGuide = {
 - Use \`try/except\` blocks to handle errors gracefully
 - Use the \`code_session\` context manager to ensure cleanup
 - Close sessions when done to release resources
-- Clean up temporary files to avoid storage accumulation`,
+- Clean up temporary files to avoid storage accumulation
+
+Using the high-level SDK client, which handles session lifecycle automatically:
+
+\`\`\`python
+from bedrock_agentcore.tools.code_interpreter_client import CodeInterpreter
+import json
+
+code_client = CodeInterpreter("us-east-1")
+code_client.start()  # creates the session
+
+try:
+    response = code_client.invoke("executeCode", {
+        "language": "python",
+        "code": """
+import json, os
+try:
+    data = [1, 2, 3, 4, 5]
+    result = {"mean": sum(data) / len(data), "count": len(data)}
+    print(json.dumps(result))
+except Exception as e:
+    print(f"Error: {e}")
+finally:
+    # clean up any temp files
+    if os.path.exists("tmp_output.csv"):
+        os.remove("tmp_output.csv")
+""",
+    })
+    for event in response["stream"]:
+        print(json.dumps(event["result"], indent=2))
+finally:
+    code_client.stop()  # always release the session
+\`\`\``,
       quiz: [
         {
           question:

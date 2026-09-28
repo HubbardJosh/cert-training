@@ -72,7 +72,26 @@ Gateway is described as "the only solution that provides both comprehensive ingr
 
 **Result**: Agents can work effectively across thousands of tools while maintaining small prompt sizes and low latency. Tool indexing costs $0.02 per 100 tools indexed per month; semantic search API costs $0.025 per 1,000 invocations.
 
-**Supported input types**: OpenAPI, Smithy, and Lambda function definitions.`,
+**Supported input types**: OpenAPI, Smithy, and Lambda function definitions.
+
+Connecting an agent to Gateway tools via MCP (using the Strands framework):
+
+\`\`\`python
+from strands import Agent
+from strands.models import BedrockModel
+from strands.tools.mcp.mcp_client import MCPClient
+from mcp.client.streamable_http import streamablehttp_client
+
+gateway_url = "https://<gateway-id>.gateway.bedrock-agentcore.<region>.amazonaws.com/mcp"
+
+mcp_client = MCPClient(lambda: streamablehttp_client(gateway_url))
+
+with mcp_client:
+    # Gateway returns only the tools relevant to the agent's context
+    tools = mcp_client.list_tools_sync()
+    agent = Agent(model=BedrockModel(model_id="anthropic.claude-sonnet-4-6"), tools=tools)
+    response = agent("File a Jira ticket for the login bug")
+\`\`\``,
       quiz: [
         {
           question:
@@ -109,7 +128,25 @@ Beyond 1-click integrations, Gateway supports any of these as targets:
 - **HTTP services** (passthrough targets)
 - **Model providers** (for the inference routing endpoint)
 
-**Framework compatibility**: Gateway works with CrewAI, LangGraph, LlamaIndex, and Strands Agents out of the box.`,
+**Framework compatibility**: Gateway works with CrewAI, LangGraph, LlamaIndex, and Strands Agents out of the box.
+
+Adding a Lambda function as an MCP tool target via the AgentCore CLI:
+
+\`\`\`bash
+# Create a gateway with no inbound auth
+agentcore add gateway --name MyGateway --authorizer-type NONE
+
+# Register a Lambda function as a tool target
+agentcore add gateway-target \
+  --name WeatherTool \
+  --type lambda-function-arn \
+  --lambda-arn arn:aws:lambda:us-east-1:123456789012:function:get-weather \
+  --tool-schema-file tools.json \
+  --gateway MyGateway
+
+# Deploy to AWS (~2-3 min)
+agentcore deploy
+\`\`\``,
       quiz: [
         {
           question:

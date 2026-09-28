@@ -113,7 +113,23 @@ AgentCore packages all of these as managed services so you focus on your agent's
 
 Similarly, AgentCore Runtime works with any model — Amazon Bedrock models (Claude, Nova, Titan), Anthropic Claude directly, Google Gemini, OpenAI, or any model accessible via API.
 
-**The deploy story**: You write your agent code locally, test it there, then deploy it to AgentCore Runtime with minimal changes — typically just adding the \`@bedrock_agentcore_client.entrypoint\` decorator (for the Strands SDK) or containerizing your existing code. The code that runs locally is the same code that runs in production.`,
+**The deploy story**: You write your agent code locally, test it there, then deploy it to AgentCore Runtime with minimal changes — wrapping your agent in a \`BedrockAgentCoreApp\` and decorating the handler with \`@app.entrypoint\`. The code that runs locally is the same code that runs in production.
+
+\`\`\`python
+from strands import Agent
+from bedrock_agentcore.runtime import BedrockAgentCoreApp
+
+agent = Agent()  # any framework — Strands, LangGraph, CrewAI, etc.
+
+app = BedrockAgentCoreApp()
+
+@app.entrypoint
+def agent_invocation(payload, context):
+    result = agent(payload.get("prompt", ""))
+    return {"result": result.message}
+
+app.run()
+\`\`\``,
       quiz: [
         {
           question:

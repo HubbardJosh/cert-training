@@ -103,7 +103,39 @@ The service manages both tiers, automatically extracting information from conver
 **Pricing**:
 - Storage: $0.75 per 1,000 records/month
 - Retrieval: $0.50 per 1,000 memory record retrievals
-- Short-term events (feeding long-term): $0.25 per 1,000 new events`,
+- Short-term events (feeding long-term): $0.25 per 1,000 new events
+
+Writing conversation turns to memory and querying long-term records:
+
+\`\`\`python
+import boto3
+from bedrock_agentcore.memory import MemorySessionManager
+from bedrock_agentcore.memory.constants import ConversationalMessage, MessageRole
+
+control_client = boto3.client("bedrock-agentcore-control", region_name="us-east-1")
+memory_id = control_client.list_memories()["memories"][0]["id"]
+
+session_manager = MemorySessionManager(memory_id=memory_id, region_name="us-east-1")
+session = session_manager.create_memory_session(
+    actor_id="user-42",
+    session_id="booking-session-001"
+)
+
+# Write conversation turns (short-term + feeds long-term extraction)
+session.add_turns(messages=[
+    ConversationalMessage("I always prefer window seats.", MessageRole.USER),
+    ConversationalMessage("Got it, I'll remember that.", MessageRole.ASSISTANT),
+])
+
+# At next session start: retrieve relevant long-term records
+records = session.search_long_term_memories(
+    query="seating preferences",
+    namespace_path="/",
+    top_k=3,
+)
+for record in records:
+    print(record)
+\`\`\``,
       quiz: [
         {
           question:

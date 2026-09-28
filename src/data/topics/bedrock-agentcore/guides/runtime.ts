@@ -99,7 +99,28 @@ export const runtimeGuide: ServiceGuide = {
 
 **HTTP and WebSocket**: Agents can be invoked via standard HTTP API calls or maintain persistent WebSocket connections for real-time bidirectional streaming. WebSocket connections enable immediate response feedback and maintained conversation context for interactive applications.
 
-**Payload limits**: AgentCore Runtime handles payloads up to **100 MB**, supporting multi-modal content (text, images, audio, video) and large datasets.`,
+**Payload limits**: AgentCore Runtime handles payloads up to **100 MB**, supporting multi-modal content (text, images, audio, video) and large datasets.
+
+Invoking a deployed agent programmatically via the AWS SDK:
+
+\`\`\`python
+import json
+import uuid
+import boto3
+
+client = boto3.client("bedrock-agentcore")
+
+response = client.invoke_agent_runtime(
+    agentRuntimeArn="arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-agent",
+    runtimeSessionId=str(uuid.uuid4()),  # unique per session
+    payload=json.dumps({"prompt": "Summarize last quarter's sales"}).encode(),
+    qualifier="DEFAULT",
+)
+
+# response["response"] is a streaming iterator of byte chunks
+content = [chunk.decode("utf-8") for chunk in response.get("response", [])]
+print(json.loads("".join(content)))
+\`\`\``,
       quiz: [
         {
           question:
