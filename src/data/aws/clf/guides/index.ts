@@ -23,13 +23,14 @@ import { route53Guide } from "./route53";
 export const allGuides: ServiceGuide[] = [
   // Cloud fundamentals
   globalInfrastructureGuide,
-  sharedResponsibilityGuide,
   // Identity & access
   iamGuide,
   // Core compute & storage
   ec2Guide,
   vpcGuide,
   s3Guide,
+  // Governance foundation (references EC2/S3/VPC as examples)
+  sharedResponsibilityGuide,
   rdsGuide,
   // Serverless & managed
   lambdaGuide,

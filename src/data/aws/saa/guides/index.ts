@@ -22,6 +22,8 @@ export const allGuides: ServiceGuide[] = [
   // Identity & networking foundation
   iamGuide,
   vpcGuide,
+  // Security deep-dive (concepts appear throughout all following guides)
+  securityGuide,
   // Core compute & storage
   ec2Guide,
   s3Guide,
@@ -43,8 +45,6 @@ export const allGuides: ServiceGuide[] = [
   monitoringGuide,
   drGuide,
   costGuide,
-  // Security deep-dive
-  securityGuide,
 ];
 
 export const guidesByDomain = allGuides.reduce<Record<string, ServiceGuide[]>>(

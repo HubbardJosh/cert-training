@@ -33,6 +33,10 @@ import { systemsManagerGuide } from "./systemsManager";
 export const allGuides: ServiceGuide[] = [
   // Identity & access
   iamGuide,
+  // Auth & secrets (referenced by Lambda and API Gateway)
+  cognitoGuide,
+  kmsGuide,
+  secretsManagerGuide,
   // Serverless core
   lambdaGuide,
   apiGatewayGuide,
@@ -55,10 +59,6 @@ export const allGuides: ServiceGuide[] = [
   vpcGuide,
   cloudfrontGuide,
   appsyncGuide,
-  // Auth & secrets
-  cognitoGuide,
-  kmsGuide,
-  secretsManagerGuide,
   // Containers
   ecsGuide,
   // CI/CD pipeline

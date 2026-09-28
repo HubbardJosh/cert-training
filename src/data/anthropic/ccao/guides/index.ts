@@ -24,8 +24,8 @@ export const allGuides: ServiceGuide[] = [
   anthropicProductsGuide,
   // Using Claude
   promptingAndTaskExecutionGuide,
-  promptEngineeringGuide,
   messagesApiGuide,
+  promptEngineeringGuide,
   // Extending Claude
   toolUseGuide,
   configurationAndKnowledgeManagementGuide,
@@ -39,6 +39,7 @@ export const allGuides: ServiceGuide[] = [
   agenticWorkflowsGuide,
   // Shipping to production
   productionDeploymentGuide,
+  outputEvaluationAndValidationGuide,
   evaluationsAndTestingGuide,
   troubleshootingAndOptimizationGuide,
 ];

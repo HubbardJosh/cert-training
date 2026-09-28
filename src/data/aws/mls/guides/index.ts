@@ -21,6 +21,8 @@ import { mlSecurityGuide } from "./ml-security";
 import { mlopsGuide } from "./mlops";
 
 export const allGuides: ServiceGuide[] = [
+  // Main ML platform (lifecycle guides reference SageMaker extensively)
+  sagemakerGuide,
   // ML lifecycle concepts
   dataPreparationGuide,
   modelTrainingGuide,
@@ -33,8 +35,6 @@ export const allGuides: ServiceGuide[] = [
   emrGuide,
   athenaGuide,
   redshiftGuide,
-  // Main ML platform
-  sagemakerGuide,
   // Pre-built AI services
   rekognitionGuide,
   comprehendGuide,
