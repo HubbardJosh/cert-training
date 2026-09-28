@@ -12,7 +12,7 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { AbbreviatedText } from "../components/AbbreviatedText";
 import { fontSize, radius, spacing, ThemeColors } from "../utils/theme";
 import { useTheme } from "../context/ThemeContext";
-import { useCert } from "../context/CertContext";
+import { useActiveStorageKey } from "../context/useActiveData";
 import {
   getMissedQuestions,
   getMissedQuizQuestions,
@@ -31,7 +31,7 @@ export default function MissedQuestionsScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteT>();
   const { source } = route.params;
-  const { certMeta } = useCert();
+  const activeStorageKey = useActiveStorageKey();
   const { colors } = useTheme();
   const styles = makeStyles(colors);
 
@@ -43,8 +43,8 @@ export default function MissedQuestionsScreen() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    loadProgress(certMeta.storageKey).then(setProgress);
-  }, [certMeta.storageKey]);
+    loadProgress(activeStorageKey).then(setProgress);
+  }, [activeStorageKey]);
 
   const missed = progress
     ? source === "quiz"
@@ -60,9 +60,9 @@ export default function MissedQuestionsScreen() {
           ? removeMissedQuizQuestion(progress, id)
           : removeMissedQuestion(progress, id);
       setProgress(updated);
-      await saveProgress(updated, certMeta.storageKey);
+      await saveProgress(updated, activeStorageKey);
     },
-    [progress, certMeta.storageKey, source],
+    [progress, activeStorageKey, source],
   );
 
   const handleDismissCurrent = useCallback(async () => {
